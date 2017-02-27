@@ -1,8 +1,8 @@
-OC.Plugins.register('OCA.Share.foo', {
+OC.Plugins.register('OCA.Share.extend', {
 	attach: function (obj) {
 		obj.autocompleteHandler = function(search, response) {
-			var view = this;
-			var $loading = this.$el.find('.shareWithLoading');
+			var view = obj;
+			var $loading = obj.$el.find('.shareWithLoading');
 			$loading.removeClass('hidden');
 			$loading.addClass('inlineblock');
 			$.get(
@@ -17,9 +17,19 @@ OC.Plugins.register('OCA.Share.foo', {
 					$loading.addClass('hidden');
 					$loading.removeClass('inlineblock');
 					if (result.ocs.meta.statuscode == 100) {
-						var users = result.ocs.data.exact.users.concat(result.ocs.data.users);
-						var groups = result.ocs.data.exact.groups.concat(result.ocs.data.groups);
-						var remotes = result.ocs.data.exact.remotes.concat(result.ocs.data.remotes);
+						var searchTerm = search.term.trim();
+						var users      = result.ocs.data.exact.users.concat(result.ocs.data.users);
+						var groups     = result.ocs.data.exact.groups.concat(result.ocs.data.groups);
+						var remotes    = result.ocs.data.exact.remotes.concat(result.ocs.data.remotes);
+
+						// Potential guests
+						var unknown    = [{
+							label: searchTerm,
+							value: {
+								shareType :4,
+								shareWith : searchTerm.toLowerCase()
+							}
+						}];
 
 						var usersLength;
 						var groupsLength;
@@ -81,7 +91,7 @@ OC.Plugins.register('OCA.Share.foo', {
 							}
 						}
 
-						var suggestions = users.concat(groups).concat(remotes);
+						var suggestions = users.concat(groups).concat(remotes).concat(unknown);
 
 						if (suggestions.length > 0) {
 							$('.shareWithField').removeClass('error')
