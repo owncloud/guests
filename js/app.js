@@ -1,4 +1,4 @@
-OC.Plugins.register('OCA.Share.extend', {
+OC.Plugins.register('OCA.Share.ShareDialogView', {
 	attach: function (obj) {
 		obj.autocompleteHandler = function(search, response) {
 			var view = obj;
