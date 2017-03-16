@@ -8,9 +8,9 @@ class GroupBackend implements GroupInterface {
 
 
 	protected $possibleActions = [
-		self::CREATE_GROUP => 'createGroup',
 		self::COUNT_USERS => 'countUsersInGroup',
 		self::GROUP_DETAILS => 'getGroupDetails',
+		self::REMOVE_FROM_GOUP => 'removeFromGroup',
 	];
 
 	private $groupName = 'guests';
@@ -18,6 +18,11 @@ class GroupBackend implements GroupInterface {
 
 	public function __construct($groupName = 'guests') {
 		$this->groupName = $groupName;
+	}
+
+
+	public function countUsersInGroup($gid) {
+		return 10;
 	}
 
 	/**
@@ -63,7 +68,7 @@ class GroupBackend implements GroupInterface {
 	 * Checks whether the user is member of a group or not.
 	 */
 	public function inGroup($uid, $gid) {
-		return \OC::$server->getGroupManager()->isInGroup($uid, $gid);
+		return false;
 	}
 
 	/**
