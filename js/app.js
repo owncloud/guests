@@ -89,7 +89,7 @@ $(document).ready(function () {
 				var self = this;
 				xhrObject = {
 					type: 'PUT',
-					url: OC.getRootPath() + '/index.php' + OC.linkTo('guests', 'users'),
+					url: OC.generateUrl('/apps/guests/users'),
 					dataType: 'text',
 					data: {
 						displayName: this.guest.fullname,
