@@ -52,8 +52,8 @@ $(document).ready(function () {
 			'guest.email': function () {
 				if (this.guest.email) {
 					username = this.guest.email.toLowerCase();
-					username = username.match(/[\w\.-]+/g);
-					this.guest.username = username.join('.');
+					username = username.match(/[\w]+/g);
+					this.guest.username = username.join('_');
 				}
 				else {
 					this.guest.username = '';
