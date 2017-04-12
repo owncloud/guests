@@ -39,7 +39,7 @@ print_unescaped($l->t(
          
          just letting you know that %s shared <strong>%s</strong> with you.<br><br>
          Activate your guest account at %s by <a href="%s">setting a password</a>.<br><br>
-         Then <a href="%s">view it!</a><br><br>You can login using the email address <strong>%s</strong> .<br><br>',
+         Then <a href="%s">view it!</a><br><br>You can login using the email address <strong>"%s"</strong> .<br><br>',
 		[$_['user_displayname'], $_['filename'], $_['cloud_name'], $_['password_link'], $_['link'], $_['guestEmail']]
 ));
 
