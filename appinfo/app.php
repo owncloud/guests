@@ -20,18 +20,21 @@
  *
  */
 
+\OC::$server->getEventDispatcher()->addListener(
+	'OCA\Files::loadAdditionalScripts',
+	function() {
+		\OCP\Util::addScript('guests', 'vue');
+		\OCP\Util::addScript('guests', 'app');
+		\OCP\Util::addStyle('guests', 'app');
+	}
+);
+
 $config = \OC::$server->getConfig();
 $groupName = $config->getAppValue('guests', 'group', 'guest_app');
 
 \OC::$server->getGroupManager()->addBackend(new \OCA\Guests\GroupBackend($groupName));
 \OCP\Util::connectHook('OCP\Share', 'post_shared', '\OCA\Guests\Hooks', 'postShareHook');
 
-// --- register js for user management------------------------------------------
-if (\OC::$server->getRequest()->getPathInfo() === '/apps/files/') {
-	\OCP\Util::addScript('guests', 'vue');
-	\OCP\Util::addScript('guests', 'app');
-	\OCP\Util::addStyle('guests', 'app');
-}
 
 $user = \OC::$server->getUserSession()->getUser();
 
