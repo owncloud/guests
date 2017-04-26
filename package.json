@@ -1,6 +1,6 @@
 {
   "name": "guests",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Allow classifying users or contacts as guests.",
   "main": "src/default.js",
   "directories": {
