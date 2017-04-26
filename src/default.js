@@ -1,157 +1,138 @@
-/*
- * Copyright (c) 2017 Felix Heidecke <felix.heidecke@owncloud.com>
- *
- * This file is licensed under the Affero General Public License version 3
- * or later.
- *
- * See the COPYING-README file.
- *
- */
+require('./styles/default.less');
 
-if (!OCA.Guests) {
-	/**
-	 * @namespace OCA.Guests
-	 */
-	OCA.Guests = {};
-}
-/**
- * @namespace
- */
+// ------------------------------------------------------------- Vue plugins ---
 
-$(document).ready(function () {
-	$('body').append('<div id="app-guests"><div class="modal" v-if="state.modalIsOpen"><h2 class="modal-title">Add <span class="placeholder-name">{{guest.fullname}}</span> to guests</h2><div class="modal-body"><div class="form-group"><label class="form-label" >Username:</label><input class="form-input" disabled type="text" v-model="guest.username"></div><div class="form-group"><label class="form-label" for="app-guests-input-name">Name:</label><input class="form-input" id="app-guests-input-name" type="text" v-model="guest.fullname"></div><div class="form-group"><label class="form-label" for="app-guests-input-email">E-Mail:</label><input class="form-input" id="app-guests-input-email" type="email" v-model="guest.email" :class="{ _error : error.email }"> <span v-if="error.email">{{error.email}}</span></div></div><div class="modal-footer"><button class="button-close" @click="closeModal">Cancel</button><button class="button-save" @click="addGuest">Save and Share</button></div></div><div class="modal-backdrop" v-if="state.modalIsOpen"></div></div>');
+import Vue from 'vue/dist/vue'
 
-	OCA.Guests.App = new Vue({
-		el: '#app-guests',
-		data: {
+const Guests = new Vue({
+	data: {
 
-			// OC.Backbone model
-			// -----------------
-			model: null,
+		// OC.Backbone model
+		// -----------------
+		model: null,
 
-			// current state of the view
-			// -------------------------
-			state: {
-				modalIsOpen: false
-			},
-
-			// guest data
-			// ----------
-			guest: {
-				fullname: null,
-				username: null,
-				email: null
-			},
-
-			error: {
-				username: false,
-				email: false
-			}
+		// current state of the view
+		// -------------------------
+		state: {
+			modalIsOpen: false
 		},
-		watch: {
-			'guest.email': function () {
-				if (this.guest.email) {
-					username = this.guest.email.toLowerCase();
-					username = username.match(/[\w]+/g);
-					this.guest.username = username.join('_');
-				}
-				else {
-					this.guest.username = '';
-				}
 
-				var self = this;
-
-				_.delay(function() {
-					self._resetErrors();
-				}, 250);
-			}
+		// guest data
+		// ----------
+		guest: {
+			fullname: null,
+			username: null,
+			email: null
 		},
-		methods: {
 
-			populate: function (model, name) {
-				this.guest.fullname = (name) ? name : '';
-				this.model = (model) ? model : false;
-			},
-
-			openModal: function () {
-				this.state.modalIsOpen = true;
-			},
-
-			closeModal: function () {
-				this.state.modalIsOpen = false;
-				this._resetForm();
-
-				$('#shareTabView .shareWithField').val('').removeAttr('disabled');
-				$('#shareTabView .shareWithLoading').toggleClass('hidden inlineblock');
-			},
-
-			addGuest: function () {
-				var self = this;
-				xhrObject = {
-					type: 'PUT',
-					url: OC.generateUrl('/apps/guests/users'),
-					dataType: 'text',
-					data: {
-						displayName: this.guest.fullname,
-						username: this.guest.username,
-						email: this.guest.email
-					}
-				}
-
-				$.ajax(xhrObject).done(function (xhr) {
-					self._addGuestShare();
-
-				}).fail(function (xhr) {
-					response = JSON.parse(xhr.responseText);
-					error = response.errorMessages;
-
-					self.error.email = (error.email) ? error.email : false;
-					self.error.username = (error.username) ? error.username : false;
-				});
-			},
-
-			_addGuestShare: function () {
-				var self = this;
-				var attributes = {
-					shareType: 0,
-					shareWith: this.guest.username,
-					permissions: OC.PERMISSION_CREATE | OC.PERMISSION_UPDATE | OC.PERMISSION_READ | OC.PERMISSION_DELETE,
-					path: this.model.fileInfoModel.getFullPath()
-				}
-
-				return $.ajax({
-					type: 'POST',
-					url: OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares?format=json',
-					data: attributes,
-					dataType: 'json'
-				}).done(function () {
-
-					self.closeModal();
-
-					if (self.model)
-						self.model.fetch();
-
-				}).fail(function () {
-
-					// @NOTE: will be expendable in the near future
-					OCdialogs.alert(
-						t('core', 'Error while sharing'), // text
-						t('core', 'Error'), // title
-						false, // callback
-						true // modal
-					);
-				});
-			},
-
-			_resetForm: function () {
-				this.guest.fullname = this.guest.username = this.guest.email = null;
-			},
-
-			_resetErrors: function () {
-				this.error.username = this.error.email = false;
-			}
+		error: {
+			username: false,
+			email: false
 		}
-	});
+	},
+	watch: {
+		'guest.email': function () {
+			if (this.guest.email) {
+				let username = this.guest.email.toLowerCase();
+				username = username.match(/[\w]+/g);
+				this.guest.username = username.join('_');
+			}
+			else {
+				this.guest.username = '';
+			}
+
+			var self = this;
+
+			_.delay(function() {
+				self._resetErrors();
+			}, 250);
+		}
+	},
+	methods: {
+
+		populate: function (model, name) {
+			this.guest.fullname = (name) ? name : '';
+			this.model = (model) ? model : false;
+		},
+
+		openModal: function () {
+			this.state.modalIsOpen = true;
+		},
+
+		closeModal: function () {
+			this.state.modalIsOpen = false;
+			this._resetForm();
+
+			$('#shareTabView .shareWithField').val('').removeAttr('disabled');
+			$('#shareTabView .shareWithLoading').toggleClass('hidden inlineblock');
+		},
+
+		addGuest: function () {
+			var self = this;
+			let xhrObject = {
+				type: 'PUT',
+				url: OC.generateUrl('/apps/guests/users'),
+				dataType: 'text',
+				data: {
+					displayName: this.guest.fullname,
+					username: this.guest.username,
+					email: this.guest.email
+				}
+			}
+
+			$.ajax(xhrObject).done(function (xhr) {
+				self._addGuestShare();
+
+			}).fail(function (xhr) {
+				let response = JSON.parse(xhr.responseText);
+				let error = response.errorMessages;
+
+				self.error.email = (error.email) ? error.email : false;
+				self.error.username = (error.username) ? error.username : false;
+			});
+		},
+
+		_addGuestShare: function () {
+			let self = this;
+			let attributes = {
+				shareType: 0,
+				shareWith: this.guest.username,
+				permissions: OC.PERMISSION_CREATE | OC.PERMISSION_UPDATE | OC.PERMISSION_READ | OC.PERMISSION_DELETE,
+				path: this.model.fileInfoModel.getFullPath()
+			}
+
+			return $.ajax({
+				type: 'POST',
+				url: OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares?format=json',
+				data: attributes,
+				dataType: 'json'
+			}).done(function () {
+
+				self.closeModal();
+
+				if (self.model)
+					self.model.fetch();
+
+			}).fail(function () {
+
+				// @NOTE: will be expendable in the near future
+				OCdialogs.alert(
+					t('core', 'Error while sharing'), // text
+					t('core', 'Error'), // title
+					false, // callback
+					true // modal
+				);
+			});
+		},
+
+		_resetForm: function () {
+			this.guest.fullname = this.guest.username = this.guest.email = null;
+		},
+
+		_resetErrors: function () {
+			this.error.username = this.error.email = false;
+		}
+	}
 });
 
 OC.Plugins.register('OC.Share.ShareDialogView', {
@@ -303,8 +284,8 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 			// Init OCA.Guests.App if share is of type guest
 			// ---
 			if (s.item.value.shareType === OC.Share.SHARE_TYPE_GUEST) {
-				OCA.Guests.App.populate(obj.model, s.item.value.shareWith);
-				OCA.Guests.App.openModal();
+				Guests.populate(obj.model, s.item.value.shareWith);
+				Guests.openModal();
 			}
 			else {
 				obj.model.addShare(s.item.value, {
@@ -320,4 +301,12 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 			}
 		}
 	}
+});
+
+$(document).ready(function () {
+
+	$('body').append('<div id="app-guests"><div class="modal" v-if="state.modalIsOpen"><h2 class="modal-title">Add <span class="placeholder-name">{{guest.fullname}}</span> to guests</h2><div class="modal-body"><div class="form-group"><label class="form-label" >Username:</label><input class="form-input" disabled type="text" v-model="guest.username"></div><div class="form-group"><label class="form-label" for="app-guests-input-name">Name:</label><input class="form-input" id="app-guests-input-name" type="text" v-model="guest.fullname"></div><div class="form-group"><label class="form-label" for="app-guests-input-email">E-Mail:</label><input class="form-input" id="app-guests-input-email" type="email" v-model="guest.email" :class="{ _error : error.email }"> <span v-if="error.email">{{error.email}}</span></div></div><div class="modal-footer"><button class="button-close" @click="closeModal">Cancel</button><button class="button-save" @click="addGuest">Save and Share</button></div></div><div class="modal-backdrop" v-if="state.modalIsOpen"></div></div>');
+
+
+	Guests.$mount('#app-guests');
 });

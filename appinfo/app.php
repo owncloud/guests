@@ -20,21 +20,13 @@
  *
  */
 
-\OC::$server->getEventDispatcher()->addListener(
-	'OCA\Files::loadAdditionalScripts',
-	function() {
-		\OCP\Util::addScript('guests', 'vue');
-		\OCP\Util::addScript('guests', 'app');
-		\OCP\Util::addStyle('guests', 'app');
-	}
-);
+\OCP\Util::addScript('guests', 'guests.bundle');
 
 $config = \OC::$server->getConfig();
 $groupName = $config->getAppValue('guests', 'group', 'guest_app');
 
 \OC::$server->getGroupManager()->addBackend(new \OCA\Guests\GroupBackend($groupName));
 \OCP\Util::connectHook('OCP\Share', 'post_shared', '\OCA\Guests\Hooks', 'postShareHook');
-
 
 $user = \OC::$server->getUserSession()->getUser();
 
