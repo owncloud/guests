@@ -131,6 +131,18 @@ const Guests = new Vue({
 
 		_resetErrors: function () {
 			this.error.username = this.error.email = false;
+		},
+
+		// Translating
+		t: function (string, replace) {
+
+			replace = replace || null;
+			return t('core', string, replace);
+		}
+	},
+	filters: {
+		addUserText: function (name) {
+			return t('core', 'Share with {myname}', {myname: name});
 		}
 	}
 });
@@ -305,7 +317,7 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 
 $(document).ready(function () {
 
-	$('body').append('<div id="app-guests"><div class="modal" v-if="state.modalIsOpen"><h2 class="modal-title">Add <span class="placeholder-name">{{guest.fullname}}</span> to guests</h2><div class="modal-body"><div class="form-group"><label class="form-label" >Username:</label><input class="form-input" disabled type="text" v-model="guest.username"></div><div class="form-group"><label class="form-label" for="app-guests-input-name">Name:</label><input class="form-input" id="app-guests-input-name" type="text" v-model="guest.fullname"></div><div class="form-group"><label class="form-label" for="app-guests-input-email">E-Mail:</label><input class="form-input" id="app-guests-input-email" type="email" v-model="guest.email" :class="{ _error : error.email }"> <span v-if="error.email">{{error.email}}</span></div></div><div class="modal-footer"><button class="button-close" @click="closeModal">Cancel</button><button class="button-save" @click="addGuest">Save and Share</button></div></div><div class="modal-backdrop" v-if="state.modalIsOpen"></div></div>');
+	$('body').append('<div id="app-guests"><div class="modal" v-if="state.modalIsOpen"><h2 class="modal-title"> {{ t("Share with {name}", {name: guest.fullname}) }}</h2><div class="modal-body"><div class="form-group"><label class="form-label" for="app-guests-input-name">{{ t("Name") }}:</label><input class="form-input" id="app-guests-input-name" type="text" v-model="guest.fullname"></div><div class="form-group"><label class="form-label" for="app-guests-input-email">{{ t("Email") }}:</label><input class="form-input" id="app-guests-input-email" type="email" v-model="guest.email" :class="{ _error : error.email }"> <span v-if="error.email">{{error.email}}</span></div></div><div class="modal-footer"><button class="button-close" @click="closeModal">{{ t("Cancel") }}</button><button class="button-save" @click="addGuest">{{ t("Share") }}</button></div></div><div class="modal-backdrop" v-if="state.modalIsOpen"></div></div>');
 
 
 	Guests.$mount('#app-guests');
