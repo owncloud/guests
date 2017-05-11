@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "לא ניתן היה לשלוח דואר אלקטרוני לאיפוס. יש לפנות למנהל שלך.",
     "Error while sharing" : "שגיאה במהלך השיתוף",
     "Error" : "שגיאה",
+    "Share with {myname}" : "משתף עם {myname}",
     "Add {unknown} (guest)" : "הוספת {unknown} (אורח)",
     "No users or groups found for {search}" : "לא אותרו משתמשים או קבוצות עבור {search}",
     "No users found for {search}" : "לא אותרו משתמשים עבור {search}",

@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "No pudo enviarse el correo para restablecer la contraseña. Por favor, contacte con su administrador.",
     "Error while sharing" : "Error al compartir",
     "Error" : "Error",
+    "Share with {myname}" : "Compartir con {myname}",
     "Add {unknown} (guest)" : "Añadir {desconocido} invitado",
     "No users or groups found for {search}" : "No se han encontrado usuarios ni grupos para {search}",
     "No users found for {search}" : "No se han encontrado usuarios para {search}",

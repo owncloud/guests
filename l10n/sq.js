@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "S’u dërgua dot email-i i ricaktimit. Ju lutemi, lidhuni me përgjegjësin tuaj.",
     "Error while sharing" : "Gabim gjatë ndarjes",
     "Error" : "Gabim",
+    "Share with {myname}" : "Ndaje me {myname}",
     "Add {unknown} (guest)" : "Shto {unknown} (vizitor)",
     "No users or groups found for {search}" : "S’u gjetën përdorues ose grupe për {search}",
     "No users found for {search}" : "S’u gjet përdorues për {search}",

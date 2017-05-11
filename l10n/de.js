@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "Die E-Mail zum Zurücksetzen konnte nicht versendet werden. Bitte kontaktiere Deinen Administrator.",
     "Error while sharing" : "Fehler beim Teilen",
     "Error" : "Fehler",
+    "Share with {myname}" : "Mit {myname} teilen",
     "Add {unknown} (guest)" : "{unknown} hinzufügen (Gast)",
     "No users or groups found for {search}" : "Kein Benutzer oder Gruppen gefunden für {search}",
     "No users found for {search}" : "Kein Benutzer gefunden für {search}",

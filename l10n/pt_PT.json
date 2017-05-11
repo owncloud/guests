@@ -13,6 +13,7 @@
     "Couldn't send reset email. Please contact your administrator." : "Não foi possível enviar a mensagem de reposição. Por favor, contacte o seu administrador.",
     "Error while sharing" : "Erro ao partilhar",
     "Error" : "Erro",
+    "Share with {myname}" : "Partilhar com {myname}",
     "Add {unknown} (guest)" : "Adicionar {unknown} (convidado)",
     "No users or groups found for {search}" : "Não foram encontrados utilizadores ou grupos para {search}",
     "No users found for {search}" : "Não foram encontrados utilizadores para {search}",

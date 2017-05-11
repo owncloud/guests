@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "ไม่สามารถส่งข้อมูลการตั้งค่าไปยังอีเมลของคุณ กรุณาติดต่อผู้ดูแลระบบ",
     "Error while sharing" : "เกิดข้อผิดพลาดขณะกำลังแชร์ข้อมูล",
     "Error" : "ข้อผิดพลาด",
+    "Share with {myname}" : "แชร์กับ {myname}",
     "Add {unknown} (guest)" : "เพิ่ม {unknown} (บุคคลทั่วไป)",
     "No users or groups found for {search}" : "ไม่พบผู้ใช้หรือกลุ่มที่มีชื่อว่า {search}",
     "No users found for {search}" : "ไม่พบผู้ใช้ {search}",

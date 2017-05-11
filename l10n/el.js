@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "Αδυναμία αποστολής ηλ. μηνύματος επαναφοράς. Παρακαλώ επικοινωνήστε με το διαχειριστή σας.",
     "Error while sharing" : "Σφάλμα κατά τον διαμοιρασμό",
     "Error" : "Σφάλμα",
+    "Share with {myname}" : "Διαμοιρασμός με {το όνομα μου}",
     "Add {unknown} (guest)" : "Προσθήκη {unknown} (guest)",
     "No users or groups found for {search}" : "Δεν βρέθηκαν χρήστες ή ομάδες για {search}",
     "No users found for {search}" : "Δεν βρέθηκαν χρήστες για {search}",
