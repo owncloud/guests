@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "Não foi possível enviar e-mail de redefinição. Por favor, contate o administrador.",
     "Error while sharing" : "Erro ao compartilhar",
     "Error" : "Erro",
+    "Share with {myname}" : "Compartilhado com {myname}",
     "Add {unknown} (guest)" : "Adicionar {unknown} (convidado)",
     "No users or groups found for {search}" : "Nenhum usuário ou grupo encontrado para {search}",
     "No users found for {search}" : "Nenhum usuário encontrado para {search}",
