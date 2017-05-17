@@ -21,9 +21,10 @@
 
 namespace OCA\Guests\Settings;
 
+use OCP\Settings\ISettings;
 use OCP\Template;
 
-class Admin implements \OCP\Settings\ISettings
+class Admin implements ISettings
 {
 
 	/**
@@ -43,7 +44,7 @@ class Admin implements \OCP\Settings\ISettings
 	 * @return string
 	 */
 	public function getSectionID() {
-		return 'guests';
+		return 'authentication';
 	}
 
 	/**
