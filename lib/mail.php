@@ -206,7 +206,7 @@ class Mail {
 		// mark mail as sent
 		// TODO do not set if $result contains the recipient
 		Share::setSendMailStatus(
-			$itemType, $itemSource, Share::SHARE_TYPE_USER, $recipient, true
+			$itemType, $itemSource, Share::SHARE_TYPE_USER, $recipient->getUID(), true
 		);
 
 	}
