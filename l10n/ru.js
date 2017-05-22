@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "Не удалось отправить письмо для сброса пароля. Пожалуйста, свяжитесь с вашим администратором.",
     "Error while sharing" : "При попытке поделиться произошла ошибка",
     "Error" : "Ошибка",
+    "Share with {myname}" : "Поделиться с {myname}",
     "Add {unknown} (guest)" : "Добавить {unknown} (гостя)",
     "No users or groups found for {search}" : "Не найдено пользователей или групп по запросу {search}",
     "No users found for {search}" : "Не найдено пользователей по запросу {search}",
