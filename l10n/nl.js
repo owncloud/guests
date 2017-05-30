@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "Kon herstel e-mail niet versturen. Neem contact op met uw beheerder.",
     "Error while sharing" : "Fout tijdens het delen",
     "Error" : "Fout",
+    "Share with {myname}" : "Delen met {myname}",
     "Add {unknown} (guest)" : "Toevoegen {unknown} (guest)",
     "No users or groups found for {search}" : "Geen gebruikers of groepen gevonden voor {search}",
     "No users found for {search}" : "Geen gebruikers gevonden voor {search}",
