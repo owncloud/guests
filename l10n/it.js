@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "Impossibile inviare l'email di reimpostazione. Contatta il tuo amministratore.",
     "Error while sharing" : "Errore durante la condivisione",
     "Error" : "Errore",
+    "Share with {myname}" : "Condividi con {myname}",
     "Add {unknown} (guest)" : "Aggiungi {unknown} (ospite)",
     "No users or groups found for {search}" : "Nessun utente o gruppo trovato per {search}",
     "No users found for {search}" : "Nessun utente trovato per {search}",
