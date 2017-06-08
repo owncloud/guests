@@ -17,6 +17,17 @@ Scenario: A guest user cannot upload files
 	When User "guest_example_com" uploads file "data/textfile.txt" to "/myfile.txt"
 	Then the HTTP status code should be "401"
 
+Scenario: A guest user can upload files
+        Given As an "admin"
+	And user "user0" exists
+        And user "admin" creates guest user "guest" with email "guest@example.com"
+        And the HTTP status code should be "201"
+	And user "user0" created a folder "/tmp"
+	And folder "/tmp" of user "user0" is shared with user "guest_example_com"
+        And guest user "guest" sets its password
+	When User "guest_example_com" uploads file "data/textfile.txt" to "/tmp/textfile.txt"
+        Then the HTTP status code should be "201"
+
 Scenario: Check that skeleton is properly set
 	Given As an "admin"
 	And user "user0" exists
