@@ -43,7 +43,7 @@ class Admin implements \OCP\Settings\ISettings
 	 * @return string
 	 */
 	public function getSectionID() {
-		return 'guests';
+		return 'sharing';
 	}
 
 	/**
