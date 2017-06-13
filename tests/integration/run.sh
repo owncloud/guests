@@ -43,6 +43,7 @@ $OCC config:system:set csrf.disabled --value="true"
 #Enable needed app
 $OCC app:enable files_external
 $OCC app:enable guests
+$OCC app:enable testing
 
 vendor/bin/behat --strict -f junit -f pretty $SCENARIO_TO_RUN
 RESULT=$?
@@ -52,6 +53,7 @@ kill $PHPPID
 #Disable apps
 $OCC app:disable files_external
 $OCC app:disable guests
+$OCC app:disable testing
 
 if [ -z $HIDE_OC_LOGS ]; then
 	tail "${OC_PATH}/data/owncloud.log"
