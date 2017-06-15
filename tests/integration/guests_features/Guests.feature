@@ -56,8 +56,8 @@ Scenario: A created guest user can log in
 
 Scenario: Trying to create a guest user that already exists
 	Given As an "admin"
-	When user "admin" creates guest user "guest" with email "guest@example.com"
+	And user "admin" creates guest user "guest" with email "guest@example.com"
 	And the HTTP status code should be "201"
 	And check that user "guest" is a guest
-	And user "admin" creates guest user "guest" with email "guest@example.com"
+	When user "admin" creates guest user "guest" with email "guest@example.com"
 	Then the HTTP status code should be "422"
