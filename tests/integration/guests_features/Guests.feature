@@ -42,7 +42,7 @@ Scenario: Check that skeleton is properly set
 		| /textfile4.txt |
 		| /welcome.txt |
 
- Scenario: A created guest user can log in
+Scenario: A created guest user can log in
 	Given As an "admin"
 	And user "user0" exists
 	And user "admin" creates guest user "guest" with email "guest@example.com"
@@ -53,3 +53,11 @@ Scenario: Check that skeleton is properly set
 	Then the HTTP status code should be "200"
 	And user "guest_example_com" should see following elements
 		| /textfile1.txt |
+
+Scenario: Trying to create a guest user that already exists
+	Given As an "admin"
+	And user "admin" creates guest user "guest" with email "guest@example.com"
+	And the HTTP status code should be "201"
+	And check that user "guest" is a guest
+	When user "admin" creates guest user "guest" with email "guest@example.com"
+	Then the HTTP status code should be "422"
