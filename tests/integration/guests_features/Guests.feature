@@ -42,6 +42,29 @@ Scenario: A guest user can upload a file and can reshare it
         When sending "GET" to "/apps/files_sharing/api/v1/shares?reshares=true&path=/tmp/textfile.txt"
         Then the HTTP status code should be "200"
 
+Scenario: A guest user cannot reshare files
+        Given As an "admin"
+        And user "user0" exists
+        And user "user1" exists
+        And user "admin" creates guest user "guest" with email "guest@example.com"
+        And the HTTP status code should be "201"
+        And user "user0" created a folder "/tmp"
+        And As an "user0"
+        And creating a share with
+                        | path | /tmp |
+                        | shareType | 0 |
+                        | shareWith | guest_example_com |
+                        | permissions | 8 |
+        And guest user "guest" sets its password
+        And As an "guest_example_com"
+                When creating a share with
+                        | path | /tmp |
+                        | shareType | 0 |
+                        | shareWith | user1 |
+                        | permissions | 31 |
+        Then the OCS status code should be "404"
+        And the HTTP status code should be "200"
+
 Scenario: Check that skeleton is properly set
 	Given As an "admin"
 	And user "user0" exists
