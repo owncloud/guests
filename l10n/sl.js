@@ -15,6 +15,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "Ni mogoče poslati elektronskega naslova za ponastavitev. Stopite v stik s skrbnikom sistema.",
     "Error while sharing" : "Napaka med omogočanjem souporabe",
     "Error" : "Napaka",
+    "Share with {myname}" : "Souporaba z {myname}",
     "Add {unknown} (guest)" : "Dodaj {unknown} (gostujoči uporabnik)",
     "No users or groups found for {search}" : "Ni najdenih uporabnikov ali skupin za {search}",
     "No users found for {search}" : "Ni uporabnikov, skladnih z iskalnim nizom {search}",
