@@ -39,8 +39,10 @@ Scenario: A guest user can upload a file and can reshare it
         And guest user "guest" sets its password
         And User "guest_example_com" uploads file "data/textfile.txt" to "/tmp/textfile.txt"
         And file "/tmp/textfile.txt" of user "guest_example_com" is shared with user "user1"
+        And As an "guest_example_com"
         When sending "GET" to "/apps/files_sharing/api/v1/shares?reshares=true&path=/tmp/textfile.txt"
-        Then the HTTP status code should be "200"
+        Then the OCS status code should be "100"
+        And the HTTP status code should be "200"
 
 Scenario: A guest user cannot reshare files
         Given As an "admin"
