@@ -61,3 +61,14 @@ Scenario: Trying to create a guest user that already exists
 	And check that user "guest" is a guest
 	When user "admin" creates guest user "guest" with email "guest@example.com"
 	Then the HTTP status code should be "422"
+
+Scenario: removing a user from a group
+        Given As an "admin"
+        And user "admin" creates guest user "guest" with email "guest@example.com"
+        And the HTTP status code should be "201"
+        And group "guests_app" exists
+        And user "guest_example_com" belongs to group "guests_app"
+        When sending "DELETE" to "/cloud/users/guest_example_com/groups" with
+                | groupid | guests_app |
+        Then the OCS status code should be "100"
+        And user "guest_example_com" does not belong to group "guests_app"
