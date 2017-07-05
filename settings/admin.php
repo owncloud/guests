@@ -44,7 +44,7 @@ class Admin implements ISettings
 	 * @return string
 	 */
 	public function getSectionID() {
-		return 'authentication';
+		return 'sharing';
 	}
 
 	/**
