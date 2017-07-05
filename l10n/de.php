@@ -1,0 +1,31 @@
+<?php
+$TRANSLATIONS = array(
+"Invalid mail address" => "Ungültige E-Mail-Adresse",
+"Username required" => "Benutzername erforderlich",
+"A user with that name already exists." => "Ein Benutzer mit diesem Namen existiert bereits.",
+"User successfully created" => "Benutzer erfolgreich erstellt",
+"Loading…" => "Lade…",
+"Loaded" => "Geladen",
+"Saved" => "Gespeichert",
+"Reset" => "Zurücksetzen",
+"Access to this resource is forbidden for guests." => "Der Zugriff auf diese Ressource ist für Gastnutzer untersagt. ",
+"%s shared »%s« with you" => "%s hat „%s“ mit Dir geteilt",
+"%s via %s" => "%s via %s",
+"Couldn't send reset email. Please contact your administrator." => "Die E-Mail zum Zurücksetzen konnte nicht versendet werden. Bitte kontaktiere Deinen Administrator.",
+"Error while sharing" => "Fehler beim Teilen",
+"Error" => "Fehler",
+"Share with {myname}" => "Mit {myname} teilen",
+"Add {unknown} (guest)" => "{unknown} hinzufügen (Gast)",
+"No users or groups found for {search}" => "Kein Benutzer oder Gruppen gefunden für {search}",
+"No users found for {search}" => "Kein Benutzer gefunden für {search}",
+"An error occurred. Please try again" => "Es ist ein Fehler aufgetreten. Bitte versuche es noch einmal",
+"Hey there,\n\njust letting you know that %s shared %s with you.\n\nActivate your guest account at %s by setting a password: %s\n\nThen view it: %s\n\nYou can login using the email address \"%s\".\n\n" => "Hallo,\n\n%s hat gerade %s mit dir geteilt.\n\nAktiviere dein Gastkonto %s indem du ein Passwort vergibst: %s\n\nSieh es dir danach an: %s\n\nDu kannst dich mit deiner E-Mail Adresse einloggen \"%s\".\n\n",
+"The share will expire on %s." => "Die Freigabe wird am %s ablaufen.",
+"Cheers!" => "Noch einen schönen Tag!",
+"Hey there,<br><br>\n         \n         just letting you know that %s shared <strong>%s</strong> with you.<br><br>\n         Activate your guest account at %s by <a href=\"%s\">setting a password</a>.<br><br>\n         Then <a href=\"%s\">view it!</a><br><br>You can login using the email address <strong>\"%s\"</strong> .<br><br>" => "Hallo,<br><br>\n\n%s hat gerade <strong>%s</strong> mit dir geteilt.<br><br>\nAktiviere dein Gastkonto %s indem du <a href=\"%s\">ein Passwort vergibst:</a>.<br><br>\n<a href=\"%s\">Sieh es dir danach an:</a><br><br>\nDu kannst dich mit deiner E-Mail Adresse einloggen <strong>\"%s\".</strong> .<br><br>",
+"Guest users are grouped under a virtual group in the user manager" => "Gäste sind unter einer virtuellen Gruppe im  Nutzermanager zusammengefasst",
+"Group name" => "Gruppenname",
+"Limit guest access to an app whitelist" => "Gastzugriff auf eine App-Whitelist beschränken",
+"Reset whitelist" => "Whitelist zurücksetzen"
+);
+$PLURAL_FORMS = "nplurals=2; plural=(n != 1);";

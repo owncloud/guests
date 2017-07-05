@@ -1,0 +1,31 @@
+<?php
+$TRANSLATIONS = array(
+"Invalid mail address" => "Adresse e-mail non valide",
+"Username required" => "Nom d'utilisateur obligatoire",
+"A user with that name already exists." => "Un utilisateur avec ce nom existe déjà.",
+"User successfully created" => "Utilisateur créé avec succès",
+"Loading…" => "Chargement...",
+"Loaded" => "Chargé",
+"Saved" => "Enregistré",
+"Reset" => "Réinitialiser",
+"Access to this resource is forbidden for guests." => "L'accès à cet élément n'est pas autorisé pour les invités.",
+"%s shared »%s« with you" => "%s a partagé «%s» avec vous",
+"%s via %s" => "%s via %s",
+"Couldn't send reset email. Please contact your administrator." => "Impossible d'envoyer le courriel de réinitialisation. Veuillez contacter votre administrateur.",
+"Error while sharing" => "Erreur lors du partage",
+"Error" => "Erreur",
+"Share with {myname}" => "Partager avec {myname}",
+"Add {unknown} (guest)" => "Ajouter {unknown} (invité)",
+"No users or groups found for {search}" => "Aucun utilisateur ou groupe trouvé pour {search}",
+"No users found for {search}" => "Aucun utilisateur trouvé pour {search}",
+"An error occurred. Please try again" => "Une erreur est survenue. Merci de réessayer",
+"Hey there,\n\njust letting you know that %s shared %s with you.\n\nActivate your guest account at %s by setting a password: %s\n\nThen view it: %s\n\nYou can login using the email address \"%s\".\n\n" => "Bonjour,\n\nSoyez informé que %s a partagé %s avec vous.\n\nActivez votre compte invité à %s en définissant un mot de passe : %s\n\nPuis visualisez le : %s\n\nVous pouvez vous connecter en utilisant l'adresse mail \"%s\".\n\n",
+"The share will expire on %s." => "Le partage expirera le %s.",
+"Cheers!" => "À bientôt !",
+"Hey there,<br><br>\n         \n         just letting you know that %s shared <strong>%s</strong> with you.<br><br>\n         Activate your guest account at %s by <a href=\"%s\">setting a password</a>.<br><br>\n         Then <a href=\"%s\">view it!</a><br><br>You can login using the email address <strong>\"%s\"</strong> .<br><br>" => "Bonjour,<br><br>\n\nSoyez informé que %s a partagé <strong>%s</strong> avec vous.<br><br>\n\nActivez votre compte invité à %s en <a href=\"%s\"> définissant un mot de passe</a>.<br><br>\n\nPuis <a href=\"%s\">visualisez le</a><br><br>Vous pouvez vous connecter en utilisant l'adresse mail <strong>\"%s\"</strong> .<br><br>",
+"Guest users are grouped under a virtual group in the user manager" => "Dans la gestion des utilisateurs, les utilisateurs invités sont regroupés dans un groupe virtuel",
+"Group name" => "Nom du groupe",
+"Limit guest access to an app whitelist" => "Réduire l'accès invité à une liste blanche d'applications",
+"Reset whitelist" => "Effacer la liste blanche"
+);
+$PLURAL_FORMS = "nplurals=2; plural=(n > 1);";
