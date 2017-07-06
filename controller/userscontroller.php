@@ -3,6 +3,7 @@
 namespace OCA\Guests\Controller;
 
 
+use OCA\Guests\Mail;
 use OC\AppFramework\Http;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
@@ -36,6 +37,10 @@ class UsersController extends Controller {
 	 */
 	private $mailer;
 	/**
+	 * @var Mail
+	 */
+	private $mail;
+	/**
 	 * @var IGroupManager
 	 */
 	private $groupManager;
@@ -55,6 +60,7 @@ class UsersController extends Controller {
 	 * @param IL10N $l10n
 	 * @param IConfig $config
 	 * @param IMailer $mailer
+	 * @param Mail $mail
 	 * @param ISecureRandom $secureRandom
 	 */
 	public function __construct($appName,
@@ -64,6 +70,7 @@ class UsersController extends Controller {
 								IL10N $l10n,
 								IConfig $config,
 								IMailer $mailer,
+								Mail $mail,
 								ISecureRandom $secureRandom
 	) {
 		parent::__construct($appName, $request);
@@ -73,6 +80,7 @@ class UsersController extends Controller {
 		$this->l10n = $l10n;
 		$this->config = $config;
 		$this->mailer = $mailer;
+		$this->mail = $mail;
 		$this->groupManager = $groupManager;
 		$this->secureRandom = $secureRandom;
 	}
@@ -87,8 +95,9 @@ class UsersController extends Controller {
 	 * @param $displayName
 	 * @return DataResponse
 	 */
-	public function create($username, $email, $displayName) {
+	public function create($email, $displayName) {
 		$errorMessages = [];
+		$username = strtolower($email);
 
 		if (empty($email) || !$this->mailer->validateMailAddress($email)) {
 			$errorMessages['email'] = (string)$this->l10n->t(
@@ -96,16 +105,9 @@ class UsersController extends Controller {
 			);
 		}
 
-		if (empty($username)) {
-			$errorMessages['username'] = (string)$this->l10n->t(
-				'Username required'
-			);
-		}
-
-
 		if ($this->userManager->userExists($username)) {
-			$errorMessages['username'] = (string)$this->l10n->t(
-				'A user with that name already exists.'
+			$errorMessages['email'] = (string)$this->l10n->t(
+				'A username with that email already exists.'
 			);
 		}
 
@@ -134,27 +136,29 @@ class UsersController extends Controller {
 			21,
 			ISecureRandom::CHAR_DIGITS .
 			ISecureRandom::CHAR_LOWER .
-			ISecureRandom::CHAR_UPPER);
-
-		$token = sprintf('%s:%s', time(), $token);
-
-		$userId = $user->getUID();
+			ISecureRandom::CHAR_UPPER
+		);
 
 		$this->config->setUserValue(
-			$user->getUID(),
-			'owncloud',
-			'lostpassword',
+			$username,
+			'guests',
+			'registerToken',
 			$token
 		);
 
+		$this->config->setUserValue(
+			$username,
+			'guests',
+			'created',
+			time()
+		);
 
 		$this->config->setUserValue(
-			$userId,
+			$username,
 			'owncloud',
 			'isGuest',
 			'1'
 		);
-
 
 		return new DataResponse(
 			[

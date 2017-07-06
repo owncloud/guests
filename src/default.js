@@ -33,9 +33,7 @@ const Guests = new Vue({
 	watch: {
 		'guest.email': function () {
 			if (this.guest.email) {
-				let username = this.guest.email.toLowerCase();
-				username = username.match(/[\w]+/g);
-				this.guest.username = username.join('_');
+				this.guest.username = this.guest.email.toLowerCase(); 
 			}
 			else {
 				this.guest.username = '';
@@ -52,6 +50,7 @@ const Guests = new Vue({
 
 		populate: function (model, name) {
 			this.guest.fullname = (name) ? name : '';
+			this.guest.email = (name) ? name : '';
 			this.model = (model) ? model : false;
 		},
 
@@ -182,7 +181,7 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 						var i, j;
 
 						// Add potential guests to the suggestions
-						if (searchTerm.search("@") === -1) {
+						if (searchTerm.search("@") !== -1) {
 
 							unknown = [{
 								label: t('core', 'Add {unknown} (guest)', {unknown: searchTerm}),

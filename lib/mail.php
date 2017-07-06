@@ -32,8 +32,8 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Mail\IMailer;
-use OCP\Security\ISecureRandom;
 use OCP\Share;
+use OCP\Template;
 use OCP\Util;
 
 class Mail {
@@ -113,16 +113,16 @@ class Mail {
 	 * @throws \Exception
 	 */
 	public function sendGuestInviteMail($uid, $shareWith, $itemType, $itemSource, $token) {
-		$passwordLink = $this->urlGenerator->linkToRouteAbsolute(
-			'core.lost.resetform',
-			['userId' => $shareWith, 'token' => $token]
-		);
-
-		$this->logger->debug("sending invite to $shareWith: $passwordLink", ['app' => 'guests']);
-
 		$shareWithEmail = $this->userManager->get($shareWith)->getEMailAddress();
 		$replyTo = $this->userManager->get($uid)->getEMailAddress();
 		$senderDisplayName = $this->userSession->getUser()->getDisplayName();
+
+		$registerLink = $this->urlGenerator->linkToRouteAbsolute(
+			'guests.register.showPasswordForm',
+			['email' => $shareWithEmail, 'token' => $token]
+		);
+
+		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
 		$items = Share::getItemSharedWithUser($itemType, $itemSource, $shareWith);
 		$filename = trim($items[0]['file_target'], '/');
@@ -137,13 +137,12 @@ class Mail {
 			}
 		}
 
-
 		$link = $this->urlGenerator->linkToRouteAbsolute(
 			'files.viewcontroller.showFile', ['fileId' => $itemSource]
 		);
 
 		list($htmlBody, $textBody) = $this->createMailBody(
-			$filename, $link, $passwordLink, $this->defaults->getName(), $senderDisplayName, $expiration, $shareWithEmail
+			$filename, $link, $registerLink, $this->defaults->getName(), $senderDisplayName, $expiration, $shareWithEmail
 		);
 
 		try {
@@ -224,7 +223,7 @@ class Mail {
 
 		$formattedDate = $expiration ? $this->l10n->l('date', $expiration) : null;
 
-		$html = new \OC_Template('guests', 'mail/invite');
+		$html = new Template('guests', 'mail/invite');
 		$html->assign('link', $link);
 		$html->assign('password_link', $passwordLink);
 		$html->assign('cloud_name', $cloudName);
@@ -234,7 +233,7 @@ class Mail {
 		$html->assign('guestEmail', $guestEmail);
 		$htmlMail = $html->fetchPage();
 
-		$plainText = new \OC_Template('guests', 'mail/altinvite');
+		$plainText = new Template('guests', 'mail/altinvite');
 		$plainText->assign('link', $link);
 		$plainText->assign('password_link', $passwordLink);
 		$plainText->assign('cloud_name', $cloudName);

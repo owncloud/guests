@@ -22,6 +22,16 @@
 return [
 	'routes' => [
 		[
+			'name' => 'register#showPasswordForm',
+			'url' => '/register/{email}/{token}',
+			'verb' => 'GET',
+		],
+		[
+			'name' => 'register#register',
+			'url' => '/register',
+			'verb' => 'POST',
+		],
+		[
 			'name' => 'settings#getConfig',
 			'url' => '/config',
 			'verb' => 'GET',
