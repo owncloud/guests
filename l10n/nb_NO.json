@@ -13,6 +13,7 @@
     "Couldn't send reset email. Please contact your administrator." : "Klarte ikke å sende e-post for tilbakestilling. Kontakt administratoren.",
     "Error while sharing" : "Feil under deling",
     "Error" : "Feil",
+    "Share with {myname}" : "Del med {myname}",
     "Add {unknown} (guest)" : "Legg til {unknown} (guest)",
     "No users or groups found for {search}" : "Ingen brukere eller grupper funnet for {search}",
     "No users found for {search}" : "Ingen brukere funnet for {search}",
