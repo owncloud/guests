@@ -23,6 +23,7 @@
  *
  */
 
+<<<<<<< HEAD
 $eventDispatcher = \OC::$server->getEventDispatcher();
 $eventDispatcher->addListener(
 	'OCA\Files::loadAdditionalScripts',
@@ -30,6 +31,11 @@ $eventDispatcher->addListener(
 		\OCP\Util::addScript('guests', 'guestshare');
 	}
 );
+=======
+use OCP\API;
+
+\OCP\Util::addScript('guests', 'guests.bundle');
+>>>>>>> add guestsfilelist
 
 $config = \OC::$server->getConfig();
 $groupName = $config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME);
@@ -54,4 +60,41 @@ if ($user) {
 	if ($user->getBackendClassName() === 'Guests') {
 		\OCP\Util::addStyle('guests', 'personal');
 	}
+<<<<<<< HEAD
+=======
+
+	$eventDispatcher = \OC::$server->getEventDispatcher();
+	$eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
+		style('guests', 'guests');
+	});
+
+	\OCA\Files\App::getNavigationManager()->add(function () {
+		$l = \OC::$server->getL10N('guests');
+		return [
+				'id' => 'sharingguests',
+				'appname' => 'guests',
+				'script' => 'list.php',
+				'order' => 17,
+				'name' => $l->t('Shared with Guests'),
+		];
+	});
+
+	$OCS = new \OCA\Guests\Controller\GuestShareController(
+		\OC::$server->getShareManager(),
+		\OC::$server->getGroupManager(),
+		\OC::$server->getUserManager(),
+		\OC::$server->getRequest(),
+		\OC::$server->getRootFolder(),
+		\OC::$server->getURLGenerator(),
+		\OC::$server->getUserSession()->getUser(),
+		\OC::$server->getL10N('files_sharing'),
+		\OC::$server->getConfig()
+	);
+
+	API::register('get',
+		'/apps/guests/api/v1/shares',
+		[$OCS, 'getShares'],
+		'guests'
+	);
+>>>>>>> add guestsfilelist
 }
