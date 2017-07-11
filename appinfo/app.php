@@ -29,3 +29,32 @@ $app->registerListeners($groupBackend);
 
 // this will initialize the
 \OCP\Util::addScript('guests', 'app');
+
+\OCA\Files\App::getNavigationManager()->add(function () {
+	$l = \OC::$server->getL10N('guests');
+	return [
+		'id' => 'sharingguests',
+		'appname' => 'guests',
+		'script' => 'list.php',
+		'order' => 17,
+		'name' => $l->t('Shared with guests'),
+	];
+});
+
+$OCS = new \OCA\Guests\Controller\GuestShareController(
+	\OC::$server->getShareManager(),
+	\OC::$server->getGroupManager(),
+	\OC::$server->getUserManager(),
+	\OC::$server->getRequest(),
+	\OC::$server->getRootFolder(),
+	\OC::$server->getURLGenerator(),
+	\OC::$server->getUserSession()->getUser(),
+	\OC::$server->getL10N('files_sharing'),
+	\OC::$server->getConfig()
+);
+
+API::register('get',
+	'/apps/guests/api/v1/shares',
+	[$OCS, 'getShares'],
+	'guests'
+);
