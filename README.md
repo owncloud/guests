@@ -1,7 +1,7 @@
 guests 
 =======
 
-Create a guest user by typing his name in to the sharing dialog. The guest
+Create a guest user by typing his email address in to the sharing dialog. The guest
 will receive an email invite with a link to create an account. He has only access
 to files which are shared with him.
 
