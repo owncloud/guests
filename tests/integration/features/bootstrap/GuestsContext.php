@@ -36,9 +36,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	private $createdGuests = [];
 
 	public function prepareUserNameAsFrontend($guestDisplayName, $guestEmail) {
-		$emailDomain = preg_split('/\./', preg_split('/@/', $guestEmail, null, null)[1], null, null);
-		$userName = $guestDisplayName . '_' . $emailDomain[0] . '_' . $emailDomain[1];
-		return $userName;
+		return strtolower(trim(urldecode($guestEmail)));
 	}
 
 	/**
