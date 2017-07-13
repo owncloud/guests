@@ -24,7 +24,7 @@ Scenario: A guest user can upload files
 	And the HTTP status code should be "201"
 	And user "user0" created a folder "/tmp"
 	And folder "/tmp" of user "user0" is shared with user "guest@example.com"
-	And guest user "guest" sets its password
+	And guest user "guest" registers
 	When User "guest@example.com" uploads file "data/textfile.txt" to "/tmp/textfile.txt"
 	Then the HTTP status code should be "201"
 
@@ -36,7 +36,7 @@ Scenario: A guest user can upload a file and can reshare it
         And the HTTP status code should be "201"
         And user "user0" created a folder "/tmp"
         And folder "/tmp" of user "user0" is shared with user "guest@example.com"
-        And guest user "guest" sets its password
+        And guest user "guest" registers
         And User "guest@example.com" uploads file "data/textfile.txt" to "/tmp/textfile.txt"
         And file "/tmp/textfile.txt" of user "guest@example.com" is shared with user "user1"
         And As an "guest@example.com"
@@ -57,7 +57,7 @@ Scenario: A guest user cannot reshare files
                         | shareType | 0 |
                         | shareWith | guest@example.com |
                         | permissions | 8 |
-        And guest user "guest" sets its password
+        And guest user "guest" registers
         And As an "guest@example.com"
                 When creating a share with
                         | path | /tmp |
@@ -88,7 +88,7 @@ Scenario: A created guest user can log in
 	And the HTTP status code should be "201"
 	And check that user "guest" is a guest
 	And file "/textfile1.txt" of user "user0" is shared with user "guest@example.com"
-	When guest user "guest" sets its password
+	When guest user "guest" registers
 	Then the HTTP status code should be "200"
 	And user "guest@example.com" should see following elements
 		| /textfile1.txt |
