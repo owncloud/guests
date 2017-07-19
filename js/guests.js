@@ -80,8 +80,7 @@
 				url: OC.generateUrl('apps/guests/config'),
 				data: config,
 				dataType: 'json'
-			}).success(function() {
-				var data = { status:'success', data:{message:t('guests', 'Saved')} };
+			}).success(function(data) {
 				OC.msg.finishedSaving($msg, data);
 			}).fail(function(result) {
 				var data = { status: 'error', data:{message:result.responseJSON.message} };

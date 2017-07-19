@@ -25,6 +25,7 @@ use OCA\Guests\AppWhitelist;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IConfig;
+use OCP\IL10N;
 use OCP\IRequest;
 
 /**
@@ -45,10 +46,16 @@ class SettingsController extends Controller {
 	 */
 	private $config;
 
-	public function __construct($AppName, IRequest $request, $UserId, IConfig $config) {
+	/**
+	 * @var IL10N
+	 */
+	private $l10n;
+
+	public function __construct($AppName, IRequest $request, $UserId, IConfig $config, IL10N $l10n) {
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
 		$this->config = $config;
+		$this->l10n = $l10n;
 	}
 
 	/**
@@ -66,9 +73,9 @@ class SettingsController extends Controller {
 		$whitelist = $this->config->getAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
 		$whitelist = explode(',', $whitelist);
 		return new DataResponse([
-			'group' => $this->config->getAppValue('guests', 'group', 'guests'),
-			'useWhitelist' => $useWhitelist,
-			'whitelist' => $whitelist,
+				'group' => $this->config->getAppValue('guests', 'group', 'guests'),
+				'useWhitelist' => $useWhitelist,
+				'whitelist' => $whitelist,
 		]);
 	}
 	/**
@@ -81,6 +88,15 @@ class SettingsController extends Controller {
 	 * @return DataResponse
 	 */
 	public function setConfig($conditions, $group, $useWhitelist, $whitelist) {
+		if (empty($group)) {
+			return new DataResponse([
+					'status' => 'error',
+					'data' => [
+							'message' => $this->l10n->t('Group name must not be empty.')
+					],
+			]);
+		}
+
 		$newWhitelist = [];
 		foreach ($whitelist as $app) {
 			$newWhitelist[] = trim($app);
@@ -89,7 +105,13 @@ class SettingsController extends Controller {
 		$this->config->setAppValue('guests', 'group', $group);
 		$this->config->setAppValue('guests', 'usewhitelist', $useWhitelist);
 		$this->config->setAppValue('guests', 'whitelist', $newWhitelist);
-		return new DataResponse();
+
+		return new DataResponse([
+				'status' => 'success',
+				'data' => [
+						'message' => $this->l10n->t('Saved')
+				],
+		]);
 	}
 
 	/**
@@ -110,8 +132,8 @@ class SettingsController extends Controller {
 		$whitelist = $this->config->getAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
 		$whitelist = explode(',', $whitelist);
 		return new DataResponse([
-			'useWhitelist' => $useWhitelist,
-			'whitelist' => $whitelist,
+				'useWhitelist' => $useWhitelist,
+				'whitelist' => $whitelist,
 		]);
 	}
 
@@ -124,7 +146,7 @@ class SettingsController extends Controller {
 	public function resetWhitelist() {
 		$this->config->setAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
 		return new DataResponse([
-			'whitelist' => explode(',', AppWhitelist::DEFAULT_WHITELIST),
+				'whitelist' => explode(',', AppWhitelist::DEFAULT_WHITELIST),
 		]);
 	}
 }
