@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2014 Vincent Petry <pvince81@owncloud.com>
+ * @author Thomas Heinisch <t.heinisch@bw-tech.de>
+ * @copyright (C) 2014-2017 ownCloud, Inc.
  *
  * This file is licensed under the Affero General Public License version 3
  * or later.
@@ -7,115 +8,60 @@
  * See the COPYING-README file.
  *
  */
-
-if (!OCA.Guests) {
-	/**
-	 * @namespace OCA.Guests
-	 */
-	OCA.Guests = {};
-}
-/**
- * @namespace
- */
-OCA.Guests.App = {
-
-	_guestsFileList: null,
-
-	initSharingGuests: function($el) {
-		if (this._guestsFileList) {
-			return this._guestsFileList;
-		}
-		this._guestsFileList = new OCA.Guests.FileList(
-			$el,
-			{
-				id: 'shares.guests',
-				scrollContainer: $('#app-content'),
-				fileActions: this._createFileActions(),
-				config: OCA.Files.App.getFilesConfig()
-			}
-		);
-
-		this._extendFileList(this._guestsFileList);
-		this._guestsFileList.appName = t('guests', 'Shared with Guests');
-		this._guestsFileList.$el.find('#emptycontent').html('<div class="icon-share"></div>' +
-			'<h2>' + t('guests', 'Nothing shared with Guests yet') + '</h2>' +
-			'<p>' + t('guests', 'Files and folders you share with Guests will show up here') + '</p>');
-		return this._guestsFileList;
-	},
-
-
-	removeSharingGuests: function() {
-		if (this._guestsFileList) {
-			this._guestsFileList.$fileList.empty();
-		}
-	},
+(function() {
 
 	/**
-	 * Destroy the app
+	 * @class OCA.Guest.FileList
+	 * @augments OCA.Sharing.FileList
+	 *
+	 * @classdesc Sharing file list.
+	 * Provides "shared with guests"
+	 *
+	 * @param $el container element with existing markup for the #controls
+	 * and a table
+	 * @param [options] map of options, see other parameters
 	 */
-	destroy: function() {
-		OCA.Files.fileActions.off('setDefault.app-guests', this._onActionsUpdated);
-		OCA.Files.fileActions.off('registerAction.app-guests', this._onActionsUpdated);
-		this.removeSharingGuests();
-		this._guestsFileList = null;
-		delete this._globalActionsInitialized;
-	},
+	var FileList = function($el, options) {
+		this.initialize($el, options);
+	};
+	FileList.prototype = _.extend({}, OCA.Sharing.FileList.prototype,
+		/** @lends OCA.Sharing.FileList.prototype */ {
+		appName: 'Guests',
 
-	_createFileActions: function() {
-		// inherit file actions from the files app
-		var fileActions = new OCA.Files.FileActions();
-		// note: not merging the legacy actions because legacy apps are not
-		// compatible with the sharing overview and need to be adapted first
-		fileActions.registerDefaultActions();
-		fileActions.merge(OCA.Files.fileActions);
+		reload: function() {
+			this.showMask();
+			if (this._reloadCall) {
+				this._reloadCall.abort();
+			}
 
-		if (!this._globalActionsInitialized) {
-			// in case actions are registered later
-			this._onActionsUpdated = _.bind(this._onActionsUpdated, this);
-			OCA.Files.fileActions.on('setDefault.app-sharing', this._onActionsUpdated);
-			OCA.Files.fileActions.on('registerAction.app-sharing', this._onActionsUpdated);
-			this._globalActionsInitialized = true;
+			// there is only root
+			this._setCurrentDir('/', false);
+
+			var promises = [];
+			var shares = $.ajax({
+				url: OC.linkToOCS('apps/guests/api/v1') + 'shares',
+				/* jshint camelcase: false */
+				data: {
+					format: 'json',
+					include_tags: true
+				},
+				type: 'GET',
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader('OCS-APIREQUEST', 'true');
+				},
+			});
+			promises.push(shares);
+
+			this._reloadCall = $.when.apply($, promises);
+			var callBack = this.reloadCallback.bind(this);
+			return this._reloadCall.then(
+				function(shares) {
+					// reloadCallback requires list of shares
+					callBack([shares]); 
+				}
+			);
 		}
-
-		// when the user clicks on a folder, redirect to the corresponding
-		// folder in the files app instead of opening it directly
-		fileActions.register('dir', 'Open', OC.PERMISSION_READ, '', function (filename, context) {
-			OCA.Files.App.setActiveView('files', {silent: true});
-			OCA.Files.App.fileList.changeDirectory(OC.joinPaths(context.$file.attr('data-path'), filename), true, true);
-		});
-		fileActions.setDefault('dir', 'Open');
-		return fileActions;
-	},
-
-	_onActionsUpdated: function(ev) {
-		_.each([this._guestsFileList], function(list) {
-			if (!list) {
-				return;
-			}
-
-			if (ev.action) {
-				list.fileActions.registerAction(ev.action);
-			} else if (ev.defaultAction) {
-				list.fileActions.setDefault(
-					ev.defaultAction.mime,
-					ev.defaultAction.name
-				);
-			}
-		});
-	},
-
-	_extendFileList: function(fileList) {
-		// remove size column from summary
-		fileList.fileSummary.$el.find('.filesize').remove();
-	}
-};
-
-$(document).ready(function() {
-	$('#app-content-sharingguests').on('show', function(e) {
-		OCA.Guests.App.initSharingGuests($(e.target));
 	});
-	$('#app-content-sharingguests').on('hide', function() {
-		OCA.Guests.App.removeSharingGuests();
-	});
-});
 
+	OCA.Guests.FileList = FileList;
+})();
