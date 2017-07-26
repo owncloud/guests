@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Vincent Petry <pvince81@owncloud.com>
+ * @author Thomas Heinisch <t.heinisch@bw-tech.de>
  *
  * @copyright Copyright (c) 2017, ownCloud GmbH
  * @license AGPL-3.0
@@ -23,7 +23,7 @@ OCP\User::checkLoggedIn();
 
 $tmpl = new OCP\Template('guests', 'list', '');
 
+OCP\Util::addScript('guests', 'app');
 OCP\Util::addScript('guests', 'guestsfilelist');
-OCP\Util::addScript('guests', 'sharedfilelist');
 
 $tmpl->printPage();
