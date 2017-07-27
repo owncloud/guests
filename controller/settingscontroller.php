@@ -93,29 +93,6 @@ class SettingsController extends Controller {
 	}
 
 	/**
-	 * AJAX handler for getting the whitelisted apps
-	 * We do not set the whitelist to null when it is unused. This is by design.
-	 * It allows remembering the whitelist throughout changes.
-	 *
-	 * @NoAdminRequired
-	 * @return DataResponse with the current whitelist config
-	 */
-	public function getWhitelist() {
-		$useWhitelist = $this->config->getAppValue('guests', 'useWhitelist', true);
-		if ($useWhitelist === 'true' || $useWhitelist === true) {
-			$useWhitelist = true;
-		} else {
-			$useWhitelist = false;
-		}
-		$whitelist = $this->config->getAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
-		$whitelist = explode(',', $whitelist);
-		return new DataResponse([
-			'useWhitelist' => $useWhitelist,
-			'whitelist' => $whitelist,
-		]);
-	}
-
-	/**
 	 * AJAX handler for resetting the whitelisted apps
 	 *
 	 * @NoAdminRequired
