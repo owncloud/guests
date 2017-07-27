@@ -31,7 +31,8 @@ use OCP\Template;
  */
 class AppWhitelist {
 
-	const DEFAULT_WHITELIST = 'settings,avatar,files,files_external,files_trashbin,files_versions,files_sharing,files_texteditor,activity,firstrunwizard,gallery,notifications';
+	const CORE_WHITELIST = ',core,files';
+	const DEFAULT_WHITELIST = 'settings,avatar,files_external,files_trashbin,files_versions,files_sharing,files_texteditor,activity,firstrunwizard,gallery,notifications';
 
 	public static function preSetup($params) {
 		$uid = $params['user'];
@@ -61,7 +62,7 @@ class AppWhitelist {
 	}
 
 	public static function getWhitelist() {
-		$whitelist = ',core,';
+		$whitelist = self::CORE_WHITELIST;
 		$whitelist .=  \OC::$server->getConfig()->getAppValue(
 			'guests',
 			'whitelist',
