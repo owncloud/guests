@@ -2,6 +2,7 @@
  * ownCloud
  *
  * @author Jörn Friedrich Dreyer <jfd@owncloud.com>
+ * @author Thomas Heinisch <t.heinisch@bw-tech.de>
  * @copyright (C) 2015-2017 ownCloud, Inc.
  *
  * This code is free software: you can redistribute it and/or modify
@@ -29,11 +30,6 @@
 		var $resetWhitelist = $section.find('#guestResetWhitelist');
 		var $msg = $section.find('.msg');
 
-		var config = { conditions: ['quota'], group: 'guests',
-			useWhitelist: true, whitelist:[
-				'','core','settings','avatar','files','files_trashbin','files_sharing'
-			]};
-
 		// functions
 
 		var loadConfig = function () {
@@ -45,12 +41,14 @@
 					// update model
 					config = data;
 					// update ui
-					if(config.useWhitelist) {
+					if (config.useWhitelist) {
 						$guestUseWhitelist.prop('checked', true);
 						$guestWhitelist.show();
+						$resetWhitelist.show();
 					} else {
 						$guestUseWhitelist.prop('checked', false);
 						$guestWhitelist.hide();
+						$resetWhitelist.hide();
 					}
 					if (config.group) {
 						$guestGroup.val(config.group);
@@ -100,6 +98,20 @@
 			}
 			config.conditions = conditions;
 		};
+		
+		var saveGroup = function () {
+			config.group = $guestGroup.val();
+			saveConfig();			
+		}
+		
+		var saveWhitelist = function () {
+			var apps = $guestWhitelist.val().split(',');
+			config.whitelist = [];
+			$.each(apps, function( index, value ) {
+				config.whitelist.push(value.trim());
+			});
+			saveConfig();			
+		}
 
 		// listen to ui changes
 		$guestsByGroup.on('change', function () {
@@ -108,26 +120,41 @@
 		});
 
 		$guestGroup.on('change', function () {
-			config.group = $guestGroup.val();
-			saveConfig();
+			saveGroup();
 		});
+		
+		$guestGroup.keypress(function (e) {
+			var key = e.which;
+			if (key == 13) {
+				saveGroup();
+				return true;
+			}
+		});
+		
 		$guestUseWhitelist.on('change', function () {
 			config.useWhitelist = $guestUseWhitelist.prop('checked');
 			if(config.useWhitelist) {
 				$guestWhitelist.show();
+				$resetWhitelist.show()
 			} else {
 				$guestWhitelist.hide();
+				$resetWhitelist.hide();
 			}
 			saveConfig();
 		});
+		
 		$guestWhitelist.on('change', function () {
-			var apps = $guestWhitelist.val().split(',');
-			config.whitelist = [];
-			$.each(apps, function( index, value ) {
-				config.whitelist.push(value.trim());
-			});
-			saveConfig();
+			saveWhitelist();
 		});
+		
+		$guestWhitelist.keypress(function (e) {
+			var key = e.which;
+			if (key == 13) {
+				saveWhitelist();
+				return true;
+			}
+		});
+		
 		$resetWhitelist.on('click', function () {
 			OC.msg.startSaving($msg);
 			$.ajax({
@@ -152,7 +179,7 @@
 				});
 			});
 		});
-
+		
 	});
 
 })();
