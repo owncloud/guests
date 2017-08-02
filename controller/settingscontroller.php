@@ -73,9 +73,9 @@ class SettingsController extends Controller {
 		$whitelist = $this->config->getAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
 		$whitelist = explode(',', $whitelist);
 		return new DataResponse([
-				'group' => $this->config->getAppValue('guests', 'group', 'guests'),
-				'useWhitelist' => $useWhitelist,
-				'whitelist' => $whitelist,
+			'group' => $this->config->getAppValue('guests', 'group', 'guests'),
+			'useWhitelist' => $useWhitelist,
+			'whitelist' => $whitelist,
 		]);
 	}
 	/**
@@ -90,10 +90,10 @@ class SettingsController extends Controller {
 	public function setConfig($conditions, $group, $useWhitelist, $whitelist) {
 		if (empty($group)) {
 			return new DataResponse([
-					'status' => 'error',
-					'data' => [
-							'message' => $this->l10n->t('Group name must not be empty.')
-					],
+				'status' => 'error',
+				'data' => [
+					'message' => $this->l10n->t('Group name must not be empty.')
+				],
 			]);
 		}
 
@@ -107,10 +107,10 @@ class SettingsController extends Controller {
 		$this->config->setAppValue('guests', 'whitelist', $newWhitelist);
 
 		return new DataResponse([
-				'status' => 'success',
-				'data' => [
-						'message' => $this->l10n->t('Saved')
-				],
+			'status' => 'success',
+			'data' => [
+				'message' => $this->l10n->t('Saved')
+			],
 		]);
 	}
 
@@ -132,8 +132,8 @@ class SettingsController extends Controller {
 		$whitelist = $this->config->getAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
 		$whitelist = explode(',', $whitelist);
 		return new DataResponse([
-				'useWhitelist' => $useWhitelist,
-				'whitelist' => $whitelist,
+			'useWhitelist' => $useWhitelist,
+			'whitelist' => $whitelist,
 		]);
 	}
 
@@ -146,7 +146,7 @@ class SettingsController extends Controller {
 	public function resetWhitelist() {
 		$this->config->setAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
 		return new DataResponse([
-				'whitelist' => explode(',', AppWhitelist::DEFAULT_WHITELIST),
+			'whitelist' => explode(',', AppWhitelist::DEFAULT_WHITELIST),
 		]);
 	}
 }
