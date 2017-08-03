@@ -219,6 +219,7 @@ class RegisterController extends Controller {
 			$user = $this->userManager->get($userId);
 			$user->setPassword($password);
 		} catch (\Exception $e){
+			$parameters['email'] = $email;
 			$parameters['messages']['password'] = $e->getMessage();
 			return new TemplateResponse(
 				$this->appName, 'form.password', $parameters, 'guest'
