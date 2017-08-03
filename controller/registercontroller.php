@@ -217,13 +217,12 @@ class RegisterController extends Controller {
 
 		try {
 			$user = $this->userManager->get($userId);
-
-			if (!$user->setPassword($password)) {
-				throw new \Exception();
-			}
-
+			$user->setPassword($password);
 		} catch (\Exception $e){
-			return $this->error($e->getMessage());
+			$parameters['messages']['password'] = $e->getMessage();
+			return new TemplateResponse(
+				$this->appName, 'form.password', $parameters, 'guest'
+			);
 		}
 
 		$this->config->deleteUserValue($userId, 'guests', 'registerToken');
