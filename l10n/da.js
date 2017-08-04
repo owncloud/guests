@@ -1,13 +1,13 @@
 OC.L10N.register(
     "guests",
     {
+    "Saved" : "Gemt",
     "Invalid mail address" : "Ugyldig mailadresse",
     "Username required" : "Brugernavn påkrævet",
     "A user with that name already exists." : "Dette brugernavn eksistere allerede.",
     "User successfully created" : "Bruger succesfuldt oprettet",
     "Loading…" : "Indlæser...",
     "Loaded" : "Loaded",
-    "Saved" : "Gemt",
     "Reset" : "Nulstil",
     "Access to this resource is forbidden for guests." : "Adgang til denne resource er forbudt for gæster.",
     "%s shared »%s« with you" : "%s delte »%s« med sig",

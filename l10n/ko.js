@@ -1,13 +1,13 @@
 OC.L10N.register(
     "guests",
     {
+    "Saved" : "저장됨",
     "Invalid mail address" : "잘못된 이메일 주소",
     "Username required" : "사용자 이름이 필요함",
     "A user with that name already exists." : "같은 이름의 사용자가 이미 존재합니다.",
     "User successfully created" : "사용자를 성공적으로 생성함",
     "Loading…" : "불러오는 중…",
     "Loaded" : "불러옴",
-    "Saved" : "저장됨",
     "Reset" : "초기화",
     "Access to this resource is forbidden for guests." : "손님은 이 자원에 접근할 수 없습니다.",
     "%s shared »%s« with you" : "%s 님이 %s을(를) 공유했습니다",

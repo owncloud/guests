@@ -1,13 +1,13 @@
 OC.L10N.register(
     "guests",
     {
+    "Saved" : "Shranjeno",
     "Invalid mail address" : "Neveljaven elektronski naslov",
     "Username required" : "Zahtevano je uporabniško ime",
     "A user with that name already exists." : "Uporabnik s tem imenom že obstaja.",
     "User successfully created" : "Uporabniški račun je uspešno ustvarjen.",
     "Loading…" : "Poteka nalaganje ...",
     "Loaded" : "Naloženo",
-    "Saved" : "Shranjeno",
     "Reset" : "Ponastavi",
     "Access to this resource is forbidden for guests." : "Dostop do tega vira je gostom prepovedan.",
     "%s shared »%s« with you" : "%s je omogočil souporabo »%s«",

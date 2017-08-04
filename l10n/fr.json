@@ -1,11 +1,11 @@
 { "translations": {
+    "Saved" : "Enregistré",
     "Invalid mail address" : "Adresse e-mail non valide",
     "Username required" : "Nom d'utilisateur obligatoire",
     "A user with that name already exists." : "Un utilisateur avec ce nom existe déjà.",
     "User successfully created" : "Utilisateur créé avec succès",
     "Loading…" : "Chargement...",
     "Loaded" : "Chargé",
-    "Saved" : "Enregistré",
     "Reset" : "Réinitialiser",
     "Access to this resource is forbidden for guests." : "L'accès à cet élément n'est pas autorisé pour les invités.",
     "%s shared »%s« with you" : "%s a partagé «%s» avec vous",

@@ -1,13 +1,13 @@
 OC.L10N.register(
     "guests",
     {
+    "Saved" : "Bewaard",
     "Invalid mail address" : "Ongeldig e-mailadres",
     "Username required" : "Gebruikersnaam vereist",
     "A user with that name already exists." : "Er bestaat al een gebruiker met die naam.",
     "User successfully created" : "Gebruiker succesvol aangemaakt",
     "Loading…" : "Laden...",
     "Loaded" : "Geladen",
-    "Saved" : "Bewaard",
     "Reset" : "Reset",
     "Access to this resource is forbidden for guests." : "Toegang tot dit object is verboden voor gasten.",
     "%s shared »%s« with you" : "%s deelde »%s« met u",

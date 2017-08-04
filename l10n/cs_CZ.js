@@ -1,13 +1,13 @@
 OC.L10N.register(
     "guests",
     {
+    "Saved" : "Uloženo",
     "Invalid mail address" : "Neplatná emailová adresa",
     "Username required" : "Uživatelské jméno je vyžadováno",
     "A user with that name already exists." : "Uživatel tohoto jména již existuje.",
     "User successfully created" : "Uživatel vytvořen",
     "Loading…" : "Načítání...",
     "Loaded" : "Načteno",
-    "Saved" : "Uloženo",
     "Reset" : "Reset",
     "Access to this resource is forbidden for guests." : "Přístup k tomuto zdroji je pro hosty zamítnut.",
     "%s shared »%s« with you" : "%s s vámi sdílí »%s«",

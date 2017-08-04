@@ -1,11 +1,11 @@
 { "translations": {
+    "Saved" : "Αποθηκεύτηκαν",
     "Invalid mail address" : "Μη έγκυρη διεύθυνση ταχυδρομείου.",
     "Username required" : "Απαιτείται το όνομα χρήστη",
     "A user with that name already exists." : "Υπάρχει ήδη χρήστης με το ίδιο όνομα",
     "User successfully created" : "Επιτυχής δημιουργία χρήστη",
     "Loading…" : "Φόρτωση...",
     "Loaded" : "Φορτώθηκε",
-    "Saved" : "Αποθηκεύτηκαν",
     "Reset" : "Επαναφορά",
     "Access to this resource is forbidden for guests." : "Δεν επιτρέπεται η πρόσβαση επιςκεπτών σε αυτόν τον πόρο.",
     "%s shared »%s« with you" : "Ο %s διαμοιράστηκε μαζί σας το »%s«",

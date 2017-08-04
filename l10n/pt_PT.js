@@ -1,13 +1,13 @@
 OC.L10N.register(
     "guests",
     {
+    "Saved" : "Guardado",
     "Invalid mail address" : "Endereço de e-mail inválido",
     "Username required" : "Nome de utilizador obrigatório",
     "A user with that name already exists." : "Já existe um utilizador com esse nome.",
     "User successfully created" : "Utilizador criado com sucesso",
     "Loading…" : "A carregar...",
     "Loaded" : "Carregado",
-    "Saved" : "Guardado",
     "Reset" : "Repor",
     "Access to this resource is forbidden for guests." : "Acesso a este recurso é proibido para convidados.",
     "%s shared »%s« with you" : "%s partilhou »%s« consigo",

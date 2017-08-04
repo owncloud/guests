@@ -1,13 +1,13 @@
 OC.L10N.register(
     "guests",
     {
+    "Saved" : "Sparad",
     "Invalid mail address" : "Ogiltig e-postadress",
     "Username required" : "Användarnamn krävs",
     "A user with that name already exists." : "En användare med det namnet existerar redan.",
     "User successfully created" : "Användaren skapades",
     "Loading…" : "Laddar...",
     "Loaded" : "Laddad",
-    "Saved" : "Sparad",
     "Reset" : "Återställ",
     "%s shared »%s« with you" : "%s delade »%s« med dig",
     "%s via %s" : "%s via %s",

@@ -1,13 +1,13 @@
 OC.L10N.register(
     "guests",
     {
+    "Saved" : "נשמר",
     "Invalid mail address" : "כתובת דואר אלקטרוני לא חוקית",
     "Username required" : "נדרש שם משתמש",
     "A user with that name already exists." : "משתמש בשם זה כבר קיים.",
     "User successfully created" : "משתמש נוצר בהצלחה",
     "Loading…" : "בטעינה …",
     "Loaded" : "נטען",
-    "Saved" : "נשמר",
     "Reset" : "לאפס",
     "Access to this resource is forbidden for guests." : "גישה למשאב זה אסור למשתמשים ברמת אורח.",
     "%s shared »%s« with you" : "%s שיתף/שיתפה איתך את »%s«",
