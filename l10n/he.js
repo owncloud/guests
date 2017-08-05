@@ -1,6 +1,7 @@
 OC.L10N.register(
     "guests",
     {
+    "Group name must not be empty." : "שם קבוצה אינו יכול להיות ריק.",
     "Saved" : "נשמר",
     "Invalid mail address" : "כתובת דואר אלקטרוני לא חוקית",
     "Username required" : "נדרש שם משתמש",
