@@ -1,6 +1,7 @@
 OC.L10N.register(
     "guests",
     {
+    "Group name must not be empty." : "Der Gruppenname muss angegeben werden.",
     "Saved" : "Gespeichert",
     "Invalid mail address" : "Ungültige E-Mail-Adresse",
     "Username required" : "Benutzername erforderlich",
