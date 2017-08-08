@@ -2,12 +2,29 @@
 <info>
 	<id>guests</id>
 	<name>Guests</name>
+	<summary>Share with externals easily via email address</summary>
 	<description>
-		Allow classifying users or contacts as guests.
+Share with external users conveniently just by entering an email address in the sharing dialog. Recipients receive an email containing an activation link. They can log in using their email address as user name and the password they chose during activation.
+Guests may even use the ownCloud desktop clients and mobile apps to connect to ownCloud and work on shared contents.
+
+Guest users do not have storage space and can only work in contents that are shared with them.
+
+In the 'Sharing' section of ownCloud settings administrators find configuration options for the application enabling to whitelist other ownCloud applications that guests are allowed use.
+It is important to note that the whitelist defaults are quite conservative. We recommend administrators to check carefully which apps they want to offer.
+Guest accounts are grouped under a virtual group allowing administrators to easily filter them in the user management.
+Furthermore guests are fully auditable with the [ownCloud Auditing application](https://marketplace.owncloud.com/apps/admin_audit).
+
+### Resources
+- Video: [ownCloud X Insights: Guest Users](https://www.youtube.com/watch?v=L42PBHgqKVI)
 	</description>
 	<version>0.4.1</version>
+	<documentation>
+    		<user>https://doc.owncloud.com/server/10.0/user_manual/files/webgui/sharing.html?highlight=guest#sharing-files-with-guest-users</user>
+    		<admin></admin>
+    		<developer></developer>
+    	</documentation>
 	<licence>AGPL</licence>
-	<author>owncloud.org</author>
+	<author>ownCloud GmbH</author>
 	<dependencies>
 		<owncloud min-version="10.0" max-version="10.0" />
 		<php min-version="5.4" />
