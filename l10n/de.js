@@ -1,13 +1,14 @@
 OC.L10N.register(
     "guests",
     {
+    "Group name must not be empty." : "Der Gruppenname muss angegeben werden.",
+    "Saved" : "Gespeichert",
     "Invalid mail address" : "Ungültige E-Mail-Adresse",
     "Username required" : "Benutzername erforderlich",
     "A user with that name already exists." : "Ein Benutzer mit diesem Namen existiert bereits.",
     "User successfully created" : "Benutzer erfolgreich erstellt",
     "Loading…" : "Lade…",
     "Loaded" : "Geladen",
-    "Saved" : "Gespeichert",
     "Reset" : "Zurücksetzen",
     "Access to this resource is forbidden for guests." : "Der Zugriff auf diese Ressource ist für Gastnutzer untersagt. ",
     "%s shared »%s« with you" : "%s hat „%s“ mit Dir geteilt",

@@ -1,13 +1,14 @@
 OC.L10N.register(
     "guests",
     {
+    "Group name must not be empty." : "Имя группы не должно быть пустым.",
+    "Saved" : "Сохранено",
     "Invalid mail address" : "Некорректный адрес электронной почты",
     "Username required" : "Требуется имя пользователя",
     "A user with that name already exists." : "Пользователь с таким именем уже существует.",
     "User successfully created" : "Пользователь успешно создан",
     "Loading…" : "Загрузка...",
     "Loaded" : "Загружено",
-    "Saved" : "Сохранено",
     "Reset" : "Сброс",
     "Access to this resource is forbidden for guests." : "Доступ к этому ресурсу закрыт для гостей.",
     "%s shared »%s« with you" : "%s поделился »%s« с вами",

@@ -1,13 +1,14 @@
 OC.L10N.register(
     "guests",
     {
+    "Group name must not be empty." : "O nome do grupo não deve estar vazio.",
+    "Saved" : "Salvo",
     "Invalid mail address" : "Endereço de e-mail inválido",
     "Username required" : "Nome de usuário requerido",
     "A user with that name already exists." : "Um usuário com esse nome já existe.",
     "User successfully created" : "Usuário criado com sucesso",
     "Loading…" : "Carregando...",
     "Loaded" : "Concluído",
-    "Saved" : "Salvo",
     "Reset" : "Reiniciar",
     "Access to this resource is forbidden for guests." : "O acesso à este recurso é proibido para convidados",
     "%s shared »%s« with you" : "%s compartilhou »%s« com você",

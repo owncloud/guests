@@ -1,13 +1,13 @@
 OC.L10N.register(
     "guests",
     {
+    "Saved" : "U ruajt",
     "Invalid mail address" : "Adresë email e pavlefshme",
     "Username required" : "Lypset emër përdoruesi",
     "A user with that name already exists." : "Ka tashmë një përdorues me këtë emër.",
     "User successfully created" : "Përdoruesi u krijua me sukses",
     "Loading…" : "Po ngarkohet…",
     "Loaded" : "U ngarkua",
-    "Saved" : "U ruajt",
     "Reset" : "Ricaktoje",
     "Access to this resource is forbidden for guests." : "Hyrja në këtë burim është e ndaluar për vizitorët.",
     "%s shared »%s« with you" : "%s ndau me ju »%s«",

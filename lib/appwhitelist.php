@@ -2,6 +2,7 @@
 
 /**
  * @author Ilja Neumann <ineumann@owncloud.com>
+ * @author Thomas Heinisch <t.heinisch@bw-tech.de>
  *
  * @copyright Copyright (c) 2017, ownCloud GmbH
  * @license AGPL-3.0
@@ -30,7 +31,8 @@ use OCP\Template;
  */
 class AppWhitelist {
 
-	const DEFAULT_WHITELIST = ',core,settings,avatar,files,files_external,files_trashbin,files_versions,files_sharing,files_texteditor,activity,firstrunwizard,gallery,notifications';
+	const CORE_WHITELIST = ',core,files';
+	const DEFAULT_WHITELIST = 'settings,avatar,files_external,files_trashbin,files_versions,files_sharing,files_texteditor,activity,firstrunwizard,gallery,notifications';
 
 	public static function preSetup($params) {
 		$uid = $params['user'];
@@ -46,11 +48,7 @@ class AppWhitelist {
 		if ($isGuest && $whitelistEnabled) {
 			$path = \OC::$server->getRequest()->getRawPathInfo();
 			$app = self::getRequestedApp($path);
-			$whitelist = explode(',' , $config->getAppValue(
-				'guests',
-				'whitelist',
-				self::DEFAULT_WHITELIST
-			));
+			$whitelist = self::getWhitelist();
 
 			if (!in_array($app, $whitelist)) {
 				header('HTTP/1.0 403 Forbidden');
@@ -61,6 +59,17 @@ class AppWhitelist {
 				exit;
 			}
 		}
+	}
+
+	public static function getWhitelist() {
+		$whitelist = self::CORE_WHITELIST;
+		$whitelist .=  \OC::$server->getConfig()->getAppValue(
+			'guests',
+			'whitelist',
+			self::DEFAULT_WHITELIST
+		);
+
+		return explode(',' , $whitelist);
 	}
 
 	/**
