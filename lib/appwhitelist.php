@@ -63,7 +63,7 @@ class AppWhitelist {
 
 	public static function getWhitelist() {
 		$whitelist = self::CORE_WHITELIST;
-		$whitelist .=  \OC::$server->getConfig()->getAppValue(
+		$whitelist .=  ',' . \OC::$server->getConfig()->getAppValue(
 			'guests',
 			'whitelist',
 			self::DEFAULT_WHITELIST

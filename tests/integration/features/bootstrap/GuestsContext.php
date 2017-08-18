@@ -36,9 +36,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	private $createdGuests = [];
 
 	public function prepareUserNameAsFrontend($guestDisplayName, $guestEmail) {
-		$emailDomain = preg_split('/\./', preg_split('/@/', $guestEmail, null, null)[1], null, null);
-		$userName = $guestDisplayName . '_' . $emailDomain[0] . '_' . $emailDomain[1];
-		return $userName;
+		return strtolower(trim(urldecode($guestEmail)));
 	}
 
 	/**
@@ -89,48 +87,45 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$this->deleteUser($userName);
 	}
 
-	/*Processes the body of an email sent and gets the reset password url
+	/*Processes the body of an email sent and gets the register url
 	  It depends on the content of the email*/
-	public function extractResetPasswordUrl($emailBody) {
+	public function extractRegisterUrl($emailBody) {
 		$knownString = 'Activate your guest account at ownCloud by setting a password: ';
 		$nextString = 'Then view it';
 		$posKnownString = strpos($emailBody, $knownString);
 		$posNextString = strpos($emailBody, $nextString, $posKnownString + strlen($knownString));
-		$urlResetPasswd = substr($emailBody,
+		$urlRegister = substr($emailBody,
 								 $posKnownString + strlen($knownString),
 								 $posNextString - ($posKnownString + strlen($knownString)));
-		$urlResetPasswd = preg_replace('/[\s]+/mu', ' ', $urlResetPasswd);
-		$urlResetPasswd = str_replace('=', '', $urlResetPasswd);
-		$urlResetPasswd = str_replace(' ', '', $urlResetPasswd);
-		return $urlResetPasswd;
-	}
-
-	/*Function to prepare the set password url from the reset password form one*/
-	public function getSetPasswordUrl($urlResetPasswd) {
-		$resetUrlParts = explode('/', $urlResetPasswd);
-		array_splice($resetUrlParts, 5, 2, 'set');
-		$urlSetPasswd = implode('/', $resetUrlParts);
-		return $urlSetPasswd;
+		$urlRegister = preg_replace('/[\s]+/mu', ' ', $urlRegister);
+		$urlRegister = str_replace('=', '', $urlRegister);
+		$urlRegister = str_replace(' ', '', $urlRegister);
+		return $urlRegister;
 	}
 
 	/**
-	 * @Given guest user :user sets its password
+	 * @Given guest user :user registers
 	 * @param string $guestDisplayName
 	 */
-	public function guestUserSetsItsPassword($guestDisplayName) {
+	public function guestUserRegisters($guestDisplayName) {
 		$userName = $this->prepareUserNameAsFrontend($guestDisplayName, $this->createdGuests[$guestDisplayName]);
 		$emails = $this->getEmails();
 		$lastEmailBody = $emails->items[0]->Content->Body;
-		$resetPwUrl = $this->extractResetPasswordUrl($lastEmailBody);
-		$urlSetPasswd = $this->getSetPasswordUrl($resetPwUrl);
-
+		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
+		
+		$exploded = explode('/', $fullRegisterUrl);
+		$email = $exploded[7];
+		$token = $exploded[8];		
+		$registerUrl = implode('/', array_splice($exploded, 0, 7));
+		
 		$client = new Client();
 		$options['body'] = [
-							'password' => $this->regularUser,
-							'proceed' => 'false'
+							'email' => $email,
+							'token' => $token,
+							'password' => $this->regularUser
 							];
 		try {
-			$this->response = $client->send($client->createRequest('POST', $urlSetPasswd, $options));
+			$this->response = $client->send($client->createRequest('POST', $registerUrl, $options));
 		} catch (\GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}

@@ -7,8 +7,6 @@ composer install
 OC_PATH=../../../../
 CORE_INT_TESTS_PATH=tests/integration/
 
-cd "$OC_PATH""$CORE_INT_TESTS_PATH"
-composer install
 cd -
 
 OCC=${OC_PATH}occ

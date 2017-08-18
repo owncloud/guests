@@ -24,7 +24,6 @@ namespace OCA\Guests;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IConfig;
-use OCP\IGroupManager;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUserManager;
@@ -172,25 +171,24 @@ class Hooks {
 			['app'=>'guests']);
 
 
-		$passwordToken = $this->config->getUserValue(
+		$registerToken = $this->config->getUserValue(
 			$shareWith,
-			'owncloud',
-			'lostpassword',
+			'guests',
+			'registerToken',
 			null
 		);
 
 		$uid = $user->getUID();
 
 		try {
-			if ($passwordToken) {
-				$exploded = explode(':', $passwordToken);
+			if ($registerToken) {
 				// send invitation
 				$this->mail->sendGuestInviteMail(
 					$uid,
 					$shareWith,
 					$itemType,
 					$itemSource,
-					$exploded[1]
+					$registerToken
 				);
 			} else {
 				// always notify guests of new files
