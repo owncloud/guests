@@ -1,11 +1,9 @@
 OC.L10N.register(
     "guests",
     {
+    "Invalid mail address" : "Некорректный адрес электронной почты",
     "Group name must not be empty." : "Имя группы не должно быть пустым.",
     "Saved" : "Сохранено",
-    "Invalid mail address" : "Некорректный адрес электронной почты",
-    "Username required" : "Требуется имя пользователя",
-    "A user with that name already exists." : "Пользователь с таким именем уже существует.",
     "User successfully created" : "Пользователь успешно создан",
     "Loading…" : "Загрузка...",
     "Loaded" : "Загружено",

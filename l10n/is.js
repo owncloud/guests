@@ -1,10 +1,8 @@
 OC.L10N.register(
     "guests",
     {
-    "Saved" : "Vistað",
     "Invalid mail address" : "Ógilt tölvupóstfang",
-    "Username required" : "Notandanafns er krafist",
-    "A user with that name already exists." : "Nú þegar til notandi með þetta nafn.",
+    "Saved" : "Vistað",
     "User successfully created" : "Það tókst að búa til notandann",
     "Loading…" : "Hleð inn…",
     "Loaded" : "Hlaðið",

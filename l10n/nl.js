@@ -1,10 +1,8 @@
 OC.L10N.register(
     "guests",
     {
-    "Saved" : "Bewaard",
     "Invalid mail address" : "Ongeldig e-mailadres",
-    "Username required" : "Gebruikersnaam vereist",
-    "A user with that name already exists." : "Er bestaat al een gebruiker met die naam.",
+    "Saved" : "Bewaard",
     "User successfully created" : "Gebruiker succesvol aangemaakt",
     "Loading…" : "Laden...",
     "Loaded" : "Geladen",

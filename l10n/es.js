@@ -1,10 +1,9 @@
 OC.L10N.register(
     "guests",
     {
-    "Saved" : "Guardado",
     "Invalid mail address" : "Dirección de correo inválida",
-    "Username required" : "Nombre de usuario requerido",
-    "A user with that name already exists." : "Ya existe un usuario con ese nombre.",
+    "Group name must not be empty." : "El nombre del grupo no debe estar vacío",
+    "Saved" : "Guardado",
     "User successfully created" : "Usuario creado con éxito",
     "Loading…" : "Cargando...",
     "Loaded" : "Cargado",

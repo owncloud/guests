@@ -1,11 +1,9 @@
 OC.L10N.register(
     "guests",
     {
+    "Invalid mail address" : "ที่อยู่อีเมลไม่ถูกต้อง",
     "Group name must not be empty." : "จำเป็นต้องป้อนชื่อกลุ่ม",
     "Saved" : "บันทึกแล้ว",
-    "Invalid mail address" : "ที่อยู่อีเมลไม่ถูกต้อง",
-    "Username required" : "ต้องระบุชื่อผู้ใช้",
-    "A user with that name already exists." : "มีชื้อผู้ใช้นี้อยู่แล้ว",
     "User successfully created" : "สร้างผู้ใช้เรียบร้อยแล้ว",
     "Loading…" : "กำลังโหลด...",
     "Loaded" : "โหลดแล้ว",

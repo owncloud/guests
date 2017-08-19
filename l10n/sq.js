@@ -1,10 +1,8 @@
 OC.L10N.register(
     "guests",
     {
-    "Saved" : "U ruajt",
     "Invalid mail address" : "Adresë email e pavlefshme",
-    "Username required" : "Lypset emër përdoruesi",
-    "A user with that name already exists." : "Ka tashmë një përdorues me këtë emër.",
+    "Saved" : "U ruajt",
     "User successfully created" : "Përdoruesi u krijua me sukses",
     "Loading…" : "Po ngarkohet…",
     "Loaded" : "U ngarkua",

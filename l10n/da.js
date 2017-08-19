@@ -1,10 +1,8 @@
 OC.L10N.register(
     "guests",
     {
-    "Saved" : "Gemt",
     "Invalid mail address" : "Ugyldig mailadresse",
-    "Username required" : "Brugernavn påkrævet",
-    "A user with that name already exists." : "Dette brugernavn eksistere allerede.",
+    "Saved" : "Gemt",
     "User successfully created" : "Bruger succesfuldt oprettet",
     "Loading…" : "Indlæser...",
     "Loaded" : "Loaded",

@@ -1,11 +1,9 @@
 OC.L10N.register(
     "guests",
     {
+    "Invalid mail address" : "כתובת דואר אלקטרוני לא חוקית",
     "Group name must not be empty." : "שם קבוצה אינו יכול להיות ריק.",
     "Saved" : "נשמר",
-    "Invalid mail address" : "כתובת דואר אלקטרוני לא חוקית",
-    "Username required" : "נדרש שם משתמש",
-    "A user with that name already exists." : "משתמש בשם זה כבר קיים.",
     "User successfully created" : "משתמש נוצר בהצלחה",
     "Loading…" : "בטעינה …",
     "Loaded" : "נטען",

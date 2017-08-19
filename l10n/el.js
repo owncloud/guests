@@ -1,10 +1,8 @@
 OC.L10N.register(
     "guests",
     {
-    "Saved" : "Αποθηκεύτηκαν",
     "Invalid mail address" : "Μη έγκυρη διεύθυνση ταχυδρομείου.",
-    "Username required" : "Απαιτείται το όνομα χρήστη",
-    "A user with that name already exists." : "Υπάρχει ήδη χρήστης με το ίδιο όνομα",
+    "Saved" : "Αποθηκεύτηκαν",
     "User successfully created" : "Επιτυχής δημιουργία χρήστη",
     "Loading…" : "Φόρτωση...",
     "Loaded" : "Φορτώθηκε",
