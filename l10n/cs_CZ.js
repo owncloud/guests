@@ -1,10 +1,8 @@
 OC.L10N.register(
     "guests",
     {
-    "Saved" : "Uloženo",
     "Invalid mail address" : "Neplatná emailová adresa",
-    "Username required" : "Uživatelské jméno je vyžadováno",
-    "A user with that name already exists." : "Uživatel tohoto jména již existuje.",
+    "Saved" : "Uloženo",
     "User successfully created" : "Uživatel vytvořen",
     "Loading…" : "Načítání...",
     "Loaded" : "Načteno",
@@ -19,6 +17,9 @@ OC.L10N.register(
     "No users or groups found for {search}" : "Nebyli nalezeni žádní členové ani skupiny pro {search}",
     "No users found for {search}" : "Nebyli nalezeni žádní uživatelé pro {search}",
     "An error occurred. Please try again" : "Došlo k chybě. Zkuste to prosím znovu",
+    "Email" : "Email",
+    "Password" : "Heslo",
+    "Set password" : "Nastavit heslo",
     "Hey there,\n\njust letting you know that %s shared %s with you.\n\nActivate your guest account at %s by setting a password: %s\n\nThen view it: %s\n\nYou can login using the email address \"%s\".\n\n" : "Dobrý den,\n\njen vám chceme sdělit, že %s s vámi sdílel %s.\n\nAktivujte svůj účet hosta na %s tím, že si nastavíte heslo: %s\n\nPak si můžete sdílený soubor prohlédnout: %s\n\nMůžete se přihlásit pomocí emailové adresy \"%s\".\n\n",
     "The share will expire on %s." : "Sdílení vyprší %s.",
     "Cheers!" : "Ať slouží!",

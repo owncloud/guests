@@ -2,6 +2,7 @@ OC.L10N.register(
     "guests",
     {
     "Invalid mail address" : "Ongeldig e-mailadres",
+    "No such guest user" : "Niet zo'n gastgebruiker",
     "Saved" : "Bewaard",
     "User successfully created" : "Gebruiker succesvol aangemaakt",
     "Loading…" : "Laden...",
@@ -18,6 +19,9 @@ OC.L10N.register(
     "No users or groups found for {search}" : "Geen gebruikers of groepen gevonden voor {search}",
     "No users found for {search}" : "Geen gebruikers gevonden voor {search}",
     "An error occurred. Please try again" : "Er trad een fout op. Probeer het opnieuw",
+    "Email" : "mailadres",
+    "Password" : "Wachtwoord",
+    "Set password" : "Instellen wachtwoord",
     "Hey there,\n\njust letting you know that %s shared %s with you.\n\nActivate your guest account at %s by setting a password: %s\n\nThen view it: %s\n\nYou can login using the email address \"%s\".\n\n" : "Hallo daar,\n\nwe willen even laten weten dat %s %s met u deelde.\n\nActiveer uw gastenaccount voor %s door een wachtwoord in te stellen: %s\n\nBekijk het daarna: %s\n\nU kunt inloggen met e-mailadres \"%s\".\n\n",
     "The share will expire on %s." : "De share vervalt op %s.",
     "Cheers!" : "Proficiat!",
