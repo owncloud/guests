@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-guests (0.4.1 new_registration)
+guests (0.4.2)
 -------------------------------
 
   see https://github.com/owncloud/guests/issues/64
