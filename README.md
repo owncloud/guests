@@ -18,13 +18,9 @@ The front end section is based on the [Vue.js 2.0](https://vuejs.org/) framework
 
 ### Setup
 
-1. Change to the `/app/guests` folder and install all dependencies and run:
+You can install the development environment and get webpack started (watcher included) by running:
 
-`npm install`
-
-2. If no errors occur, you can get webpack started (watcher included) by running:
-
-`npm run dev`
+`make dev`
 
 ***
 
@@ -32,4 +28,4 @@ The front end section is based on the [Vue.js 2.0](https://vuejs.org/) framework
 
 To build the uglified / minified muted version run the following:
 
-`npm run build`
+`make`
