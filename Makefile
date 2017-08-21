@@ -1,7 +1,5 @@
 app_name=$(notdir $(CURDIR))
-source_build_directory=$(CURDIR)/build/artifacts/source
-source_package_name=$(source_build_directory)/$(app_name)
-appstore_build_directory=$(CURDIR)/build/artifacts/appstore
+appstore_build_directory=$(CURDIR)/build/
 appstore_package_name=$(appstore_build_directory)/$(app_name)
 tests_integration_directory=$(CURDIR)/tests/integration
 
@@ -33,7 +31,7 @@ dev: npm
 # Node modules
 .PHONY: npm
 npm:
-	npm install && npm update
+	npm install
 	
 # Remove the appstore build and generated guests bundle
 .PHONY: clean
