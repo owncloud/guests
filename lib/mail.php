@@ -21,14 +21,11 @@
 
 namespace OCA\Guests;
 
-
-use OC\Share\MailNotifications;
 use OCP\Defaults;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
-use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Mail\IMailer;
@@ -169,45 +166,6 @@ class Mail {
 				'Couldn\'t send reset email. Please contact your administrator.'
 			));
 		}
-	}
-
-	/**
-	 * @param $sender
-	 * @param $recipient
-	 * @param $itemType
-	 * @param $itemSource
-	 */
-	public function sendShareNotification(
-		$sender,
-		IUser $recipient,
-		$itemType,
-		$itemSource
-	) {
-		$recipientList[] = $recipient;
-
-
-		$mailNotification = new MailNotifications(
-			$sender,
-			\OC::$server->getL10N('lib'),
-			$this->mailer,
-			$this->logger,
-			$this->defaults,
-			\OC::$server->getURLGenerator()
-		);
-		$this->logger->debug("sending share notification for '$itemType'"
-			. " '$itemSource' to {$recipient->getUID()}'",
-			['app' => 'guests']);
-
-		$result = $mailNotification->sendInternalShareMail(
-			$recipientList, $itemSource, $itemType
-		);
-
-		// mark mail as sent
-		// TODO do not set if $result contains the recipient
-		Share::setSendMailStatus(
-			$itemType, $itemSource, Share::SHARE_TYPE_USER, $recipient->getUID(), true
-		);
-
 	}
 
 	/**
