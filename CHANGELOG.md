@@ -55,14 +55,13 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 - Fixed bug where guest users couldn't be created if ownCloud is installed in a subdirectory
 - E-Mail invite could not be sent with ownCloud 10
 
-## [0.1] - 2017-03-27
+## 0.1 - 2017-03-27
 
 ### Added
 - Core functionality
 
 [Unreleased]: https://github.com/owncloud/guests/compare/v0.4.1...HEAD
-[0.4.1]: https://github.com/owncloud/guests/tree/v0.4,1
-[0.4]: https://github.com/owncloud/guests/tree/v0.4
-[0.3]: https://github.com/owncloud/guests/tree/v0.3
-[0.2]: https://github.com/owncloud/guests/tree/v0.2
-[0.1]: https://github.com/owncloud/guests/tree/v0.1
+[0.4.1]: https://github.com/owncloud/guests/compare/v.0.4...v0.4.1
+[0.4]: https://github.com/owncloud/guests/compare/v0.3...v.0.4
+[0.3]: https://github.com/owncloud/guests/compare/v0.2...v0.3
+[0.2]: https://github.com/owncloud/guests/compare/v0.1...v0.2
