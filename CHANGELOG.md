@@ -1,56 +1,68 @@
-CHANGELOG
-=========
+# Changelog
 
-guests (0.4.2)
--------------------------------
+All notable changes to this project will be documented in this file.
 
-  see https://github.com/owncloud/guests/issues/64
-  * Permit creation of guest users by their email address in the sharetabview.
-  * In the modal window "Share with guest 'guestuser'" name and email are prefilled with the email address (so the display name can be changed, if desired)
-  * Actual username creation is performed in the backend (is the lowercase email address)
-  * While creating a new guest user, a registerToken instead of lostpassword token is created (i.e. lostcontroller functionality is removed)
-  * The invitation email template will provide the link to a new route guests.register.*
-  * After a guest user submits the password it will be set via UserManager, the registerToken is deleted.
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-guests (0.4.1)
---------------
+## [Unreleased]
+### Added
+- Use new registration controller instead of lostpassword functionality [\#64](https://github.com/owncloud/guests/issues/64)
+- Add build script [\#24](https://github.com/owncloud/guests/issues/24)
 
-  * Last release did not contain the mentioned fix due to packaging error
+### Changed
+- Improve naming of guest accounts [\#69](https://github.com/owncloud/guests/issues/69)
+- Permit creation of guest users by their email address in the sharetabview. [\#64](https://github.com/owncloud/guests/issues/64)
+- Actual username creation is performed in the backend (is the lowercase email address) [\#64](https://github.com/owncloud/guests/issues/64)
 
-guests (0.4)
-------------
+### Fixed
+- Whitelist: move "," and core to backend, UI fixes [\#127](https://github.com/owncloud/guests/pull/127)
+- Login as a guest is case sensitive [\#133](https://github.com/owncloud/guests/issues/133)
+- No error message in UI when duplicate email is used [\#82](https://github.com/owncloud/guests/issues/82)
+- Admin Settings fixes [\#107](https://github.com/owncloud/guests/issues/107), [\#113](https://github.com/owncloud/guests/issues/113)
 
-  * Fixed breakage when market app is installed
+## [0.4.1] - 2017-04-26
 
-guests (0.3)
-------------
+### Fixed
+- Last release did not contain the mentioned fix due to packaging error
 
-  _NOTE: Currently only compatible with ownCloud 10.0 beta2 and higher._
+## [0.4] - 2017-04-25
 
-  #### Improvements ####
-  * Better wording in invite email, user is hinted that he can use his email address to login so he doesn`t need to memorize a username.
-  * Use shortlink in share notification and invite mail.
-  * Added translatable texts
+### Fixed
+- Fixed breakage when market app is installed
 
+## [0.3] - 2017-04-20
 
-  #### Bugfixes ####
-  * Could not create a guest user as non-admin
-  * Fixed issue with inconsistent display of guest user`s default permissions
+### Added
+- Better wording in invite email, user is hinted that he can use his email address to login so he doesn't need to memorize a username.
+- Use shortlink in share notification and invite mail.
+- Added translatable texts
 
-  #### Misc ####
-  * Removed do not use warning from readme. This app is now considered early beta quality.
+### Changed
+- Removed do not use warning from readme. This app is now considered early beta quality.
 
-guests (0.2)
-------------
+### Fixed
+- Could not create a guest user as non-admin
+- Fixed issue with inconsistent display of guest user's default permissions
 
-  _NOTE: Currently only compatible with ownCloud 10.0 beta2 and higher._
+## [0.2] - 2017-04-10
 
-  This release consists mostly of internal changes to adapt the guest app to ownCloud 10
+This release consists mostly of internal changes to adapt the guest app to ownCloud 10
 
-  * Fixed bug where guest users couldn`t be created if ownCloud is installed in a subdirectory
-  * E-Mail invite could not be sent with ownCloud 10
-  * First version of working jailing code (guest user can`t navigate out of his home dir)
+### Changed
+- First version of working jailing code (guest user can't navigate out of his home dir)
 
-guests (0.1)
-------------
-  * Core functionality
+### Fixed
+- Fixed bug where guest users couldn't be created if ownCloud is installed in a subdirectory
+- E-Mail invite could not be sent with ownCloud 10
+
+## [0.1] - 2017-03-27
+
+### Added
+- Core functionality
+
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/owncloud/guests/tree/v0.4,1
+[0.4]: https://github.com/owncloud/guests/tree/v0.4
+[0.3]: https://github.com/owncloud/guests/tree/v0.3
+[0.2]: https://github.com/owncloud/guests/tree/v0.2
+[0.1]: https://github.com/owncloud/guests/tree/v0.1
