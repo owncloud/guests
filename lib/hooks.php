@@ -190,20 +190,6 @@ class Hooks {
 					$itemSource,
 					$registerToken
 				);
-			} else {
-				// always notify guests of new files
-				$guest = $this->userManager->get($shareWith);
-
-				if (!$guest) {
-					throw new DoesNotExistException("$shareWith does not exist");
-				}
-
-				$this->mail->sendShareNotification(
-					$this->userSession->getUser(),
-					$guest,
-					$itemType,
-					$itemSource
-				);
 			}
 		} catch (DoesNotExistException $ex) {
 			$this->logger->error("'$shareWith' does not exist", ['app'=>'guests']);
