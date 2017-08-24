@@ -1,7 +1,11 @@
 { "translations": {
     "Invalid mail address" : "Некорректный адрес электронной почты",
+    "No such guest user" : "Нет такого гостевого пользователя",
+    "The token is invalid" : "Неправильный токен",
+    "Password cannot be empty" : "Пароль не может быть пустым",
     "Group name must not be empty." : "Имя группы не должно быть пустым.",
     "Saved" : "Сохранено",
+    "A username with that email already exists." : "Пользователь с такой электронной почтой уже существует.",
     "User successfully created" : "Пользователь успешно создан",
     "Loading…" : "Загрузка...",
     "Loaded" : "Загружено",
