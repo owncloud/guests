@@ -2,8 +2,12 @@ OC.L10N.register(
     "guests",
     {
     "Invalid mail address" : "ที่อยู่อีเมลไม่ถูกต้อง",
+    "No such guest user" : "ไม่มีผู้ใช้ทั่วไป",
+    "The token is invalid" : "โทเค็นไม่ถูกต้อง",
+    "Password cannot be empty" : "จำเป็นต้องกรอกรหัสผ่าน",
     "Group name must not be empty." : "จำเป็นต้องป้อนชื่อกลุ่ม",
     "Saved" : "บันทึกแล้ว",
+    "A username with that email already exists." : "มีคนใช้อีเมลนี้ไปแล้ว",
     "User successfully created" : "สร้างผู้ใช้เรียบร้อยแล้ว",
     "Loading…" : "กำลังโหลด...",
     "Loaded" : "โหลดแล้ว",
