@@ -2,7 +2,11 @@ OC.L10N.register(
     "guests",
     {
     "Invalid mail address" : "Ugyldig e-postadresse",
+    "No such guest user" : "Ingen slik gjestebruker",
+    "Password cannot be empty" : "Passordet kan ikke være tomt",
+    "Group name must not be empty." : "Gruppenavnet kan ikke være tomt. ",
     "Saved" : "Lagret",
+    "A username with that email already exists." : "Det eksisterer allerede en bruker med den e-postadressen. ",
     "User successfully created" : "Bruker oppdattet",
     "Loading…" : "Laster...",
     "Loaded" : "Innlastet",
