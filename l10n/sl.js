@@ -5,6 +5,7 @@ OC.L10N.register(
     "The token is invalid" : "Žeton ni veljaven",
     "Password cannot be empty" : "Polje gesla ne sme biti prazno",
     "Saved" : "Shranjeno",
+    "A username with that email already exists." : "Uporabniško ime s tem elektronskim naslovom že obstaja.",
     "User successfully created" : "Uporabniški račun je uspešno ustvarjen.",
     "Loading…" : "Poteka nalaganje ...",
     "Loaded" : "Naloženo",
