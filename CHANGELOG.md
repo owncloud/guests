@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [0.4.2] - 2017-09-11
 ### Added
 - Use new registration controller instead of lostpassword functionality [\#64](https://github.com/owncloud/guests/issues/64)
 - Add build script [\#24](https://github.com/owncloud/guests/issues/24)
