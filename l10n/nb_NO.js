@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Invalid mail address" : "Ugyldig e-postadresse",
     "No such guest user" : "Ingen slik gjestebruker",
+    "The token is invalid" : "Token er ugyldig",
     "Password cannot be empty" : "Passordet kan ikke være tomt",
     "Group name must not be empty." : "Gruppenavnet kan ikke være tomt. ",
     "Saved" : "Lagret",
