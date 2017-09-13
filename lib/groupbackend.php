@@ -1,6 +1,7 @@
 <?php
 /**
  * @author Ilja Neumann <ineumann@owncloud.com>
+ * @author Thomas Heinisch <t.heinisch@bw-tech.de>
  *
  * @copyright Copyright (c) 2017, ownCloud GmbH
  * @license GPL-2.0
@@ -19,8 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\Guests;
 
+namespace OCA\Guests;
 
 use OCP\GroupInterface;
 
@@ -32,6 +33,8 @@ use OCP\GroupInterface;
  */
 class GroupBackend implements GroupInterface {
 
+	const DEFAULT_NAME = 'guest_app';
+
 	private $guestMembers = [];
 
 	protected $possibleActions = [
@@ -40,7 +43,7 @@ class GroupBackend implements GroupInterface {
 	private $groupName;
 
 
-	public function __construct($groupName = 'guest_app') {
+	public function __construct($groupName = self::DEFAULT_NAME) {
 		$this->groupName = $groupName;
 	}
 
