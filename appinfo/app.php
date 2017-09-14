@@ -27,7 +27,7 @@ $eventDispatcher = \OC::$server->getEventDispatcher();
 $eventDispatcher->addListener(
 	'OCA\Files::loadAdditionalScripts',
 	function() {
-		\OCP\Util::addScript('guests', 'sharedialogview');
+		\OCP\Util::addScript('guests', 'guestshare');
 	}
 );
 

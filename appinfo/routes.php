@@ -54,12 +54,5 @@ return [
 			'url' => '/users',
 			'verb' => 'PUT'
 		]
-	],
-	'ocs' => [
-		[
-			'name' => 'sharees#search',
-			'url' => '/api/v1/sharees',
-			'verb' => 'GET',
-		]
 	]
 ];
