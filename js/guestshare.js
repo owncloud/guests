@@ -23,11 +23,11 @@
 var GuestShare = {
 	model: null,
 	email: null,
-	
+
 	addGuest: function (model, email) {
 		this.model = model;
 		this.email = email;
-		
+
 		var self = this;
 		var xhrObject = {
 			type: 'PUT',
@@ -38,7 +38,7 @@ var GuestShare = {
 				username: this.email,
 				email: this.email
 			}
-		}
+		};
 
 		$.ajax(xhrObject).done(function (xhr) {
 			self._addGuestShare();
@@ -59,7 +59,7 @@ var GuestShare = {
 			shareWith: this.email,
 			permissions: OC.PERMISSION_CREATE | OC.PERMISSION_UPDATE | OC.PERMISSION_READ | OC.PERMISSION_DELETE,
 			path: this.model.fileInfoModel.getFullPath()
-		}
+		};
 
 		return $.ajax({
 			type: 'POST',
@@ -77,7 +77,7 @@ var GuestShare = {
 			);
 		});
 	},
-}
+};
 
 OC.Plugins.register('OC.Share.ShareDialogView', {
 	attach: function (obj) {
@@ -87,7 +87,6 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 		obj.autocompleteHandler = function(search, response) {
 
 		    return oldHandler.call(obj, search, function(result) {
-
 				var searchTerm = search.term.trim();
 
 				// Add potential guests to the suggestions
@@ -101,9 +100,16 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 					});
 				}
 
-				response(result);
+				if (result !== undefined) {
+					result.sort(function (a, b) {
+						return OC.Util.naturalSortCompare(a.label, b.label);
+					});
+					response(result);
+				} else {
+					response();
+				}
 		    });
-		}
+		};
 		
 		obj._onSelectRecipient = function (e, s) {
 			e.preventDefault();
@@ -131,6 +137,6 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 					}
 				});
 			}
-		}
+		};
 	}
 });
