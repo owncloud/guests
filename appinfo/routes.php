@@ -54,5 +54,5 @@ return [
 			'url' => '/users',
 			'verb' => 'PUT'
 		]
-	],
+	]
 ];

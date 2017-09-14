@@ -1,9 +1,9 @@
 /**
- * ownCloud
- *
  * @author Jörn Friedrich Dreyer <jfd@owncloud.com>
  * @author Thomas Heinisch <t.heinisch@bw-tech.de>
- * @copyright (C) 2015-2017 ownCloud, Inc.
+ *
+ * @copyright Copyright (c) 2017, ownCloud GmbH
+ * @license GPL-2.0
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,8 +15,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 (function() {
 

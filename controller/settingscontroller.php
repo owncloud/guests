@@ -76,7 +76,7 @@ class SettingsController extends Controller {
 		$whitelist = $this->config->getAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
 		$whitelist = explode(',', $whitelist);
 		return new DataResponse([
-			'group' => $this->config->getAppValue('guests', 'group', 'guests'),
+			'group' => $this->config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME),
 			'useWhitelist' => $useWhitelist,
 			'whitelist' => $whitelist,
 		]);

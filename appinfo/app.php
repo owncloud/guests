@@ -1,5 +1,6 @@
 <?php
 /**
+ * @author Thomas Heinisch <t.heinisch@bw-tech.de>
  * @author Felix Heidecke <felix@heidecke.me>
  * @author Ilja Neumann <ineumann@owncloud.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
@@ -22,10 +23,16 @@
  *
  */
 
-\OCP\Util::addScript('guests', 'guests.bundle');
+$eventDispatcher = \OC::$server->getEventDispatcher();
+$eventDispatcher->addListener(
+	'OCA\Files::loadAdditionalScripts',
+	function() {
+		\OCP\Util::addScript('guests', 'guestshare');
+	}
+);
 
 $config = \OC::$server->getConfig();
-$groupName = $config->getAppValue('guests', 'group', 'guest_app');
+$groupName = $config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME);
 
 \OC::$server->getGroupManager()->addBackend(new \OCA\Guests\GroupBackend($groupName));
 \OCP\Util::connectHook('OCP\Share', 'post_shared', '\OCA\Guests\Hooks', 'postShareHook');

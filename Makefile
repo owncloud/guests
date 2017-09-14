@@ -36,34 +36,14 @@ endif
 endif
 endif
 
-all: build
-
-# Fetch JS dependencies and compile the JS
-.PHONY: build
-build: npm
-	npm run build
-
-# Fetch JS dependencies and compile the JS
-.PHONY: dev
-dev: npm
-	npm run dev
-
-# Node modules
-.PHONY: npm
-npm:
-	npm install
-	
 # Remove the appstore build and generated guests bundle
 .PHONY: clean
 clean:
 	rm -rf ./build
-	rm -f js/guests.bundle.js
 
 # Same as clean but also removes dependencies installed by npm
 .PHONY: distclean
 distclean: clean
-	rm -rf node_modules
-	rm -f package-lock.json
 
 # Build the source and appstore package
 .PHONY: dist
@@ -72,7 +52,7 @@ dist:
 
 # Build the source package for the app store, ignores php and js tests
 .PHONY: appstore
-appstore: build
+appstore:
 	rm -rf $(dist_dir)
 	mkdir -p $(dist_dir)/$(app_name)
 	cp -R $(all_src) $(dist_dir)/$(app_name)
