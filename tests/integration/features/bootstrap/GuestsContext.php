@@ -32,7 +32,7 @@ require __DIR__ . '/../../vendor/autoload.php';
  * Guests context.
  */
 class GuestsContext implements Context, SnippetAcceptingContext {
-	use Webdav;
+	use BasicStructure;
 
 	/** @var array */
 	private $createdGuests = [];
@@ -132,6 +132,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->response = $ex->getResponse();
 		}
 	}
+
+	/**
+	 * Abstract method implemented from Core's FeatureContext
+	 */
+	protected function resetAppConfigs() {}
 
 	/**
 	 * @BeforeScenario
