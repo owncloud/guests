@@ -91,23 +91,37 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 
 				// Add potential guests to the suggestions
 				if (searchTerm.search("@") !== -1) {
-					result.push({
-						label: t('core', 'Add {unknown} (guest)', {unknown: searchTerm}),
-						value: {
-							shareType: 4,
-							shareWith: searchTerm
-						}
-					});
-				}
+					// FIXME: will need some new hooks in core to be able to do this in a clean way
+					if (!result || !result.length) {
+						// no results, need to hack the message and still display something
+						$('.shareWithField')
+							.removeClass('error')
+							.tooltip('hide')
+							.autocomplete("option", "autoFocus", true);
+						result = [];
+					}
 
-				if (result !== undefined) {
-					result.sort(function (a, b) {
-						return OC.Util.naturalSortCompare(a.label, b.label);
-					});
+					// only add guest entry suggestion if there isn't another matching user share entry already
+					var lowerSearchTerm = searchTerm.toLowerCase();
+					if (!_.find(result, function(entry) {
+						if (entry && entry.value
+							&& entry.value.shareType === OC.Share.SHARE_TYPE_USER
+							&& entry.value.shareWith.toLowerCase() === lowerSearchTerm) {
+							return true;
+						}
+						return false;
+					})) {
+						result.push({
+							label: t('core', 'Add {unknown} (guest)', {unknown: searchTerm}),
+							value: {
+								shareType: OC.Share.SHARE_TYPE_GUEST,
+								shareWith: searchTerm
+							}
+						});
+					}
 					response(result);
-				} else {
-					response();
 				}
+				response(result);
 		    });
 		};
 		
