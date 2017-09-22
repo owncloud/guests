@@ -141,10 +141,15 @@ class UsersController extends Controller {
 			);
 		}
 
+        // HACK: make a password that is compliant with potential password policies
+        $pw = '';
+        for ($i = 0; $i < 20; $i++) {
+            $pw .= 'aA1' . \OC::$server->getConfig()->getAppValue('password_policy', 'spv_def_special_chars_value', '');
+        }
 
 		$user = $this->userManager->createUser(
 			$username,
-			$this->secureRandom->generate(20)
+			$this->secureRandom->generate(20) . $pw
 		);
 
 		$user->setEMailAddress($email);
