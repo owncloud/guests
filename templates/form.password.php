@@ -20,7 +20,7 @@
  *
  */
 ?>
-<div id="body-login">
+<div>
 <form action="<?php p($_['postAction']); ?>" name="register" method="post">
 	<fieldset>
 		<?php foreach($_['messages'] as $message): ?>
