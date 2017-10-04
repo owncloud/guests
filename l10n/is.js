@@ -2,6 +2,7 @@ OC.L10N.register(
     "guests",
     {
     "Invalid mail address" : "Ógilt tölvupóstfang",
+    "Password cannot be empty" : "Lykilorð má ekki vera tómt",
     "Saved" : "Vistað",
     "User successfully created" : "Það tókst að búa til notandann",
     "Loading…" : "Hleð inn…",

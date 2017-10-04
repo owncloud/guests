@@ -2,7 +2,12 @@ OC.L10N.register(
     "guests",
     {
     "Invalid mail address" : "Neplatná emailová adresa",
+    "No such guest user" : "Žádný takový host",
+    "The token is invalid" : "Neplatný token",
+    "Password cannot be empty" : "Heslo nesmí být prázdné",
+    "Group name must not be empty." : "Název skupiny nesmí být prázdný",
     "Saved" : "Uloženo",
+    "A username with that email already exists." : "Uživatelské jméno s tímto emailem již existuje.",
     "User successfully created" : "Uživatel vytvořen",
     "Loading…" : "Načítání...",
     "Loaded" : "Načteno",
