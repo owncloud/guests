@@ -2,8 +2,10 @@ OC.L10N.register(
     "guests",
     {
     "Invalid mail address" : "Neveljaven elektronski naslov",
+    "No such guest user" : "Ni takega gostujočega uporabnika",
     "The token is invalid" : "Žeton ni veljaven",
     "Password cannot be empty" : "Polje gesla ne sme biti prazno",
+    "Group name must not be empty." : "Ime skupine ne sme biti prazna vrednost.",
     "Saved" : "Shranjeno",
     "A username with that email already exists." : "Uporabniško ime s tem elektronskim naslovom že obstaja.",
     "User successfully created" : "Uporabniški račun je uspešno ustvarjen.",
