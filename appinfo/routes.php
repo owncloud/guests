@@ -45,6 +45,11 @@ return [
 			'verb' => 'PUT',
 		],
 		[
+			'name' => 'settings#getWhitelist',
+			'url' => '/whitelist',
+			'verb' => 'GET',
+		],
+		[
 			'name' => 'settings#resetWhitelist',
 			'url' => '/whitelist/reset',
 			'verb' => 'POST',

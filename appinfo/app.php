@@ -34,7 +34,8 @@ $eventDispatcher->addListener(
 $config = \OC::$server->getConfig();
 $groupName = $config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME);
 
-\OC::$server->getGroupManager()->addBackend(new \OCA\Guests\GroupBackend($groupName));
+$groupBackend = new \OCA\Guests\GroupBackend($groupName);
+\OC::$server->getGroupManager()->addBackend($groupBackend);
 \OCP\Util::connectHook('OCP\Share', 'post_shared', '\OCA\Guests\Hooks', 'postShareHook');
 
 $user = \OC::$server->getUserSession()->getUser();
@@ -43,6 +44,10 @@ if ($user) {
     // if the whitelist is used
 	if ($config->getAppValue('guests', 'usewhitelist', 'true') === 'true') {
 		\OCP\Util::connectHook('OC_Filesystem', 'preSetup', '\OCA\Guests\AppWhitelist', 'preSetup');
+		// apply whitelist to navigation if guest user
+		if ($groupBackend->inGroup($user->getUID(), $groupName)) {
+			\OCP\Util::addScript('guests', 'navigation');
+		}
 	}
 
 	// hide email change field via css for learned guests

@@ -118,6 +118,20 @@ class SettingsController extends Controller {
 	}
 
 	/**
+	 * AJAX handler for getting whitelisted apps
+	 *
+	 * @NoAdminRequired
+	 * @return array whitelisted apps
+	 */
+	public function getWhitelist() {
+		return [
+			'isGuest' => false,
+			'enabled' => $this->config->getAppValue('guests', 'usewhitelist', 'true') === 'true',
+			'apps' => \OCA\Guests\AppWhitelist::getWhitelist()
+		];
+	}
+
+	/**
 	 * AJAX handler for resetting the whitelisted apps
 	 *
 	 * @NoAdminRequired

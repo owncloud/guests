@@ -103,7 +103,7 @@ class GroupBackend implements GroupInterface {
 	 * Checks whether the user is member of a group or not.
 	 */
 	public function inGroup($uid, $gid) {
-		return in_array($uid, $this->guestMembers) && $gid === $this->groupName;
+		return in_array($uid, $this->getMembers()) && $gid === $this->groupName;
 
 	}
 
