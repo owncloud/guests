@@ -32,7 +32,7 @@ use OCP\Template;
  */
 class AppWhitelist {
 
-	const CORE_WHITELIST = ',core,files';
+	const CORE_WHITELIST = ',core,files,guests';
 	const DEFAULT_WHITELIST = 'settings,avatar,files_external,files_trashbin,files_versions,files_sharing,files_texteditor,activity,firstrunwizard,gallery,notifications';
 
 	public static function preSetup($params) {
@@ -90,6 +90,8 @@ class AppWhitelist {
 			return 'avatar';
 		} else if (substr($url, 0, 10) === '/heartbeat') {
 			return 'heartbeat';
+		} else if (substr($url, 0, 13) === '/dav/comments') {
+			return 'comments';
 		}
 		return false;
 	}
