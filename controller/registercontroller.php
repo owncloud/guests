@@ -222,6 +222,9 @@ class RegisterController extends Controller {
 		} catch (\Exception $e){
 			$parameters['email'] = $email;
 			$parameters['messages']['password'] = $e->getMessage();
+			$parameters['token'] = $token;
+			$parameters['postAction'] =
+			    $this->urlGenerator->linkToRouteAbsolute('guests.register.register');
 			return new TemplateResponse(
 				$this->appName, 'form.password', $parameters, 'guest'
 			);
