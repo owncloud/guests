@@ -11,6 +11,7 @@ OC.L10N.register(
     "Error" : "Fout",
     "Error while sharing" : "Fout tijdens het delen",
     "Add {unknown} (guest)" : "Toevoegen {unknown} (guest)",
+    "Error loading activities" : "Fout bij laden activiteiten",
     "Access to this resource is forbidden for guests." : "Toegang tot dit object is verboden voor gasten.",
     "%s shared »%s« with you" : "%s deelde »%s« met u",
     "%s via %s" : "%s via %s",

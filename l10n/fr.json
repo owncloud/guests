@@ -8,6 +8,7 @@
     "Error" : "Erreur",
     "Error while sharing" : "Erreur lors du partage",
     "Add {unknown} (guest)" : "Ajouter {unknown} (invité)",
+    "Error loading activities" : "Erreur au chargement de l'activité",
     "Access to this resource is forbidden for guests." : "L'accès à cet élément n'est pas autorisé pour les invités.",
     "%s shared »%s« with you" : "%s a partagé «%s» avec vous",
     "%s via %s" : "%s via %s",

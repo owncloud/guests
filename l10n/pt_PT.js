@@ -10,6 +10,7 @@ OC.L10N.register(
     "Error" : "Erro",
     "Error while sharing" : "Erro ao partilhar",
     "Add {unknown} (guest)" : "Adicionar {unknown} (convidado)",
+    "Error loading activities" : "Erro ao carregar as atividades",
     "Access to this resource is forbidden for guests." : "Acesso a este recurso é proibido para convidados.",
     "%s shared »%s« with you" : "%s partilhou »%s« consigo",
     "%s via %s" : "%s via %s",

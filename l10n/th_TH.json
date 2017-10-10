@@ -13,6 +13,7 @@
     "Error" : "ข้อผิดพลาด",
     "Error while sharing" : "เกิดข้อผิดพลาดขณะกำลังแชร์ข้อมูล",
     "Add {unknown} (guest)" : "เพิ่ม {unknown} (บุคคลทั่วไป)",
+    "Error loading activities" : "เกิดข้อผิดพลาดขณะโหลดกิจกรรม",
     "Access to this resource is forbidden for guests." : "บุคคลทั่วไปไม่สามารถเข้าถึงทรัพยากรนี้ได้",
     "%s shared »%s« with you" : "%s ถูกแชร์ »%s« กับคุณ",
     "%s via %s" : "%s ผ่านทาง %s",

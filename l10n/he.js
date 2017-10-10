@@ -15,6 +15,7 @@ OC.L10N.register(
     "Error" : "שגיאה",
     "Error while sharing" : "שגיאה במהלך השיתוף",
     "Add {unknown} (guest)" : "הוספת {unknown} (אורח)",
+    "Error loading activities" : "שגיאה בטעינת פעילויות",
     "Access to this resource is forbidden for guests." : "גישה למשאב זה אסור למשתמשים ברמת אורח.",
     "%s shared »%s« with you" : "%s שיתף/שיתפה איתך את »%s«",
     "%s via %s" : "%s על בסיס %s",

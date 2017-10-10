@@ -8,6 +8,7 @@
     "Error" : "Fejl",
     "Error while sharing" : "Fejl under deling",
     "Add {unknown} (guest)" : "Tilføj {ukendt} (gæst)",
+    "Error loading activities" : "Fejl ved indlæsning af aktiviteter",
     "Access to this resource is forbidden for guests." : "Adgang til denne resource er forbudt for gæster.",
     "%s shared »%s« with you" : "%s delte »%s« med sig",
     "%s via %s" : "%s via %s",

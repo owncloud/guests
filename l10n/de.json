@@ -13,6 +13,7 @@
     "Error" : "Fehler",
     "Error while sharing" : "Fehler beim Teilen",
     "Add {unknown} (guest)" : "{unknown} hinzufügen (Gast)",
+    "Error loading activities" : "Fehler beim Laden der Aktivitäten",
     "Access to this resource is forbidden for guests." : "Der Zugriff auf diese Ressource ist für Gastnutzer untersagt. ",
     "%s shared »%s« with you" : "%s hat „%s“ mit Dir geteilt",
     "%s via %s" : "%s via %s",

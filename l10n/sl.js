@@ -15,6 +15,7 @@ OC.L10N.register(
     "Error" : "Napaka",
     "Error while sharing" : "Napaka med omogočanjem souporabe",
     "Add {unknown} (guest)" : "Dodaj {unknown} (gostujoči uporabnik)",
+    "Error loading activities" : "Napaka nalaganja dejavnosti",
     "Access to this resource is forbidden for guests." : "Dostop do tega vira je gostom prepovedan.",
     "%s shared »%s« with you" : "%s je omogočil souporabo »%s«",
     "%s via %s" : "%s prek %s",

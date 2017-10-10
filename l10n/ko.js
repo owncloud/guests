@@ -11,6 +11,7 @@ OC.L10N.register(
     "Error" : "오류",
     "Error while sharing" : "공유하는 중 오류 발생",
     "Add {unknown} (guest)" : "{unknown}(손님) 추가",
+    "Error loading activities" : "활동 불러오기 오류",
     "Access to this resource is forbidden for guests." : "손님은 이 자원에 접근할 수 없습니다.",
     "%s shared »%s« with you" : "%s 님이 %s을(를) 공유했습니다",
     "%s via %s" : "%s(%s 경유)",

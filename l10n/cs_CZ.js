@@ -15,6 +15,7 @@ OC.L10N.register(
     "Error" : "Chyba",
     "Error while sharing" : "Chyba při sdílení",
     "Add {unknown} (guest)" : "Přidat {unknown} (host)",
+    "Error loading activities" : "Chyba načtení aktivit",
     "Access to this resource is forbidden for guests." : "Přístup k tomuto zdroji je pro hosty zamítnut.",
     "%s shared »%s« with you" : "%s s vámi sdílí »%s«",
     "%s via %s" : "%s pomocí %s",

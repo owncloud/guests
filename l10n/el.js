@@ -10,6 +10,7 @@ OC.L10N.register(
     "Error" : "Σφάλμα",
     "Error while sharing" : "Σφάλμα κατά τον διαμοιρασμό",
     "Add {unknown} (guest)" : "Προσθήκη {unknown} (guest)",
+    "Error loading activities" : "Σφάλμα φόρτωσης δραστηριοτήτων",
     "Access to this resource is forbidden for guests." : "Δεν επιτρέπεται η πρόσβαση επιςκεπτών σε αυτόν τον πόρο.",
     "%s shared »%s« with you" : "Ο %s διαμοιράστηκε μαζί σας το »%s«",
     "%s via %s" : "%s μέσω %s",
