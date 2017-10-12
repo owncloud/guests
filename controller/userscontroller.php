@@ -117,6 +117,13 @@ class UsersController extends Controller {
 			);
 		}
 
+		$users = $this->userManager->getByEmail($email);
+		if (!empty($users)) {
+			$errorMessages['email'] = (string)$this->l10n->t(
+				'A username with that email already exists.'
+			);
+		}
+
 		if (!empty($errorMessages)) {
 			return new DataResponse(
 				[

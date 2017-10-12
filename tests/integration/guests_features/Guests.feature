@@ -10,6 +10,17 @@ Scenario: Creating a guest user works fine
 	Then the HTTP status code should be "201"
 	And check that user "guest" is a guest
 
+Scenario: Cannot create a guest if a user with the same email address exists
+	Given as an "admin"
+	And user "existing-user" exists
+	When sending "PUT" to "/cloud/users/existing-user" with
+		| key | email |
+		| value | guest@example.com |
+	When user "admin" creates guest user "guest" with email "guest@example.com"
+	Then the HTTP status code should be "422"
+	# TODO: missing appropriate step in core / Provisioning
+	#And check that user "guest" does not exist
+
 Scenario: A guest user cannot upload files
 	Given as an "admin"
 	And user "admin" creates guest user "guest" with email "guest@example.com"
