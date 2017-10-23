@@ -102,10 +102,34 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 					}
 
 					// only allow guest creation entry if there is no exact match (by user id or email, decided by the server)
+					var provideGuestEntry = false;
+
 					if (xhrResult
 						&& xhrResult.ocs.meta.statuscode === 100
 						&& xhrResult.ocs.data.exact.users.length === 0
 					) {
+						provideGuestEntry = true;
+					}
+
+					// compatibility with OC <= 10.0.3 where xhrResult is not available
+					// here we always show the entry as we don't know about exact matches,
+					// and the backend might block the request if the guest is referring
+					// to an existing email address
+					if (!xhrResult) {
+						var lowerSearchTerm = searchTerm.toLowerCase();
+						if (!_.find(result, function(entry) {
+							if (entry && entry.value
+								&& entry.value.shareType === OC.Share.SHARE_TYPE_USER
+								&& entry.value.shareWith.toLowerCase() === lowerSearchTerm) {
+								return true;
+							}
+							return false;
+						})) {
+							provideGuestEntry = true;
+						}
+					}
+
+					if (provideGuestEntry) {
 						result.push({
 							label: t('core', 'Add {unknown} (guest)', {unknown: searchTerm}),
 							value: {
