@@ -88,9 +88,13 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 
 		    return oldHandler.call(obj, search, function(result) {
 				var searchTerm = search.term.trim();
+				// before and after the @ sign we match at least one unicode char
+				// which is not in the range below or a word character
+				// (which is exempt in the unicode range)
+				var emailRegex = /^.*([^\u0000-\u007F]|\w).*@([^\u0000-\u007F]|\w)+.*$/;
 
 				// Add potential guests to the suggestions
-				if (searchTerm.search("@") !== -1) {
+				if (emailRegex.exec(searchTerm) !== null) {
 					// FIXME: will need some new hooks in core to be able to do this in a clean way
 					if (!result || !result.length) {
 						// no results, need to hack the message and still display something
@@ -124,7 +128,7 @@ OC.Plugins.register('OC.Share.ShareDialogView', {
 				response(result);
 		    });
 		};
-		
+
 		obj._onSelectRecipient = function (e, s) {
 			e.preventDefault();
 
