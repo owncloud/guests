@@ -4,6 +4,7 @@ OC.L10N.register(
     "Invalid mail address" : "Μη έγκυρη διεύθυνση ταχυδρομείου.",
     "No such guest user" : "Δεν υπάρχει τέτοιος επισκέπτης χρήστης",
     "The token is invalid" : "Το διακριτικό δεν είναι έγκυρο",
+    "Password cannot be empty" : "Το συνθηματικό δεν πρέπει να είναι κενό",
     "Saved" : "Αποθηκεύτηκαν",
     "User successfully created" : "Επιτυχής δημιουργία χρήστη",
     "Loading…" : "Φόρτωση...",
