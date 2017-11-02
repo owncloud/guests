@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [0.5.0]
+### Changed
+- Fix guest autocomplete addition - [#151](https://github.com/owncloud/guests/issues/151)
+- Remove modal, guests now only created by email in the share panel - [#149](https://github.com/owncloud/guests/issues/149)
+- Update LICENSE to GPL-2.0 - [#155](https://github.com/owncloud/guests/issues/155)
+
+### Fixed
+- Detect existing email/user on frontend and backend - [#168](https://github.com/owncloud/guests/issues/168)
+- Improve detection of email addresses when typed into share field - [#170](https://github.com/owncloud/guests/issues/170)
+- Preserve token when reshowing form after error - [#158](https://github.com/owncloud/guests/issues/158)
+- Add event driven password generation - [#160](https://github.com/owncloud/guests/issues/160)
+- Apply whitelist to frontend and comments URLs - [#165](https://github.com/owncloud/guests/issues/165)
+- Fix style issue on set password page - [#161](https://github.com/owncloud/guests/issues/161)
+
 ## [0.4.2] - 2017-09-11
 ### Added
 - Use new registration controller instead of lostpassword functionality [\#64](https://github.com/owncloud/guests/issues/64)
@@ -60,7 +74,7 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 ### Added
 - Core functionality
 
-[Unreleased]: https://github.com/owncloud/guests/compare/v0.4.1...HEAD
+[0.5.0]: https://github.com/owncloud/guests/compare/v0.4.1...HEAD
 [0.4.1]: https://github.com/owncloud/guests/compare/v.0.4...v0.4.1
 [0.4]: https://github.com/owncloud/guests/compare/v0.3...v.0.4
 [0.3]: https://github.com/owncloud/guests/compare/v0.2...v0.3
