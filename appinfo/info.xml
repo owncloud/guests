@@ -20,7 +20,7 @@ Furthermore guests are fully auditable with the [ownCloud Auditing application](
 	</description>
 	<version>0.5.0</version>
 	<documentation>
-    		<user>https://doc.owncloud.com/server/10.0/user_manual/files/webgui/sharing.html?highlight=guest#sharing-files-with-guest-users</user>
+    		<user>https://doc.owncloud.com/server/latest/user_manual/files/webgui/sharing.html?highlight=guest#sharing-files-with-guest-users</user>
     	</documentation>
 	<licence>GPLv2</licence>
 	<author>ownCloud GmbH</author>
@@ -35,5 +35,6 @@ Furthermore guests are fully auditable with the [ownCloud Auditing application](
 	<settings>
 		<admin>OCA\Guests\Settings\Admin</admin>
 	</settings>
-	<screenshot>https://raw.githubusercontent.com/owncloud/screenshots/ea949ddd1d35ea22aceb68609587c5536aeda5f6/guests/new_guest.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/owncloud/screenshots/master/guests/owncloud-app-guests.jpg</screenshot>
+	<screenshot>https://raw.githubusercontent.com/owncloud/screenshots/master/guests/owncloud-app-guests-2.jpg</screenshot>
 </info>
