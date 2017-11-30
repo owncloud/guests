@@ -1,6 +1,11 @@
 { "translations": {
     "Invalid mail address" : "Adresë email e pavlefshme",
+    "No such guest user" : "S’ka përdorues mysafir të tillë",
+    "The token is invalid" : "Token-i është i pavlefshëm",
+    "Password cannot be empty" : "Fjalëkalimi s’mund të jetë i zbrazët",
+    "Group name must not be empty." : "Emri i grupit s’mund të jetë i zbrazët.",
     "Saved" : "U ruajt",
+    "A username with that email already exists." : "Ka tashmë një emër përdoruesi me atë email.",
     "User successfully created" : "Përdoruesi u krijua me sukses",
     "Loading…" : "Po ngarkohet…",
     "Loaded" : "U ngarkua",
