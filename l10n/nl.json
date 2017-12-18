@@ -1,7 +1,11 @@
 { "translations": {
     "Invalid mail address" : "Ongeldig e-mailadres",
     "No such guest user" : "Niet zo'n gastgebruiker",
+    "The token is invalid" : "Het token is ongeldig",
+    "Password cannot be empty" : "Wachtwoord mag niet leeg zijn",
+    "Group name must not be empty." : "Groepsnaam mag niet leeg zijn.",
     "Saved" : "Bewaard",
+    "A username with that email already exists." : "Er bestaat al een gebruikersnaam met dat e-mailadres.",
     "User successfully created" : "Gebruiker succesvol aangemaakt",
     "Loading…" : "Laden...",
     "Loaded" : "Geladen",
