@@ -2,6 +2,8 @@ OC.L10N.register(
     "guests",
     {
     "Invalid mail address" : "Indirizzo email non valido",
+    "The token is invalid" : "Il token non è valido",
+    "Password cannot be empty" : "La password non può essere vuota",
     "Saved" : "Salvato",
     "User successfully created" : "Utente creato correttamente",
     "Loading…" : "Caricamento in corso...",
