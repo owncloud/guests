@@ -27,6 +27,9 @@ OC.L10N.register(
     "The share will expire on %s." : "Bendrinimo laikas baigsis %s.",
     "Cheers!" : "Sveikinimai!",
     "Hey there,<br><br>\n         \n         just letting you know that %s shared <strong>%s</strong> with you.<br><br>\n         Activate your guest account at %s by <a href=\"%s\">setting a password</a>.<br><br>\n         Then <a href=\"%s\">view it!</a><br><br>You can login using the email address <strong>\"%s\"</strong> .<br><br>" : "Labas,<br><br>\n         \n         Pranešu kad %s pasidalinta<strong>%s</strong> su jumis.<br><br>\n         Aktyvuokite svečio prieigą %s  <a href=\"%s\">nustatydami slaptažodį </a>.<br><br>\n         Tada <a href=\"%s\">peržiūrėkite!</a><br><br>Galite prisijungti su jūsų el. pašto adresu <strong>\"%s\"</strong> .<br><br>",
-    "Group name" : "Grupės pavadinimas"
+    "Guest users are grouped under a virtual group in the user manager" : "Svečių vartotojai yra sugrupuoti virtualioje grupėje vartotojų konsolėje",
+    "Group name" : "Grupės pavadinimas",
+    "Limit guest access to an app whitelist" : "Riboti svečio priėjimą applikacijos sarašuose",
+    "Reset whitelist" : "Nustatytį iš naujo baltą sąrašą"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);");
