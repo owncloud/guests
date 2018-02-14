@@ -77,7 +77,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	public function checkGuestUser($guestDisplayName) {
 		$userName = $this->prepareUserNameAsFrontend($guestDisplayName, $this->createdGuests[$guestDisplayName]);
-		$this->checkThatUserBelongsToGroup($userName, 'guest_app');
+		$this->userShouldBelongToGroup($userName, 'guest_app');
 	}
 
 	/**
@@ -124,7 +124,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$options['body'] = [
 							'email' => $email,
 							'token' => $token,
-							'password' => $this->regularUser
+							'password' => $this->getPasswordForUser($userName)
 							];
 		try {
 			$this->response = $client->send($client->createRequest('POST', $registerUrl, $options));
