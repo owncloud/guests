@@ -21,7 +21,7 @@ cache:
 
 env:
   global:
-    - CORE_BRANCH=master
+    - CORE_BRANCH=remove-deprecated-integration-test-methods-03
     - APP_NAME=guests
   matrix:
     - DB=sqlite
