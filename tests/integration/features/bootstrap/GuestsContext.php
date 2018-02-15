@@ -42,12 +42,13 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Given user :user creates guest user :guestDisplayName with email :guestEmail
+	 * @When user :user creates guest user :guestDisplayName with email :guestEmail using the API
+	 * @Given user :user has created guest user :guestDisplayName with email :guestEmail
 	 * @param string $user
 	 * @param string $guestDisplayName
 	 * @param string $guestEmail
 	 */
-	public function userCreatedAGuestUser($user, $guestDisplayName, $guestEmail) {
+	public function userCreatesAGuestUser($user, $guestDisplayName, $guestEmail) {
 		$fullUrl = substr($this->baseUrl, 0, -4) . '/index.php/apps/guests/users';
 		//Replicating frontend behaviour
 		$userName = $this->prepareUserNameAsFrontend($guestDisplayName, $guestEmail);
@@ -72,16 +73,16 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then check that user :user is a guest
+	 * @Then user :user should be a guest user
 	 * @param string $guestDisplayName
 	 */
 	public function checkGuestUser($guestDisplayName) {
 		$userName = $this->prepareUserNameAsFrontend($guestDisplayName, $this->createdGuests[$guestDisplayName]);
-		$this->checkThatUserBelongsToGroup($userName, 'guest_app');
+		$this->userShouldBelongToGroup($userName, 'guest_app');
 	}
 
 	/**
-	 * @Then guest user :user is deleted
+	 * @Given guest user :user has been deleted
 	 * @param string $guestDisplayName
 	 */
 	public function deleteGuestUser($guestDisplayName) {
@@ -106,7 +107,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Given guest user :user registers
+	 * @When guest user :user registers
+	 * @Given guest user :user has registered
 	 * @param string $guestDisplayName
 	 */
 	public function guestUserRegisters($guestDisplayName) {
@@ -124,7 +126,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$options['body'] = [
 							'email' => $email,
 							'token' => $token,
-							'password' => $this->regularUser
+							'password' => $this->getPasswordForUser($userName)
 							];
 		try {
 			$this->response = $client->send($client->createRequest('POST', $registerUrl, $options));
