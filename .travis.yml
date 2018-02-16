@@ -43,7 +43,7 @@ before_install:
   - ./occ app:list
 
 script:
-  - cd apps/$APP_NAME/tests/integration
+  - cd apps/$APP_NAME/tests/acceptance
   - ./run.sh
 
 matrix:
