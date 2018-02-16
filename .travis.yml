@@ -21,7 +21,7 @@ cache:
 
 env:
   global:
-    - CORE_BRANCH=stable10
+    - CORE_BRANCH=stable10-rename-integration-to-acceptance
     - APP_NAME=guests
   matrix:
     - DB=sqlite
@@ -49,7 +49,7 @@ script:
 matrix:
   include:
     - php: 7.1
-      env: DB=sqlite CORE_BRANCH=master
+      env: DB=sqlite CORE_BRANCH=rename-integration-to-acceptance
     - php: 7.2
-      env: DB=sqlite CORE_BRANCH=master
+      env: DB=sqlite CORE_BRANCH=rename-integration-to-acceptance
   fast_finish: true
