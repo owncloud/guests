@@ -21,7 +21,7 @@ cache:
 
 env:
   global:
-    - CORE_BRANCH=master
+    - CORE_BRANCH=stable10
     - APP_NAME=guests
   matrix:
     - DB=sqlite
@@ -46,3 +46,10 @@ script:
   - cd apps/$APP_NAME/tests/integration
   - ./run.sh
 
+matrix:
+  include:
+    - php: 7.1
+      env: DB=sqlite CORE_BRANCH=master
+    - php: 7.2
+      env: DB=sqlite CORE_BRANCH=master
+  fast_finish: true
