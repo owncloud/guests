@@ -20,7 +20,7 @@ src_dirs=appinfo controller js l10n lib settings templates
 all_src=$(src_dirs) $(doc_files)
 build_dir=$(CURDIR)/build
 dist_dir=$(build_dir)/dist
-tests_integration_directory=$(CURDIR)/tests/integration
+tests_acceptance_directory=$(CURDIR)/tests/acceptance
 
 
 occ=$(CURDIR)/../../occ
@@ -65,7 +65,7 @@ endif
 	tar -czf $(dist_dir)/$(app_name).tar.gz -C $(dist_dir) $(app_name)
 	tar -cjf $(dist_dir)/$(app_name).tar.bz2 -C $(dist_dir) $(app_name)
 
-# Command for running Integration tests.
+# Command for running acceptance tests.
 .PHONY: test
 test:
-	cd $(tests_integration_directory) && pwd && ./run.sh
+	cd $(tests_acceptance_directory) && pwd && ./run.sh
