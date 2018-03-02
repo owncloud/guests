@@ -3,8 +3,11 @@ OC.L10N.register(
     {
     "Invalid mail address" : "Ógilt tölvupóstfang",
     "No such guest user" : "Enginn slíkur gestanotandi",
+    "The token is invalid" : "Teiknið er ógilt",
     "Password cannot be empty" : "Lykilorð má ekki vera tómt",
+    "Group name must not be empty." : "Nafn hóps getur ekki verið tómt.",
     "Saved" : "Vistað",
+    "A username with that email already exists." : "Notandi með þetta netfang er þegar til staðar.",
     "User successfully created" : "Það tókst að búa til notandann",
     "Loading…" : "Hleð inn…",
     "Loaded" : "Hlaðið",
