@@ -55,11 +55,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$fullUrl = $fullUrl . '?displayName=' . $guestDisplayName . '&email=' . $guestEmail . '&username=' . $userName;
 		$client = new Client();
 		$options = [];
-		if ($user === 'admin') {
-			$options['auth'] = $this->adminUser;
-		} else {
-			$options['auth'] = [$user, $this->regularUser];
-		}
+		$options['auth'] = $this->getAuthOptionForUser($user);
 		$request = $client->createRequest("PUT", $fullUrl, $options);
 		$request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
 
