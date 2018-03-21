@@ -17,7 +17,7 @@ Feature: Guests
     And user "admin" sends HTTP method "PUT" to API endpoint "/cloud/users/existing-user" with body
       | key   | email             |
       | value | guest@example.com |
-    When user "admin" creates guest user "guest" with email "guest@example.com" using the API
+    When user "admin" attempts to create guest user "guest" with email "guest@example.com" using the API
     Then the HTTP status code should be "422"
     And user "guest" should not exist
 
