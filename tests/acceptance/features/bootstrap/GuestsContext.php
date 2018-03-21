@@ -34,24 +34,30 @@ require __DIR__ . '/../../vendor/autoload.php';
 class GuestsContext implements Context, SnippetAcceptingContext {
 	use BasicStructure;
 
-	/** @var array */
+	/**
+	 * Stores the email of each created guest, keyed by guest display name.
+	 *
+	 * @var array
+	 */
 	private $createdGuests = [];
 
-	public function prepareUserNameAsFrontend($guestDisplayName, $guestEmail) {
+	public function prepareUserNameAsFrontend($guestEmail) {
 		return strtolower(trim(urldecode($guestEmail)));
 	}
 
 	/**
-	 * @When user :user creates guest user :guestDisplayName with email :guestEmail using the API
-	 * @Given user :user has created guest user :guestDisplayName with email :guestEmail
+	 * @When /^user "([^"]*)" (attempts to create|creates) guest user "([^"]*)" with email "([^"]*)" using the API$/
+	 * @Given /^user "([^"]*)" has (attempted to create|created) guest user "([^"]*)" with email "([^"]*)"$/
 	 * @param string $user
+	 * @param string $attemptTo
 	 * @param string $guestDisplayName
 	 * @param string $guestEmail
 	 */
-	public function userCreatesAGuestUser($user, $guestDisplayName, $guestEmail) {
+	public function userCreatesAGuestUser($user, $attemptTo, $guestDisplayName, $guestEmail) {
+		$shouldHaveBeenCreated = (($attemptTo == "creates") || ($attemptTo === "created"));
 		$fullUrl = substr($this->baseUrl, 0, -4) . '/index.php/apps/guests/users';
 		//Replicating frontend behaviour
-		$userName = $this->prepareUserNameAsFrontend($guestDisplayName, $guestEmail);
+		$userName = $this->prepareUserNameAsFrontend($guestEmail);
 		$fullUrl = $fullUrl . '?displayName=' . $guestDisplayName . '&email=' . $guestEmail . '&username=' . $userName;
 		$client = new Client();
 		$options = [];
@@ -66,6 +72,15 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->response = $e->getResponse();
 		}
 		$this->createdGuests[$guestDisplayName] = $guestEmail;
+
+		// Let core acceptance test functionality know the user that has been created.
+		// Core acceptance test AfterScenario will cleanup created users.
+		$this->addUserToCreatedUsersList(
+			$userName,
+			$this->getPasswordForUser($userName),
+			$guestDisplayName,
+			$guestEmail,
+			$shouldHaveBeenCreated);
 	}
 
 	/**
@@ -73,7 +88,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @param string $guestDisplayName
 	 */
 	public function checkGuestUser($guestDisplayName) {
-		$userName = $this->prepareUserNameAsFrontend($guestDisplayName, $this->createdGuests[$guestDisplayName]);
+		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
 		$this->userShouldBelongToGroup($userName, 'guest_app');
 	}
 
@@ -82,7 +97,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @param string $guestDisplayName
 	 */
 	public function deleteGuestUser($guestDisplayName) {
-		$userName = $this->prepareUserNameAsFrontend($guestDisplayName, $this->createdGuests[$guestDisplayName]);
+		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
 		$this->deleteUser($userName);
 	}
 
@@ -108,7 +123,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @param string $guestDisplayName
 	 */
 	public function guestUserRegisters($guestDisplayName) {
-		$userName = $this->prepareUserNameAsFrontend($guestDisplayName, $this->createdGuests[$guestDisplayName]);
+		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
 		$emails = $this->getEmails();
 		$lastEmailBody = $emails->items[0]->Content->Body;
 		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
@@ -135,18 +150,6 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * Abstract method implemented from Core's FeatureContext
 	 */
 	protected function resetAppConfigs() {}
-
-	/**
-	 * @BeforeScenario
-	 * @AfterScenario
-	 */
-	public function cleanupGuests()
-	{
-		foreach($this->createdGuests as $displayName => $email) {
-			$this->deleteGuestUser($displayName);
-		}
-	}
-
 }
 
 
