@@ -55,7 +55,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userCreatesAGuestUser($user, $attemptTo, $guestDisplayName, $guestEmail) {
 		$shouldHaveBeenCreated = (($attemptTo == "creates") || ($attemptTo === "created"));
-		$fullUrl = substr($this->baseUrl, 0, -4) . '/index.php/apps/guests/users';
+		$fullUrl = $this->getBaseUrl() . '/index.php/apps/guests/users';
 		//Replicating frontend behaviour
 		$userName = $this->prepareUserNameAsFrontend($guestEmail);
 		$fullUrl = $fullUrl . '?displayName=' . $guestDisplayName . '&email=' . $guestEmail . '&username=' . $userName;
