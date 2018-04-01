@@ -4,8 +4,9 @@
  * @author Felix Heidecke <felix@heidecke.me>
  * @author Ilja Neumann <ineumann@owncloud.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
+ * @author Piotr Mrowczynski <piotr@owncloud.com>
  *
- * @copyright Copyright (c) 2017, ownCloud GmbH
+ * @copyright Copyright (c) 2018, ownCloud GmbH
  * @license GPL-2.0
  *
  * This program is free software; you can redistribute it and/or
@@ -31,10 +32,19 @@ $eventDispatcher->addListener(
 	}
 );
 
-$config = \OC::$server->getConfig();
-$groupName = $config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME);
-
-$groupBackend = new \OCA\Guests\GroupBackend($groupName);
+$appWhiteList = new \OCA\Guests\AppWhitelist(
+	\OC::$server->getConfig()
+);
+$handler = new \OCA\Guests\GuestsHandler(
+	\OC::$server->getConfig(),
+	\OC::$server->getUserManager(),
+	\OC::$server->getMailer(),
+	\OC::$server->getSecureRandom(),
+	\OC::$server->getEventDispatcher()
+);
+$groupBackend = new \OCA\Guests\GroupBackend(
+	$handler
+);
 \OC::$server->getGroupManager()->addBackend($groupBackend);
 \OCP\Util::connectHook('OCP\Share', 'post_shared', '\OCA\Guests\Hooks', 'postShareHook');
 
@@ -42,9 +52,10 @@ $user = \OC::$server->getUserSession()->getUser();
 
 if ($user) {
     // if the whitelist is used
-	if ($config->getAppValue('guests', 'usewhitelist', 'true') === 'true') {
-		\OCP\Util::connectHook('OC_Filesystem', 'preSetup', '\OCA\Guests\AppWhitelist', 'preSetup');
+	if ($appWhiteList->isWhitelistEnabled()) {
+		\OCP\Util::connectHook('OC_Filesystem', 'preSetup', '\OCA\Guests\Hooks', 'preSetup');
 		// apply whitelist to navigation if guest user
+		$groupName = $handler->getGuestsGID();
 		if ($groupBackend->inGroup($user->getUID(), $groupName)) {
 			\OCP\Util::addScript('guests', 'navigation');
 		}

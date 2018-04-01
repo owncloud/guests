@@ -1,8 +1,9 @@
 <?php
 /**
  * @author Thomas Heinisch <t.heinisch@bw-tech.de>
+ * @author Piotr Mrowczynski <piotr@owncloud.com>
  *
- * @copyright Copyright (c) 2017, ownCloud GmbH
+ * @copyright Copyright (c) 2018, ownCloud GmbH
  * @license GPL-2.0
  *
  * This program is free software; you can redistribute it and/or
@@ -22,88 +23,57 @@
 
 namespace OCA\Guests\Controller;
 
+use OCA\Guests\GuestsHandler;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IConfig;
-use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
-use OCP\IUserManager;
-use OCP\Mail\IMailer;
-use OCP\Security\ISecureRandom;
-use OCP\Util;
 
 class RegisterController extends Controller {
+
 	/**
 	 * @var IRequest
 	 */
 	protected $request;
-	/**
-	 * @var IUserManager
-	 */
-	private $userManager;
+
 	/**
 	 * @var IL10N
 	 */
 	private $l10n;
-	/**
-	 * @var IConfig
-	 */
-	private $config;
-	/**
-	 * @var IGroupManager
-	 */
-	private $groupManager;
-	/**
-	 * @var ISecureRandom
-	 */
-	private $secureRandom;
-	/**
-	 * @var IMailer
-	 */
-	private $mailer;
+
 	/**
 	 *  @var IURLGenerator
 	 */
 	private $urlGenerator;
 
 	/**
+	 * @var GuestsHandler
+	 */
+	private $handler;
+
+	/**
 	 * RegisterController constructor.
 	 *
 	 * @param string $appName
 	 * @param IRequest $request
-	 * @param IUserManager $userManager
-	 * @param IGroupManager $groupManager
 	 * @param IL10N $l10n
-	 * @param IConfig $config
-	 * @param ISecureRandom $secureRandom
-	 * @param IMailer $mailer
 	 * @param IUrlGenerator $urlGenerator
+	 * @param GuestsHandler $handler
 	 */
 	public function __construct(
 		$appName,
 		IRequest $request,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
 		IL10N $l10n,
-		IConfig $config,
-		ISecureRandom $secureRandom,
-		IMailer $mailer,
-		IUrlGenerator $urlGenerator
+		IUrlGenerator $urlGenerator,
+	    GuestsHandler $handler
 	) {
 		parent::__construct($appName, $request);
 
-		$this->request = $request;
-		$this->userManager = $userManager;
 		$this->l10n = $l10n;
-		$this->config = $config;
-		$this->groupManager = $groupManager;
-		$this->secureRandom = $secureRandom;
-		$this->mailer = $mailer;
 		$this->urlGenerator = $urlGenerator;
+		$this->handler = $handler;
 	}
 
 	/**
@@ -120,35 +90,10 @@ class RegisterController extends Controller {
 	 */
 	public function showPasswordForm($email, $token) {
 		$errorMessages = [];
-		$userId = strtolower($email);
-
-		if (empty($email) || !$this->mailer->validateMailAddress($email)) {
-			$errorMessages['email'] = (string)$this->l10n->t(
-				'Invalid mail address'
-			);
-		}
-
-		$isGuest = (bool)$this->config->getUserValue(
-			$userId,
-			'owncloud',
-			'isGuest'
-		);
-
-		if (!$isGuest) {
-			$errorMessages['username'] = (string)$this->l10n->t(
-				'No such guest user'
-			);
-		}
-
-		$checkToken = $this->config->getUserValue(
-			$userId,
-			'guests',
-			'registerToken'
-		);
-
-		if (empty($checkToken)) {
+		$result = $this->handler->validateGuest($email, $token);
+		if (!$result) {
 			$errorMessages['token'] = (string)$this->l10n->t(
-				'The token is invalid'
+				'The token is invalid for given email address'
 			);
 		}
 
@@ -177,60 +122,39 @@ class RegisterController extends Controller {
 		$email = trim($_POST['email']);
 		$token = trim($_POST['token']);
 		$password = trim($_POST['password']);
-		$userId = strtolower($email);
 		$parameters = [];
-
-		if (empty($email) || !$this->mailer->validateMailAddress($email)) {
-			$parameters['messages']['email'] = (string)$this->l10n->t(
-				'Invalid mail address'
-			);
-		}
 
 		if (empty($password)) {
 			$parameters['messages']['password'] = (string)$this->l10n->t(
 				'Password cannot be empty'
 			);
-		}
-
-		$registerToken = $this->config->getUserValue(
-			$userId,
-			'guests',
-			'registerToken',
-			false
-		);
-		// only show token error when there are no others
-		if (
-			empty($parameters['messages']) &&
-			(empty($token) || empty($registerToken) || $registerToken !== $token)
-		) {
-			$parameters['token'] = $token;
-			$parameters['email'] = $email;
-			$parameters['messages']['token'] = (string)$this->l10n->t(
-				'The token is invalid'
-			);
-		}
-
-		if (!empty($parameters['messages'])) {
 			return new TemplateResponse(
 				$this->appName, 'form.password', $parameters, 'guest'
 			);
 		}
 
 		try {
-			$user = $this->userManager->get($userId);
-			$user->setPassword($password);
+			$result = $this->handler->updateGuest($email, $password, $token);
 		} catch (\Exception $e){
 			$parameters['email'] = $email;
 			$parameters['messages']['password'] = $e->getMessage();
 			$parameters['token'] = $token;
-			$parameters['postAction'] =
-			    $this->urlGenerator->linkToRouteAbsolute('guests.register.register');
+			$parameters['postAction'] = $this->urlGenerator->linkToRouteAbsolute(
+				'guests.register.register'
+			);
 			return new TemplateResponse(
 				$this->appName, 'form.password', $parameters, 'guest'
 			);
 		}
 
-		$this->config->deleteUserValue($userId, 'guests', 'registerToken');
+		if (!$result) {
+			$parameters['messages']['token'] = (string)$this->l10n->t(
+				'The token is invalid for given email address'
+			);
+			return new TemplateResponse(
+				$this->appName, 'form.password', $parameters, 'guest'
+			);
+		}
 
 		// redirect to login
 		return new RedirectResponse($this->urlGenerator->linkToRouteAbsolute('core.login.showLoginForm'));

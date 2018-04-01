@@ -39,9 +39,6 @@ use OCP\Util;
 
 class Mail {
 
-	/** @var IConfig */
-	private $config;
-
 	/** @var ILogger */
 	private $logger;
 
@@ -61,7 +58,6 @@ class Mail {
 	private $urlGenerator;
 
 	public function __construct(
-		IConfig $config,
 		ILogger $logger,
 		IUserSession $userSession,
 		IMailer $mailer,
@@ -70,7 +66,6 @@ class Mail {
 		IUserManager $userManager,
 		IURLGenerator $urlGenerator
 	) {
-		$this->config = $config;
 		$this->logger = $logger;
 		$this->userSession = $userSession;
 		$this->mailer = $mailer;
@@ -92,7 +87,6 @@ class Mail {
 	public static function createForStaticLegacyCode() {
 		if (!self::$instance) {
 			self::$instance = new Mail (
-				\OC::$server->getConfig(),
 				\OC::$server->getLogger(),
 				\OC::$server->getUserSession(),
 				\OC::$server->getMailer(),

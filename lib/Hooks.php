@@ -3,8 +3,9 @@
  * @author Ilja Neumann <ineumann@owncloud.com>
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Thomas Heinisch <t.heinisch@bw-tech.de>
+ * @author Piotr Mrowczynski <piotr@owncloud.com>
  *
- * @copyright Copyright (c) 2017, ownCloud GmbH
+ * @copyright Copyright (c) 2018, ownCloud GmbH
  * @license GPL-2.0
  *
  * This program is free software; you can redistribute it and/or
@@ -30,7 +31,7 @@ use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\IUserSession;
-
+use OCP\Template;
 
 
 class Hooks {
@@ -59,6 +60,15 @@ class Hooks {
 	 */
 	private $userManager;
 
+	/**
+	 * @var GuestsHandler
+	 */
+	private $handler;
+
+	/**
+	 * @var AppWhitelist
+	 */
+	private $appWhitelist;
 
 	/**
 	 * Hooks constructor.
@@ -67,6 +77,8 @@ class Hooks {
 	 * @param IUserSession $userSession
 	 * @param IRequest $request
 	 * @param Mail $mail
+	 * @param AppWhitelist $appWhitelist
+	 * @param GuestsHandler $handler
 	 * @param IUserManager $userManager
 	 * @param IConfig $config
 	 */
@@ -75,13 +87,18 @@ class Hooks {
 		IUserSession $userSession,
 		IRequest $request,
 		Mail $mail,
+		AppWhitelist $appWhitelist,
+		GuestsHandler $handler,
 		IUserManager $userManager,
 		IConfig $config
 	) {
+		$this->request = $request;
 		$this->logger = $logger;
 		$this->userSession = $userSession;
 		$this->request = $request;
 		$this->mail = $mail;
+		$this->appWhitelist = $appWhitelist;
+		$this->handler = $handler;
 		$this->userManager = $userManager;
 		$this->config = $config;
 	}
@@ -104,6 +121,8 @@ class Hooks {
 				\OC::$server->getUserSession(),
 				\OC::$server->getRequest(),
 				Mail::createForStaticLegacyCode(),
+				AppWhitelist::createForStaticLegacyCode(),
+				GuestsHandler::createForStaticLegacyCode(),
 				\OC::$server->getUserManager(),
 				\OC::$server->getConfig()
 			);
@@ -196,5 +215,65 @@ class Hooks {
 		} catch (DoesNotExistException $ex) {
 			$this->logger->error("'$shareWith' does not exist", ['app'=>'guests']);
 		}
+	}
+
+	/**
+	 * PreSetup static hook which limits access of the user to selected apps
+	 *
+	 * @param string[] $params
+	 */
+	static public function preSetup($params) {
+		$hook = self::createForStaticLegacyCode();
+		$hook->handlePreSetup($params);
+	}
+	/**
+	 * PreSetup static hook which limits access of the user to selected apps
+	 *
+	 * @param string[] $params
+	 */
+	public function handlePreSetup($params) {
+		$uid = $params['user'];
+
+		if (empty($uid)) {
+			return;
+		}
+
+		if ($this->handler->isGuest($uid) && $this->appWhitelist->isWhitelistEnabled()) {
+			$app = $this->getRequestedApp();
+			$whitelist = $this->appWhitelist->getWhitelist();
+
+			if ($app && !in_array($app, $whitelist)) {
+				header('HTTP/1.0 403 Forbidden');
+				$l = \OC::$server->getL10NFactory()->get('guests');
+				Template::printErrorPage($l->t(
+					'Access to this resource is forbidden for guests.'
+				));
+				exit;
+			}
+		}
+	}
+
+	/**
+	 * Core has \OC::$REQUESTEDAPP but it isn't set until the routes are matched
+	 * taken from \OC\Route\Router::match()
+	 */
+	private function getRequestedApp() {
+		$url = $this->request->getRawPathInfo();
+		if (substr($url, 0, 6) === '/apps/') {
+			// empty string / 'apps' / $app / rest of the route
+			list(, , $app,) = explode('/', $url, 4);
+			return  \OC_App::cleanAppId($app);
+		} else if (substr($url, 0, 6) === '/core/') {
+			return 'core';
+		} else if (substr($url, 0, 10) === '/settings/') {
+			return 'settings';
+		} else if (substr($url, 0, 8) === '/avatar/') {
+			return 'avatar';
+		} else if (substr($url, 0, 10) === '/heartbeat') {
+			return 'heartbeat';
+		} else if (substr($url, 0, 13) === '/dav/comments') {
+			return 'comments';
+		}
+		return false;
 	}
 }

@@ -2,8 +2,9 @@
 /**
  * @author Ilja Neumann <ineumann@owncloud.com>
  * @author Thomas Heinisch <t.heinisch@bw-tech.de>
+ * @author Piotr Mrowczynski <piotr@owncloud.com>
  *
- * @copyright Copyright (c) 2017, ownCloud GmbH
+ * @copyright Copyright (c) 2018, ownCloud GmbH
  * @license GPL-2.0
  *
  * This program is free software; you can redistribute it and/or
@@ -33,32 +34,43 @@ use OCP\GroupInterface;
  */
 class GroupBackend implements GroupInterface {
 
-	const DEFAULT_NAME = 'guest_app';
+	/**
+	 * @var GuestsHandler
+	 */
+	private $handler;
 
 	private $guestMembers = [];
 
 	protected $possibleActions = [
 		self::COUNT_USERS => 'countUsersInGroup',
+		self::GROUP_DETAILS => 'getGroupDetails'
 	];
-	private $groupName;
 
-
-	public function __construct($groupName = self::DEFAULT_NAME) {
-		$this->groupName = $groupName;
+	/**
+	 * GroupBackend constructor.
+	 *
+	 * @param GuestsHandler $handler
+	 */
+	public function __construct(
+		GuestsHandler $handler
+	) {
+		$this->handler = $handler;
 	}
 
-
-	private function getMembers() {
-		if (empty($this->guestMembers)) {
-			$cfg = \OC::$server->getConfig();
-			$this->guestMembers = $cfg->getUsersForUserValue(
-				'owncloud',
-				'isGuest',
-				'1'
-			);
+	/**
+	 * Returns the info for a given group.
+	 *
+	 * @param string $gid group id
+	 * @return array|null group info or null if not found
+	 */
+	public function getGroupDetails($gid) {
+		if ($gid === $this->handler->getGuestsGID()) {
+			return [
+				'gid' => $this->handler->getGuestsGID(),
+				'displayName' => $this->handler->getGuestsDisplayName(),
+			];
 		}
-
-		return $this->guestMembers;
+		return null;
 	}
 
 	/**
@@ -103,7 +115,7 @@ class GroupBackend implements GroupInterface {
 	 * Checks whether the user is member of a group or not.
 	 */
 	public function inGroup($uid, $gid) {
-		return in_array($uid, $this->getMembers()) && $gid === $this->groupName;
+		return in_array($uid, $this->getMembers()) && $gid === $this->handler->getGuestsGID();
 
 	}
 
@@ -119,7 +131,7 @@ class GroupBackend implements GroupInterface {
 	 */
 	public function getUserGroups($uid) {
 		if (in_array($uid, $this->getMembers())) {
-			return [$this->groupName];
+			return [$this->handler->getGuestsGID()];
 		}
 
 		return [];
@@ -127,6 +139,8 @@ class GroupBackend implements GroupInterface {
 
 	/**
 	 * get a list of all groups
+	 *
+	 * TODO: add support for search, this implementation is wrong
 	 *
 	 * @param string $search
 	 * @param int $limit
@@ -137,7 +151,7 @@ class GroupBackend implements GroupInterface {
 	 * Returns a list with all groups
 	 */
 	public function getGroups($search = '', $limit = -1, $offset = 0) {
-		return [$this->groupName];
+		return [$this->handler->getGuestsGID()];
 	}
 
 	/**
@@ -148,11 +162,13 @@ class GroupBackend implements GroupInterface {
 	 * @since 4.5.0
 	 */
 	public function groupExists($gid) {
-		return $gid === $this->groupName;
+		return $gid === $this->handler->getGuestsGID();
 	}
 
 	/**
 	 * get a list of all users in a group
+	 *
+	 * TODO: add support for limit and offset, otherwise the implementation is wrong and can cause bugs
 	 *
 	 * @param string $gid
 	 * @param string $search
@@ -162,13 +178,12 @@ class GroupBackend implements GroupInterface {
 	 * @since 4.5.0
 	 */
 	public function usersInGroup($gid, $search = '', $limit = -1, $offset = 0) {
-		if ($gid === $this->groupName) {
+		if ($gid === $this->handler->getGuestsGID()) {
 			return $this->getMembers();
 		}
 
 		return [];
 	}
-
 
 	/**
 	 * @return int
@@ -187,5 +202,13 @@ class GroupBackend implements GroupInterface {
 	 */
 	public function isVisibleForScope($scope) {
 		return $scope !== 'sharing';
+	}
+
+	private function getMembers() {
+		if (empty($this->guestMembers)) {
+			$this->guestMembers = $this->handler->getGuests();
+		}
+
+		return $this->guestMembers;
 	}
 }
