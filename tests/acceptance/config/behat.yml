@@ -1,20 +1,9 @@
 default:
   autoload:
-     - %paths.base%/../vendor/autoload.php
+     '': %paths.base%/../features/bootstrap
 
   suites:
     default:
-      paths:
-        - %paths.base%/../features
-      contexts:
-        - FeatureContext:
-            baseUrl:  http://localhost:8080
-            adminUsername: admin
-            adminPassword: admin
-            regularUserPassword: 123456
-            mailhogUrl: http://127.0.0.1:8025/api/v2/messages
-            ocPath: ../../../../
-    Guests:
       paths:
         - %paths.base%/../guests_features
       contexts:
@@ -23,8 +12,9 @@ default:
             adminUsername: admin
             adminPassword: admin
             regularUserPassword: 123456
-            mailhogUrl: http://127.0.0.1:8025/api/v2/messages
             ocPath: ../../../../
+        - EmailContext:
+
   extensions:
       jarnaiz\JUnitFormatter\JUnitFormatterExtension:
           filename: report.xml

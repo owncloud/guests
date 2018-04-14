@@ -23,10 +23,11 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use GuzzleHttp\Client;
+use TestHelpers\EmailHelper;
 
-require __DIR__ . '/../../vendor/autoload.php';
-
+require_once 'bootstrap.php';
 
 /**
  * Guests context.
@@ -40,6 +41,12 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @var array
 	 */
 	private $createdGuests = [];
+
+	/**
+	 * 
+	 * @var EmailContext
+	 */
+	private $emailContext;
 
 	public function prepareUserNameAsFrontend($guestEmail) {
 		return strtolower(trim(urldecode($guestEmail)));
@@ -124,7 +131,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	public function guestUserRegisters($guestDisplayName) {
 		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
-		$emails = $this->getEmails();
+		$emails = EmailHelper::getEmails($this->emailContext->getMailhogUrl());
 		$lastEmailBody = $emails->items[0]->Content->Body;
 		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
 		
@@ -144,6 +151,20 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		} catch (\GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
+	}
+
+	/**
+	 * @BeforeScenario
+	 *
+	 * @param BeforeScenarioScope $scope
+	 *
+	 * @return void
+	 */
+	public function setUpScenario(BeforeScenarioScope $scope) {
+		// Get the environment
+		$environment = $scope->getEnvironment();
+		// Get all the contexts you need in this context
+		$this->emailContext = $environment->getContext('EmailContext');
 	}
 
 	/**
