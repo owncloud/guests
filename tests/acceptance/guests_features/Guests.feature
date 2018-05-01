@@ -28,6 +28,7 @@ Feature: Guests
     When user "guest@example.com" uploads file "data/textfile.txt" to "/myfile.txt" using the API
     Then the HTTP status code should be "401"
 
+  @mailhog
   Scenario: A guest user can upload files
     Given as user "admin"
     And user "user0" has been created
@@ -39,6 +40,7 @@ Feature: Guests
     When user "guest@example.com" uploads file "data/textfile.txt" to "/tmp/textfile.txt" using the API
     Then the HTTP status code should be "201"
 
+  @mailhog
   Scenario: A guest user can upload a file and can reshare it
     Given as user "admin"
     And user "user0" has been created
@@ -54,6 +56,7 @@ Feature: Guests
     Then the OCS status code should be "100"
     And the HTTP status code should be "200"
 
+  @mailhog
   Scenario: A guest user cannot reshare files
     Given as user "admin"
     And user "user0" has been created
@@ -89,6 +92,7 @@ Feature: Guests
       | /textfile4.txt     |
       | /welcome.txt       |
 
+  @mailhog
   Scenario: A created guest user can log in
     Given as user "admin"
     And user "user0" has been created
