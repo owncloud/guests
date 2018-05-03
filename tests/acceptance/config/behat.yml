@@ -3,9 +3,9 @@ default:
      '': %paths.base%/../features/bootstrap
 
   suites:
-    default:
+    apiGuests:
       paths:
-        - %paths.base%/../guests_features
+        - %paths.base%/../features/apiGuests
       contexts:
         - GuestsContext:
             baseUrl:  http://localhost:8080
