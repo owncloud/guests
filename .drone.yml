@@ -1,0 +1,78 @@
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+branches: [master, release*, release/*]
+
+pipeline:
+  install-server:
+    image: owncloudci/core
+    pull: true
+    version: ${OC_VERSION}
+
+  install-app:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - cd /var/www/owncloud/apps/guests
+      - make
+      - cd /var/www/owncloud/
+      - php occ a:l
+      - php occ a:e guests
+      - php occ a:e testing
+      - php occ a:l
+      - php occ config:system:set trusted_domains 1 --value=owncloud
+      - php occ log:manage --level 0
+
+  api-acceptance:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    environment:
+      - MAILHOG_HOST=mailhog
+    commands:
+      - cd tests/acceptance
+      - ./run.sh
+
+  print-log:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - cat /var/www/owncloud/data/owncloud.log
+    when:
+      status:  [ failure ]
+
+  notify:
+    image: plugins/slack:1
+    pull: true
+    secrets: [ slack_webhook ]
+    channel: builds
+    when:
+      status: [ failure, changed ]
+      event: [ push, tag ]
+
+services:
+  mailhog:
+    image: mailhog/mailhog
+    pull: true
+
+
+matrix:
+  include:
+    # unit tests
+    - PHP_VERSION: 7.1
+      OC_VERSION: daily-master-qa
+
+    - PHP_VERSION: 7.2
+      OC_VERSION: daily-master-qa
+
+    - PHP_VERSION: 5.6
+      OC_VERSION: daily-stable10-qa
+
+    - PHP_VERSION: 7.0
+      OC_VERSION: daily-stable10-qa
+
+    - PHP_VERSION: 7.1
+      OC_VERSION: daily-stable10-qa
+
+    - PHP_VERSION: 7.2
+      OC_VERSION: daily-stable10-qa
