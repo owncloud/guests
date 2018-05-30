@@ -120,7 +120,7 @@ class RegisterController extends Controller {
 	 */
 	public function showPasswordForm($email, $token) {
 		$errorMessages = [];
-		$userId = strtolower($email);
+		$userId = \strtolower($email);
 
 		if (empty($email) || !$this->mailer->validateMailAddress($email)) {
 			$errorMessages['email'] = (string)$this->l10n->t(
@@ -161,7 +161,6 @@ class RegisterController extends Controller {
 		return new TemplateResponse(
 			$this->appName, 'form.password', $parameters, 'guest'
 		);
-
 	}
 
 	/**
@@ -174,10 +173,10 @@ class RegisterController extends Controller {
 	 * @return TemplateResponse|RedirectResponse
 	 */
 	public function register() {
-		$email = trim($_POST['email']);
-		$token = trim($_POST['token']);
-		$password = trim($_POST['password']);
-		$userId = strtolower($email);
+		$email = \trim($_POST['email']);
+		$token = \trim($_POST['token']);
+		$password = \trim($_POST['password']);
+		$userId = \strtolower($email);
 		$parameters = [];
 
 		if (empty($email) || !$this->mailer->validateMailAddress($email)) {
@@ -219,12 +218,12 @@ class RegisterController extends Controller {
 		try {
 			$user = $this->userManager->get($userId);
 			$user->setPassword($password);
-		} catch (\Exception $e){
+		} catch (\Exception $e) {
 			$parameters['email'] = $email;
 			$parameters['messages']['password'] = $e->getMessage();
 			$parameters['token'] = $token;
 			$parameters['postAction'] =
-			    $this->urlGenerator->linkToRouteAbsolute('guests.register.register');
+				$this->urlGenerator->linkToRouteAbsolute('guests.register.register');
 			return new TemplateResponse(
 				$this->appName, 'form.password', $parameters, 'guest'
 			);
@@ -235,5 +234,4 @@ class RegisterController extends Controller {
 		// redirect to login
 		return new RedirectResponse($this->urlGenerator->linkToRouteAbsolute('core.login.showLoginForm'));
 	}
-
 }

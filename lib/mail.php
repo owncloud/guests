@@ -91,7 +91,7 @@ class Mail {
 	 */
 	public static function createForStaticLegacyCode() {
 		if (!self::$instance) {
-			self::$instance = new Mail (
+			self::$instance = new Mail(
 				\OC::$server->getConfig(),
 				\OC::$server->getLogger(),
 				\OC::$server->getUserSession(),
@@ -101,7 +101,6 @@ class Mail {
 				\OC::$server->getUserManager(),
 				\OC::$server->getURLGenerator()
 			);
-
 		}
 		return self::$instance;
 	}
@@ -126,8 +125,8 @@ class Mail {
 		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
 		$items = Share::getItemSharedWithUser($itemType, $itemSource, $shareWith);
-		$filename = trim($items[0]['file_target'], '/');
-		$subject = (string)$this->l10n->t('%s shared »%s« with you', array($senderDisplayName, $filename));
+		$filename = \trim($items[0]['file_target'], '/');
+		$subject = (string)$this->l10n->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
 		$expiration = null;
 		if (isset($items[0]['expiration'])) {
 			try {
@@ -160,7 +159,7 @@ class Mail {
 					]),
 			]);
 
-			if (!is_null($replyTo)) {
+			if ($replyTo !== null) {
 				$message->setReplyTo([$replyTo]);
 			}
 
@@ -182,7 +181,6 @@ class Mail {
 	 * @return array an array of the html mail body and the plain text mail body
 	 */
 	private function createMailBody($filename, $link, $passwordLink, $cloudName, $displayName, $expiration, $guestEmail) {
-
 		$formattedDate = $expiration ? $this->l10n->l('date', $expiration) : null;
 
 		$html = new Template('guests', 'mail/invite');
@@ -207,5 +205,4 @@ class Mail {
 
 		return [$htmlMail, $plainTextMail];
 	}
-
 }

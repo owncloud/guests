@@ -22,7 +22,6 @@
  */
 namespace OCA\Guests\Controller;
 
-
 use OC\AppFramework\Http;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
@@ -57,7 +56,6 @@ class UsersController extends Controller {
 	 * @var ISecureRandom
 	 */
 	private $secureRandom;
-
 
 	/**
 	 * UsersController constructor.
@@ -102,8 +100,8 @@ class UsersController extends Controller {
 	 */
 	public function create($email, $displayName) {
 		$errorMessages = [];
-		$email = trim(urldecode($email));
-		$username = strtolower($email);
+		$email = \trim(\urldecode($email));
+		$username = \strtolower($email);
 
 		if (empty($email) || !$this->mailer->validateMailAddress($email)) {
 			$errorMessages['email'] = (string)$this->l10n->t(
@@ -170,7 +168,7 @@ class UsersController extends Controller {
 			$username,
 			'guests',
 			'created',
-			time()
+			\time()
 		);
 
 		$this->config->setUserValue(
@@ -189,5 +187,4 @@ class UsersController extends Controller {
 			Http::STATUS_CREATED
 		);
 	}
-
 }

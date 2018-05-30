@@ -26,7 +26,7 @@
 $eventDispatcher = \OC::$server->getEventDispatcher();
 $eventDispatcher->addListener(
 	'OCA\Files::loadAdditionalScripts',
-	function() {
+	function () {
 		\OCP\Util::addScript('guests', 'guestshare');
 	}
 );
@@ -41,7 +41,7 @@ $groupBackend = new \OCA\Guests\GroupBackend($groupName);
 $user = \OC::$server->getUserSession()->getUser();
 
 if ($user) {
-    // if the whitelist is used
+	// if the whitelist is used
 	if ($config->getAppValue('guests', 'usewhitelist', 'true') === 'true') {
 		\OCP\Util::connectHook('OC_Filesystem', 'preSetup', '\OCA\Guests\AppWhitelist', 'preSetup');
 		// apply whitelist to navigation if guest user
@@ -56,6 +56,5 @@ if ($user) {
 	}
 }
 
-// this will initialize the 
+// this will initialize the
 \OCP\Util::addScript('guests', 'app');
-
