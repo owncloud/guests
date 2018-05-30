@@ -66,6 +66,6 @@ endif
 	tar -cjf $(dist_dir)/$(app_name).tar.bz2 -C $(dist_dir) $(app_name)
 
 # Command for running acceptance tests.
-.PHONY: test
-test:
+.PHONY: test-acceptance
+test-acceptance:
 	cd $(tests_acceptance_directory) && pwd && ./run.sh

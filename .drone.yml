@@ -30,8 +30,7 @@ pipeline:
     environment:
       - MAILHOG_HOST=mailhog
     commands:
-      - cd tests/acceptance
-      - ./run.sh
+      - make test-acceptance
 
   print-log:
     image: owncloudci/php:${PHP_VERSION}
