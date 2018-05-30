@@ -4,3 +4,4 @@
 *.bundle.js
 npm-debug.log
 package-lock.json
+yarn-error.log
