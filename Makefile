@@ -69,3 +69,15 @@ endif
 .PHONY: test-acceptance
 test-acceptance:
 	cd $(tests_acceptance_directory) && pwd && ./run.sh
+
+.PHONY: test-php-lint
+test-php-lint:
+	../../lib/composer/bin/parallel-lint --exclude vendor --exclude build .
+
+.PHONY: test-php-codecheck
+test-php-codecheck:
+	# currently failes - as we use a private api
+	#	$(occ) app:check-code $(app_name) -c private
+	$(occ) app:check-code $(app_name) -c strong-comparison
+	$(occ) app:check-code $(app_name) -c deprecation
+
