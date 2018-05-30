@@ -94,10 +94,20 @@ module.exports = function(config) {
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-		reporters: ['progress'],
+		reporters: ['dots', 'junit', 'coverage'],
 
 		junitReporter: {
-			outputFile: 'tests/autotest-results-js.xml'
+			outputDir: 'tests/output',
+			outputFile: 'autotest-results-js.xml',
+			useBrowserName: false
+		},
+
+		coverageReporter: {
+			dir:'tests/output/coverage',
+			reporters: [
+				{ type: 'html' },
+				{ type: 'cobertura' }
+			]
 		},
 
 		// web server port
