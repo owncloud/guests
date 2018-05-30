@@ -43,13 +43,13 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	private $createdGuests = [];
 
 	/**
-	 * 
+	 *
 	 * @var EmailContext
 	 */
 	private $emailContext;
 
 	public function prepareUserNameAsFrontend($guestEmail) {
-		return strtolower(trim(urldecode($guestEmail)));
+		return \strtolower(\trim(\urldecode($guestEmail)));
 	}
 
 	/**
@@ -113,14 +113,14 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	public function extractRegisterUrl($emailBody) {
 		$knownString = 'Activate your guest account at ownCloud by setting a password: ';
 		$nextString = 'Then view it';
-		$posKnownString = strpos($emailBody, $knownString);
-		$posNextString = strpos($emailBody, $nextString, $posKnownString + strlen($knownString));
-		$urlRegister = substr($emailBody,
-								 $posKnownString + strlen($knownString),
-								 $posNextString - ($posKnownString + strlen($knownString)));
-		$urlRegister = preg_replace('/[\s]+/mu', ' ', $urlRegister);
-		$urlRegister = str_replace('=', '', $urlRegister);
-		$urlRegister = str_replace(' ', '', $urlRegister);
+		$posKnownString = \strpos($emailBody, $knownString);
+		$posNextString = \strpos($emailBody, $nextString, $posKnownString + \strlen($knownString));
+		$urlRegister = \substr($emailBody,
+								 $posKnownString + \strlen($knownString),
+								 $posNextString - ($posKnownString + \strlen($knownString)));
+		$urlRegister = \preg_replace('/[\s]+/mu', ' ', $urlRegister);
+		$urlRegister = \str_replace('=', '', $urlRegister);
+		$urlRegister = \str_replace(' ', '', $urlRegister);
 		return $urlRegister;
 	}
 
@@ -135,10 +135,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$lastEmailBody = $emails->items[0]->Content->Body;
 		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
 		
-		$exploded = explode('/', $fullRegisterUrl);
+		$exploded = \explode('/', $fullRegisterUrl);
 		$email = $exploded[7];
-		$token = $exploded[8];		
-		$registerUrl = implode('/', array_splice($exploded, 0, 7));
+		$token = $exploded[8];
+		$registerUrl = \implode('/', \array_splice($exploded, 0, 7));
 		
 		$client = new Client();
 		$options['body'] = [
@@ -170,7 +170,6 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	/**
 	 * Abstract method implemented from Core's FeatureContext
 	 */
-	protected function resetAppConfigs() {}
+	protected function resetAppConfigs() {
+	}
 }
-
-

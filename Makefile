@@ -17,6 +17,10 @@ tests_acceptance_directory=$(CURDIR)/tests/acceptance
 
 nodejs_deps=node_modules
 
+# composer
+composer_deps=vendor
+composer_dev_deps=vendor/php-cs-fixer
+COMPOSER_BIN=$(build_dir)/composer.phar
 
 occ=$(CURDIR)/../../occ
 private_key=$(HOME)/.owncloud/certificates/$(app_name).key
@@ -35,16 +39,36 @@ all: appstore
 
 # Remove the appstore build and generated guests bundle
 .PHONY: clean
-clean: clean-nodejs-deps
+clean: clean-nodejs-deps clean-composer-deps
 	rm -rf ./build
 
 .PHONY: clean-nodejs-deps
 clean-nodejs-deps:
 	rm -Rf $(nodejs_deps)
 
+.PHONY: clean-composer-deps
+clean-composer-deps:
+	rm -rf ./vendor
+
 # Same as clean but also removes dependencies installed by npm
 .PHONY: distclean
 distclean: clean
+
+#
+# Basic required tools
+#
+$(COMPOSER_BIN):
+	mkdir -p $(build_dir)
+	cd $(build_dir) && curl -sS https://getcomposer.org/installer | php
+
+#
+# ownCloud core PHP dependencies
+#
+$(composer_deps): $(COMPOSER_BIN) composer.json composer.lock
+	php $(COMPOSER_BIN) install --no-dev
+
+$(composer_dev_deps): $(COMPOSER_BIN) composer.json composer.lock
+	php $(COMPOSER_BIN) install --dev
 
 # Build the source and appstore package
 .PHONY: dist
@@ -92,8 +116,12 @@ test-php-codecheck:
 	$(occ) app:check-code $(app_name) -c strong-comparison
 	$(occ) app:check-code $(app_name) -c deprecation
 
+.PHONY: test-php-style
+test-php-style: $(composer_dev_deps)
+	$(composer_deps)/bin/php-cs-fixer fix -v --diff --diff-format udiff --dry-run --allow-risky yes
+
 .PHONY: test-php
-test-php:
+test-php: $(composer_dev_deps)
 	# TODO: add unit tests...
 
 .PHONY: test-js

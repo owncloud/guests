@@ -1,8 +1,10 @@
 /.idea
 /node_modules
 /build/
+/vendor
 *.bundle.js
 npm-debug.log
 package-lock.json
 yarn-error.log
 tests/output
+.php_cs.cache

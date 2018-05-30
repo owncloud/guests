@@ -32,7 +32,6 @@ use OCP\GroupInterface;
  * @package OCA\Guests
  */
 class GroupBackend implements GroupInterface {
-
 	const DEFAULT_NAME = 'guest_app';
 
 	private $guestMembers = [];
@@ -42,11 +41,9 @@ class GroupBackend implements GroupInterface {
 	];
 	private $groupName;
 
-
 	public function __construct($groupName = self::DEFAULT_NAME) {
 		$this->groupName = $groupName;
 	}
-
 
 	private function getMembers() {
 		if (empty($this->guestMembers)) {
@@ -70,8 +67,8 @@ class GroupBackend implements GroupInterface {
 	 */
 	public function getSupportedActions() {
 		$actions = 0;
-		foreach($this->possibleActions AS $action => $methodName) {
-			if (method_exists($this, $methodName)) {
+		foreach ($this->possibleActions as $action => $methodName) {
+			if (\method_exists($this, $methodName)) {
 				$actions |= $action;
 			}
 		}
@@ -91,7 +88,6 @@ class GroupBackend implements GroupInterface {
 		return (bool)($this->getSupportedActions() & $actions);
 	}
 
-
 	/**
 	 * is user in group?
 	 *
@@ -103,8 +99,7 @@ class GroupBackend implements GroupInterface {
 	 * Checks whether the user is member of a group or not.
 	 */
 	public function inGroup($uid, $gid) {
-		return in_array($uid, $this->getMembers()) && $gid === $this->groupName;
-
+		return \in_array($uid, $this->getMembers()) && $gid === $this->groupName;
 	}
 
 	/**
@@ -118,7 +113,7 @@ class GroupBackend implements GroupInterface {
 	 * if the user exists at all.
 	 */
 	public function getUserGroups($uid) {
-		if (in_array($uid, $this->getMembers())) {
+		if (\in_array($uid, $this->getMembers())) {
 			return [$this->groupName];
 		}
 
@@ -169,12 +164,11 @@ class GroupBackend implements GroupInterface {
 		return [];
 	}
 
-
 	/**
 	 * @return int
 	 */
 	public function countUsersInGroup() {
-		return count($this->getMembers());
+		return \count($this->getMembers());
 	}
 
 	/**

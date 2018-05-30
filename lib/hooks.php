@@ -31,8 +31,6 @@ use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\IUserSession;
 
-
-
 class Hooks {
 
 	/**
@@ -58,7 +56,6 @@ class Hooks {
 	 * @var IUserManager
 	 */
 	private $userManager;
-
 
 	/**
 	 * Hooks constructor.
@@ -117,7 +114,7 @@ class Hooks {
 	 * @param array $params
 	 * @throws \Exception
 	 */
-	static public function postShareHook($params) {
+	public static function postShareHook($params) {
 		$hook = self::createForStaticLegacyCode();
 		$hook->handlePostShare(
 				$params['shareType'],
@@ -133,8 +130,6 @@ class Hooks {
 		$itemType,
 		$itemSource
 	) {
-
-
 		$isGuest = $this->config->getUserValue(
 			$shareWith,
 			'owncloud',
@@ -160,7 +155,6 @@ class Hooks {
 			return;
 		}
 
-
 		$user = $this->userSession->getUser();
 
 		if (!$user) {
@@ -171,7 +165,6 @@ class Hooks {
 
 		$this->logger->debug("checking if '$shareWith' has a password",
 			['app'=>'guests']);
-
 
 		$registerToken = $this->config->getUserValue(
 			$shareWith,

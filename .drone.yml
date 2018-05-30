@@ -42,6 +42,7 @@ pipeline:
     commands:
       - make test-php-lint
       - make test-php-codecheck
+      - make test-php-style
     when:
       matrix:
         TEST_SUITE: php

@@ -22,7 +22,6 @@
  */
 namespace OCA\Guests;
 
-
 use OCP\Template;
 
 /**
@@ -31,7 +30,6 @@ use OCP\Template;
  * @package OCA\Guests
  */
 class AppWhitelist {
-
 	const CORE_WHITELIST = ',core,files,guests';
 	const DEFAULT_WHITELIST = 'settings,avatar,files_external,files_trashbin,files_versions,files_sharing,files_texteditor,activity,firstrunwizard,gallery,notifications';
 
@@ -51,8 +49,8 @@ class AppWhitelist {
 			$app = self::getRequestedApp($path);
 			$whitelist = self::getWhitelist();
 
-			if (!in_array($app, $whitelist)) {
-				header('HTTP/1.0 403 Forbidden');
+			if (!\in_array($app, $whitelist)) {
+				\header('HTTP/1.0 403 Forbidden');
 				$l = \OC::$server->getL10NFactory()->get('guests');
 				Template::printErrorPage($l->t(
 					'Access to this resource is forbidden for guests.'
@@ -70,7 +68,7 @@ class AppWhitelist {
 			self::DEFAULT_WHITELIST
 		);
 
-		return explode(',' , $whitelist);
+		return \explode(',', $whitelist);
 	}
 
 	/**
@@ -78,19 +76,19 @@ class AppWhitelist {
 	 * taken from \OC\Route\Router::match()
 	 */
 	private static function getRequestedApp($url) {
-		if (substr($url, 0, 6) === '/apps/') {
+		if (\substr($url, 0, 6) === '/apps/') {
 			// empty string / 'apps' / $app / rest of the route
-			list(, , $app,) = explode('/', $url, 4);
+			list(, , $app, ) = \explode('/', $url, 4);
 			return  \OC_App::cleanAppId($app);
-		} else if (substr($url, 0, 6) === '/core/') {
+		} elseif (\substr($url, 0, 6) === '/core/') {
 			return 'core';
-		} else if (substr($url, 0, 10) === '/settings/') {
+		} elseif (\substr($url, 0, 10) === '/settings/') {
 			return 'settings';
-		} else if (substr($url, 0, 8) === '/avatar/') {
+		} elseif (\substr($url, 0, 8) === '/avatar/') {
 			return 'avatar';
-		} else if (substr($url, 0, 10) === '/heartbeat') {
+		} elseif (\substr($url, 0, 10) === '/heartbeat') {
 			return 'heartbeat';
-		} else if (substr($url, 0, 13) === '/dav/comments') {
+		} elseif (\substr($url, 0, 13) === '/dav/comments') {
 			return 'comments';
 		}
 		return false;

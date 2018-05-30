@@ -74,7 +74,7 @@ class SettingsController extends Controller {
 			$useWhitelist = false;
 		}
 		$whitelist = $this->config->getAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
-		$whitelist = explode(',', $whitelist);
+		$whitelist = \explode(',', $whitelist);
 		return new DataResponse([
 			'group' => $this->config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME),
 			'useWhitelist' => $useWhitelist,
@@ -102,9 +102,9 @@ class SettingsController extends Controller {
 
 		$newWhitelist = [];
 		foreach ($whitelist as $app) {
-			$newWhitelist[] = trim($app);
+			$newWhitelist[] = \trim($app);
 		}
-		$newWhitelist = join(',', $newWhitelist);
+		$newWhitelist = \join(',', $newWhitelist);
 		$this->config->setAppValue('guests', 'group', $group);
 		$this->config->setAppValue('guests', 'usewhitelist', $useWhitelist);
 		$this->config->setAppValue('guests', 'whitelist', $newWhitelist);
@@ -140,7 +140,7 @@ class SettingsController extends Controller {
 	public function resetWhitelist() {
 		$this->config->setAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
 		return new DataResponse([
-			'whitelist' => explode(',', AppWhitelist::DEFAULT_WHITELIST),
+			'whitelist' => \explode(',', AppWhitelist::DEFAULT_WHITELIST),
 		]);
 	}
 }

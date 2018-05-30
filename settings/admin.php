@@ -28,8 +28,7 @@ namespace OCA\Guests\Settings;
 use OCP\Settings\ISettings;
 use OCP\Template;
 
-class Admin implements ISettings
-{
+class Admin implements ISettings {
 
 	/**
 	 * The panel controller method that returns a template to the UI
@@ -59,4 +58,5 @@ class Admin implements ISettings
 	 */
 	public function getPriority() {
 		return 0;
-}}
+	}
+}
