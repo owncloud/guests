@@ -55,3 +55,7 @@ if ($user) {
 		\OCP\Util::addStyle('guests', 'personal');
 	}
 }
+
+// this will initialize the 
+\OCP\Util::addScript('guests', 'app');
+

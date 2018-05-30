@@ -1,17 +1,10 @@
 SHELL := /bin/bash
 
-#
-# Define NPM and check if it is available on the system.
-#
-NPM := $(shell command -v npm 2> /dev/null)
-ifndef NPM
-    $(error npm is not available on your system, please install npm)
-endif
-
+YARN := $(shell command -v yarn 2> /dev/null)
 NODE_PREFIX=$(shell pwd)
 
 PHPUNIT="$(PWD)/lib/composer/phpunit/phpunit/phpunit"
-BOWER=$(NODE_PREFIX)/node_modules/bower/bin/bower
+KARMA=$(NODE_PREFIX)/node_modules/.bin/karma
 JSDOC=$(NODE_PREFIX)/node_modules/.bin/jsdoc
 
 app_name=$(notdir $(CURDIR))
@@ -21,6 +14,8 @@ all_src=$(src_dirs) $(doc_files)
 build_dir=$(CURDIR)/build
 dist_dir=$(build_dir)/dist
 tests_acceptance_directory=$(CURDIR)/tests/acceptance
+
+nodejs_deps=node_modules
 
 
 occ=$(CURDIR)/../../occ
@@ -36,10 +31,16 @@ endif
 endif
 endif
 
+all: appstore
+
 # Remove the appstore build and generated guests bundle
 .PHONY: clean
-clean:
+clean: clean-nodejs-deps
 	rm -rf ./build
+
+.PHONY: clean-nodejs-deps
+clean-nodejs-deps:
+	rm -Rf $(nodejs_deps)
 
 # Same as clean but also removes dependencies installed by npm
 .PHONY: distclean
@@ -65,6 +66,16 @@ endif
 	tar -czf $(dist_dir)/$(app_name).tar.gz -C $(dist_dir) $(app_name)
 	tar -cjf $(dist_dir)/$(app_name).tar.bz2 -C $(dist_dir) $(app_name)
 
+$(nodejs_deps): package.json yarn.lock
+	yarn install
+	touch $@
+
+$(KARMA): $(nodejs_deps)
+
+# Command for running all tests.
+.PHONY: test
+test: test-acceptance test-php test-js
+
 # Command for running acceptance tests.
 .PHONY: test-acceptance
 test-acceptance:
@@ -80,4 +91,16 @@ test-php-codecheck:
 	#	$(occ) app:check-code $(app_name) -c private
 	$(occ) app:check-code $(app_name) -c strong-comparison
 	$(occ) app:check-code $(app_name) -c deprecation
+
+.PHONY: test-php
+test-php:
+	# TODO: add unit tests...
+
+.PHONY: test-js
+test-js: $(nodejs_deps)
+	$(KARMA) start tests/js/karma.config.js --single-run
+
+.PHONY: test-js-debug
+test-js-debug: $(nodejs_deps)
+	$(KARMA) start tests/js/karma.config.js
 
