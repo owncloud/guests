@@ -1,8 +1,9 @@
 /**
  * @author Jörn Friedrich Dreyer <jfd@owncloud.com>
  * @author Thomas Heinisch <t.heinisch@bw-tech.de>
+ * @author Vincent Petry <pvince81@owncloud.com>
  *
- * @copyright Copyright (c) 2017, ownCloud GmbH
+ * @copyright Copyright (c) 2018, ownCloud GmbH
  * @license GPL-2.0
  *
  * This program is free software; you can redistribute it and/or
@@ -19,10 +20,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-(function() {
+(function(OC, OCA) {
+	if (!OCA.Guests) {
+		OCA.Guests = {};
+	}
 
-	$(document).ready(function () {
-
+	OCA.Guests.initSettingsPage = function() {
 		// variables
 		var $section = $('#guests');
 		var $guestsByGroup = $section.find('#guestsByGroup');
@@ -181,6 +184,6 @@
 			});
 		});
 		
-	});
+	};
 
-})();
+})(OC, OCA);

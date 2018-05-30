@@ -26,7 +26,8 @@
 /* jshint node: true */
 module.exports = function(config) {
 
-	// can't use wildcard due to loading order
+	// can't use wildcard due to loading order,
+	// also don't include "app.js" as it would start the app
 	var srcFiles = [
 		'js/guests.js',
 		'js/guestshare.js',
