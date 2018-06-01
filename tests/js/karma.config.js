@@ -29,13 +29,15 @@ module.exports = function(config) {
 	// can't use wildcard due to loading order,
 	// also don't include "app.js" as it would start the app
 	var srcFiles = [
+		'js/app.js',
 		'js/guests.js',
 		'js/guestshare.js',
+		'js/guestsfilelist.js',
 		'js/navigation.js'
 	];
 
 	var testFiles = [
-		'tests/js/*.js'
+		'tests/js/*Spec.js'
 	];
 
 	var basePath = '../../';
@@ -54,14 +56,27 @@ module.exports = function(config) {
 		return ownCloudPath + 'core/js/' + path;
 	}));
 
+	// FIXME: this should really be in some module.json file in the app itself...
 	var filesAppFiles = [
+		'app.js',
+		'navigation.js',
+		'files.js',
 		'fileinfomodel.js',
-		'filelist.js'
+		'filelist.js',
+		'fileactions.js',
+		'filesummary.js',
+		'keyboardshortcuts.js',
+		'breadcrumb.js',
+		'detailsview.js',
+		'detailfileinfoview.js',
+		'mainfileinfodetailview.js',
+		'tagsplugin.js'
 	].map(function prependPath(path) {
 		return ownCloudPath + 'apps/files/js/' + path;
 	});
 	var sharingAppFiles = [
 		'app.js',
+		'share.js',
 		'sharedfilelist.js'
 	].map(function prependPath(path) {
 		return ownCloudPath + 'apps/files_sharing/js/' + path;
