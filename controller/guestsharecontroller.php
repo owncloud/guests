@@ -82,7 +82,7 @@ class GuestShareController extends Share20OCS {
 	 * @return array
 	 * @throws NotFoundException In case the node can't be resolved.
 	 */
-	protected function formatShare(\OCP\Share\IShare $share) {
+	protected function formatShare(\OCP\Share\IShare $share, $received = false) {
 		$sharedBy = $this->userManager->get($share->getSharedBy());
 		$shareOwner = $this->userManager->get($share->getShareOwner());
 
