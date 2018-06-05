@@ -55,6 +55,7 @@ Feature: Guests
     And user "guest@example.com" uploads new chunk file "3" with "CCCCC" to id "chunking-42" using the API
     And user "guest@example.com" moves new chunk file with id "chunking-42" to "/tmp/myChunkedFile.txt" using the API
     Then as "guest@example.com" the file "/tmp/myChunkedFile.txt" should exist
+    And as "user0" the file "/tmp/myChunkedFile.txt" should exist
 
   @mailhog
   Scenario: A guest user can cancel a chunked upload
@@ -71,6 +72,7 @@ Feature: Guests
     And user "guest@example.com" uploads new chunk file "3" with "CCCCC" to id "chunking-42" using the API
     And user "guest@example.com" cancels chunking-upload with id "chunking-42" using the API
     Then the HTTP status code should be "204"
+    And as "user0" the file "/tmp/myChunkedFile.txt" should not exist
 
   @mailhog
   Scenario: A guest user can upload a file and can reshare it
