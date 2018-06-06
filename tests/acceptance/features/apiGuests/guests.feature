@@ -41,6 +41,40 @@ Feature: Guests
     Then the HTTP status code should be "201"
 
   @mailhog
+  Scenario: A guest user can upload chunked files
+    Given as user "admin"
+    And user "user0" has been created
+    And user "admin" has created guest user "guest" with email "guest@example.com"
+    And the HTTP status code should be "201"
+    And user "user0" has created a folder "/tmp"
+    And user "user0" has shared folder "/tmp" with user "guest@example.com"
+    And guest user "guest" has registered
+    When user "guest@example.com" creates a new chunking upload with id "chunking-42" using the API
+    And user "guest@example.com" uploads new chunk file "1" with "AAAAA" to id "chunking-42" using the API
+    And user "guest@example.com" uploads new chunk file "2" with "BBBBB" to id "chunking-42" using the API
+    And user "guest@example.com" uploads new chunk file "3" with "CCCCC" to id "chunking-42" using the API
+    And user "guest@example.com" moves new chunk file with id "chunking-42" to "/tmp/myChunkedFile.txt" using the API
+    Then as "guest@example.com" the file "/tmp/myChunkedFile.txt" should exist
+    And as "user0" the file "/tmp/myChunkedFile.txt" should exist
+
+  @mailhog
+  Scenario: A guest user can cancel a chunked upload
+    Given as user "admin"
+    And user "user0" has been created
+    And user "admin" has created guest user "guest" with email "guest@example.com"
+    And the HTTP status code should be "201"
+    And user "user0" has created a folder "/tmp"
+    And user "user0" has shared folder "/tmp" with user "guest@example.com"
+    And guest user "guest" has registered
+    When user "guest@example.com" creates a new chunking upload with id "chunking-42" using the API
+    And user "guest@example.com" uploads new chunk file "1" with "AAAAA" to id "chunking-42" using the API
+    And user "guest@example.com" uploads new chunk file "2" with "BBBBB" to id "chunking-42" using the API
+    And user "guest@example.com" uploads new chunk file "3" with "CCCCC" to id "chunking-42" using the API
+    And user "guest@example.com" cancels chunking-upload with id "chunking-42" using the API
+    Then the HTTP status code should be "204"
+    And as "user0" the file "/tmp/myChunkedFile.txt" should not exist
+
+  @mailhog
   Scenario: A guest user can upload a file and can reshare it
     Given as user "admin"
     And user "user0" has been created
