@@ -150,3 +150,8 @@ matrix:
       OC_VERSION: daily-master-qa
       TEST_SUITE: php
       TEST_OBJECTSTORAGE: true
+
+    - PHP_VERSION: 7.1
+      OC_VERSION: daily-stable10-qa
+      TEST_SUITE: php
+      TEST_OBJECTSTORAGE: true
