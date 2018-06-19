@@ -39,10 +39,6 @@
 							$e.remove();
 						}
 					});
-					if ($('#navigation li').length === 1) {
-						// only files is left, so remove menu at all
-						$('nav').remove();
-					}
 
 					// special treatment for apps in UI
 					// activity
