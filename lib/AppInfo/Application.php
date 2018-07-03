@@ -25,6 +25,7 @@ namespace OCA\Guests\AppInfo;
 use OCA\Guests\Hooks;
 use OCA\Guests\Mail;
 use OCP\AppFramework\App;
+use OCP\GroupInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -69,26 +70,73 @@ class Application extends App {
 	}
 
 	/**
-	 * Setup events
+	 * @return GroupInterface
 	 */
-	public function registerListeners() {
+	public function registerBackend() {
 		$container = $this->getContainer();
 		$server = $container->getServer();
-		$eventDispatcher = $server->getEventDispatcher();
+		$groupName = $this->getGroupName();
+		$groupBackend = new \OCA\Guests\GroupBackend($groupName);
+		$server->getGroupManager()->addBackend($groupBackend);
+		return $groupBackend;
+	}
 
-		$eventDispatcher->addListener(
-			'OCA\Files::loadAdditionalScripts',
-			function () {
-				\OCP\Util::addScript(self::APP_NAME, 'guestshare');
+	/**
+	 * Setup events
+	 *
+	 * @param GroupInterface $groupBackend
+	 */
+	public function registerListeners(GroupInterface $groupBackend) {
+		$container = $this->getContainer();
+		$server = $container->getServer();
+		$user = $server->getUserSession()->getUser();
+		if ($user === null) {
+			return;
+		}
+
+		$groupName = $this->getGroupName();
+		$isGuest = $groupBackend->inGroup($user->getUID(), $groupName);
+
+		// if the whitelist is used
+		if ($server->getConfig()->getAppValue(self::APP_NAME, 'usewhitelist', 'true') === 'true') {
+			\OCP\Util::connectHook('OC_Filesystem', 'preSetup', '\OCA\Guests\AppWhitelist', 'preSetup');
+			// apply whitelist to navigation if guest user
+			if ($isGuest) {
+				\OCP\Util::addScript(self::APP_NAME, 'navigation');
 			}
-		);
-		$eventDispatcher->addListener(
-			'share.afterCreate',
-			function (GenericEvent $event) use ($container) {
-				/** @var Hooks $hooks */
-				$hooks = $container->query('Hooks');
-				$hooks->handlePostShare($event->getArgument('shareObject'));
-			}
+		}
+
+		// hide email change field via css for learned guests
+		if ($isGuest) {
+			\OCP\Util::addStyle(self::APP_NAME, 'personal');
+		} else {
+			$eventDispatcher = $server->getEventDispatcher();
+			$eventDispatcher->addListener(
+				'OCA\Files::loadAdditionalScripts',
+				function () {
+					\OCP\Util::addScript(self::APP_NAME, 'guestshare');
+				}
+			);
+			$eventDispatcher->addListener(
+				'share.afterCreate',
+				function (GenericEvent $event) use ($container) {
+					/** @var Hooks $hooks */
+					$hooks = $container->query('Hooks');
+					$hooks->handlePostShare($event->getArgument('shareObject'));
+				}
+			);
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getGroupName() {
+		$config = $this->getContainer()->getServer()->getConfig();
+		return $config->getAppValue(
+			self::APP_NAME,
+			'group',
+			\OCA\Guests\GroupBackend::DEFAULT_NAME
 		);
 	}
 }
