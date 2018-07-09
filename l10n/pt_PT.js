@@ -2,6 +2,8 @@ OC.L10N.register(
     "guests",
     {
     "Invalid mail address" : "Endereço de e-mail inválido",
+    "No such guest user" : "Não existe tal utilizador convidado",
+    "The token is invalid" : "O código é inválido",
     "Password cannot be empty" : "A Palavra chave não pode ficar vazia",
     "Group name must not be empty." : "O Nome do grupo não pode ficar vazio",
     "Saved" : "Guardado",
