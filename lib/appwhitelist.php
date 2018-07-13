@@ -31,7 +31,7 @@ use OCP\Template;
  */
 class AppWhitelist {
 	const CORE_WHITELIST = ',core,files,guests';
-	const DEFAULT_WHITELIST = 'settings,avatar,files_external,files_trashbin,files_versions,files_sharing,files_texteditor,activity,firstrunwizard,gallery,notifications';
+	const DEFAULT_WHITELIST = 'settings,avatar,files_external,files_trashbin,files_versions,files_sharing,files_texteditor,activity,firstrunwizard,gallery,notifications,password_policy,oauth2';
 
 	public static function preSetup($params) {
 		$uid = $params['user'];
