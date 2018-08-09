@@ -26,6 +26,7 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use GuzzleHttp\Client;
 use TestHelpers\EmailHelper;
+use TestHelpers\SetupHelper;
 
 require_once 'bootstrap.php';
 
@@ -54,6 +55,46 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @var string
 	 */
 	private $relativePathToTestDataFolder = '../../apps/guests/tests/acceptance/data/';
+
+	/**
+	 * disable CSRF
+	 *
+	 * @throws Exception
+	 * @return string the previous setting of csrf.disabled
+	 */
+	private function disableCSRFFromGuestsScenario() {
+		return $this->setCSRFDotDisabledFromGuestsScenario('true');
+	}
+
+	/**
+	 * set csrf.disabled
+	 *
+	 * @param string $setting "true", "false" or "" to delete the setting
+	 *
+	 * @throws Exception
+	 * @return string the previous setting of csrf.disabled
+	 */
+	private function setCSRFDotDisabledFromGuestsScenario($setting) {
+		$oldCSRFSetting = SetupHelper::runOcc(
+			['config:system:get', 'csrf.disabled']
+		)['stdOut'];
+
+		if ($setting === "") {
+			SetupHelper::runOcc(['config:system:delete', 'csrf.disabled']);
+		} elseif ($setting !== null) {
+			SetupHelper::runOcc(
+				[
+					'config:system:set',
+					'csrf.disabled',
+					'--type',
+					'boolean',
+					'--value',
+					$setting
+				]
+			);
+		}
+		return \trim($oldCSRFSetting);
+	}
 
 	public function prepareUserNameAsFrontend($guestEmail) {
 		return \strtolower(\trim(\urldecode($guestEmail)));
@@ -152,6 +193,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @param string $guestDisplayName
 	 */
 	public function guestUserRegisters($guestDisplayName) {
+		$oldCSRFSetting = $this->disableCSRFFromGuestsScenario();
 		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
 		$emails = EmailHelper::getEmails($this->emailContext->getMailhogUrl());
 		$lastEmailBody = $emails->items[0]->Content->Body;
@@ -173,6 +215,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		} catch (\GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
+
+		$this->setCSRFDotDisabledFromGuestsScenario($oldCSRFSetting);
 	}
 
 	/**
