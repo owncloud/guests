@@ -25,7 +25,7 @@ Feature: Guests
     Given as user "admin"
     And user "admin" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    When user "guest@example.com" uploads file "data/textfile.txt" to "/myfile.txt" using the WebDAV API
+    When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder to "/myfile.txt" using the WebDAV API
     Then the HTTP status code should be "401"
 
   @mailhog
@@ -37,7 +37,7 @@ Feature: Guests
     And user "user0" has created a folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
-    When user "guest@example.com" uploads file "data/textfile.txt" to "/tmp/textfile.txt" using the WebDAV API
+    When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt" using the WebDAV API
     Then the HTTP status code should be "201"
 
   @mailhog
@@ -84,7 +84,7 @@ Feature: Guests
     And user "user0" has created a folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
-    And user "guest@example.com" has uploaded file "data/textfile.txt" to "/tmp/textfile.txt"
+    And user "guest@example.com" has uploaded file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt"
     And user "guest@example.com" has shared file "/tmp/textfile.txt" with user "user1"
     When user "guest@example.com" sends HTTP method "GET" to OCS API endpoint "/apps/files_sharing/api/v1/shares?reshares=true&path=/tmp/textfile.txt"
     Then the OCS status code should be "100"
