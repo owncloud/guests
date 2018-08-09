@@ -13,7 +13,7 @@ src_dirs=appinfo controller js l10n lib settings templates
 all_src=$(src_dirs) $(doc_files)
 build_dir=$(CURDIR)/build
 dist_dir=$(build_dir)/dist
-tests_acceptance_directory=$(CURDIR)/tests/acceptance
+tests_acceptance_directory=$(CURDIR)/../../tests/acceptance
 
 nodejs_deps=node_modules
 
@@ -103,7 +103,7 @@ test: test-acceptance test-php test-js
 # Command for running acceptance tests.
 .PHONY: test-acceptance
 test-acceptance:
-	cd $(tests_acceptance_directory) && pwd && ./run.sh
+	cd $(tests_acceptance_directory) && pwd && chmod +x run.sh && ./run.sh -c ../../apps/guests/tests/acceptance/config/behat.yml
 
 .PHONY: test-php-lint
 test-php-lint:

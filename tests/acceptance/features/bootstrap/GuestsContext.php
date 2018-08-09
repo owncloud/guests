@@ -26,6 +26,7 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use GuzzleHttp\Client;
 use TestHelpers\EmailHelper;
+use TestHelpers\SetupHelper;
 
 require_once 'bootstrap.php';
 
@@ -48,8 +49,70 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	private $emailContext;
 
+	/**
+	 * The relative path from the core tests/acceptance folder to the test data folder.
+	 *
+	 * @var string
+	 */
+	private $relativePathToTestDataFolder = '../../apps/guests/tests/acceptance/data/';
+
+	/**
+	 * disable CSRF
+	 *
+	 * @throws Exception
+	 * @return string the previous setting of csrf.disabled
+	 */
+	private function disableCSRFFromGuestsScenario() {
+		return $this->setCSRFDotDisabledFromGuestsScenario('true');
+	}
+
+	/**
+	 * set csrf.disabled
+	 *
+	 * @param string $setting "true", "false" or "" to delete the setting
+	 *
+	 * @throws Exception
+	 * @return string the previous setting of csrf.disabled
+	 */
+	private function setCSRFDotDisabledFromGuestsScenario($setting) {
+		$oldCSRFSetting = SetupHelper::runOcc(
+			['config:system:get', 'csrf.disabled']
+		)['stdOut'];
+
+		if ($setting === "") {
+			SetupHelper::runOcc(['config:system:delete', 'csrf.disabled']);
+		} elseif ($setting !== null) {
+			SetupHelper::runOcc(
+				[
+					'config:system:set',
+					'csrf.disabled',
+					'--type',
+					'boolean',
+					'--value',
+					$setting
+				]
+			);
+		}
+		return \trim($oldCSRFSetting);
+	}
+
 	public function prepareUserNameAsFrontend($guestEmail) {
 		return \strtolower(\trim(\urldecode($guestEmail)));
+	}
+
+	/**
+	 * @When user :user uploads file :source from the guests test data folder to :destination using the WebDAV API
+	 * @Given user :user has uploaded file :source from the guests test data folder to :destination
+	 *
+	 * @param string $user
+	 * @param string $source
+	 * @param string $destination
+	 *
+	 * @return void
+	 */
+	public function userUploadsFileFromGuestsDataFolderTo($user, $source, $destination) {
+		$source = $this->relativePathToTestDataFolder . $source;
+		$this->userUploadsAFileTo($user, $source, $destination);
 	}
 
 	/**
@@ -130,6 +193,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @param string $guestDisplayName
 	 */
 	public function guestUserRegisters($guestDisplayName) {
+		$oldCSRFSetting = $this->disableCSRFFromGuestsScenario();
 		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
 		$emails = EmailHelper::getEmails($this->emailContext->getMailhogUrl());
 		$lastEmailBody = $emails->items[0]->Content->Body;
@@ -151,6 +215,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		} catch (\GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
+
+		$this->setCSRFDotDisabledFromGuestsScenario($oldCSRFSetting);
 	}
 
 	/**
@@ -171,5 +237,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * Abstract method implemented from Core's FeatureContext
 	 */
 	protected function resetAppConfigs() {
+		// Remember the current capabilities
+		$this->getCapabilitiesCheckResponse();
+		$this->savedCapabilitiesXml[$this->getBaseUrl()] = $this->getCapabilitiesXml();
+		// Set the required starting values for testing
+		$this->setCapabilities($this->getCommonSharingConfigs());
 	}
 }
