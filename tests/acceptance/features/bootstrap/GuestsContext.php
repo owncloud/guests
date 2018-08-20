@@ -34,14 +34,18 @@ require_once 'bootstrap.php';
  * Guests context.
  */
 class GuestsContext implements Context, SnippetAcceptingContext {
-	use BasicStructure;
-
 	/**
 	 * Stores the email of each created guest, keyed by guest display name.
 	 *
 	 * @var array
 	 */
 	private $createdGuests = [];
+
+	/**
+	 *
+	 * @var FeatureContext
+	 */
+	private $featureContext;
 
 	/**
 	 *
@@ -112,42 +116,46 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userUploadsFileFromGuestsDataFolderTo($user, $source, $destination) {
 		$source = $this->relativePathToTestDataFolder . $source;
-		$this->userUploadsAFileTo($user, $source, $destination);
+		$this->featureContext->userUploadsAFileTo($user, $source, $destination);
 	}
 
 	/**
 	 * @When /^user "([^"]*)" (attempts to create|creates) guest user "([^"]*)" with email "([^"]*)" using the API$/
 	 * @Given /^user "([^"]*)" has (attempted to create|created) guest user "([^"]*)" with email "([^"]*)"$/
+	 *
 	 * @param string $user
 	 * @param string $attemptTo
 	 * @param string $guestDisplayName
 	 * @param string $guestEmail
+	 *
+	 * @return void
 	 */
 	public function userCreatesAGuestUser($user, $attemptTo, $guestDisplayName, $guestEmail) {
 		$shouldHaveBeenCreated = (($attemptTo == "creates") || ($attemptTo === "created"));
-		$fullUrl = $this->getBaseUrl() . '/index.php/apps/guests/users';
+		$fullUrl = $this->featureContext->getBaseUrl() . '/index.php/apps/guests/users';
 		//Replicating frontend behaviour
 		$userName = $this->prepareUserNameAsFrontend($guestEmail);
 		$fullUrl = $fullUrl . '?displayName=' . $guestDisplayName . '&email=' . $guestEmail . '&username=' . $userName;
 		$client = new Client();
 		$options = [];
-		$options['auth'] = $this->getAuthOptionForUser($user);
+		$options['auth'] = $this->featureContext->getAuthOptionForUser($user);
 		$request = $client->createRequest("PUT", $fullUrl, $options);
 		$request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
 
 		try {
-			$this->response = $client->send($request);
+			$response = $client->send($request);
 		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
 			// 4xx and 5xx responses cause an exception
-			$this->response = $e->getResponse();
+			$response = $e->getResponse();
 		}
+		$this->featureContext->setResponse($response);
 		$this->createdGuests[$guestDisplayName] = $guestEmail;
 
 		// Let core acceptance test functionality know the user that has been created.
 		// Core acceptance test AfterScenario will cleanup created users.
-		$this->addUserToCreatedUsersList(
+		$this->featureContext->addUserToCreatedUsersList(
 			$userName,
-			$this->getPasswordForUser($userName),
+			$this->featureContext->getPasswordForUser($userName),
 			$guestDisplayName,
 			$guestEmail,
 			$shouldHaveBeenCreated);
@@ -155,24 +163,36 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 
 	/**
 	 * @Then user :user should be a guest user
+	 *
 	 * @param string $guestDisplayName
+	 *
+	 * @return void
 	 */
 	public function checkGuestUser($guestDisplayName) {
 		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
-		$this->userShouldBelongToGroup($userName, 'guest_app');
+		$this->featureContext->userShouldBelongToGroup($userName, 'guest_app');
 	}
 
 	/**
 	 * @Given guest user :user has been deleted
+	 *
 	 * @param string $guestDisplayName
+	 *
+	 * @return void
+	 * @throws Exception
 	 */
 	public function deleteGuestUser($guestDisplayName) {
 		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
-		$this->deleteUser($userName);
+		$this->featureContext->deleteUser($userName);
 	}
 
-	/*Processes the body of an email sent and gets the register url
-	  It depends on the content of the email*/
+	/**
+	 * Process the body of an email and get the URL for guest registration
+	 *
+	 * @param string $emailBody
+	 *
+	 * @return string URL for the guest to register
+	 */
 	public function extractRegisterUrl($emailBody) {
 		$knownString = 'Activate your guest account at ownCloud by setting a password: ';
 		$nextString = 'Then view it';
@@ -190,7 +210,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @When guest user :user registers
 	 * @Given guest user :user has registered
+	 *
 	 * @param string $guestDisplayName
+	 *
+	 * @return void
+	 * @throws Exception
 	 */
 	public function guestUserRegisters($guestDisplayName) {
 		$oldCSRFSetting = $this->disableCSRFFromGuestsScenario();
@@ -208,14 +232,15 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$options['body'] = [
 							'email' => $email,
 							'token' => $token,
-							'password' => $this->getPasswordForUser($userName)
+							'password' => $this->featureContext->getPasswordForUser($userName)
 							];
 		try {
-			$this->response = $client->send($client->createRequest('POST', $registerUrl, $options));
+			$response = $client->send($client->createRequest('POST', $registerUrl, $options));
 		} catch (\GuzzleHttp\Exception\ClientException $ex) {
-			$this->response = $ex->getResponse();
+			$response = $ex->getResponse();
 		}
 
+		$this->featureContext->setResponse($response);
 		$this->setCSRFDotDisabledFromGuestsScenario($oldCSRFSetting);
 	}
 
@@ -230,17 +255,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		// Get the environment
 		$environment = $scope->getEnvironment();
 		// Get all the contexts you need in this context
+		$this->featureContext = $environment->getContext('FeatureContext');
 		$this->emailContext = $environment->getContext('EmailContext');
-	}
-
-	/**
-	 * Abstract method implemented from Core's FeatureContext
-	 */
-	protected function resetAppConfigs() {
-		// Remember the current capabilities
-		$this->getCapabilitiesCheckResponse();
-		$this->savedCapabilitiesXml[$this->getBaseUrl()] = $this->getCapabilitiesXml();
-		// Set the required starting values for testing
-		$this->setCapabilities($this->getCommonSharingConfigs());
 	}
 }
