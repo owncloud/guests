@@ -54,11 +54,13 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	private $emailContext;
 
 	/**
-	 * The relative path from the core tests/acceptance folder to the test data folder.
+	 * The relative path from the core tests/acceptance folder to the test data
+	 * folder.
 	 *
 	 * @var string
 	 */
-	private $relativePathToTestDataFolder = '../../apps/guests/tests/acceptance/data/';
+	private $relativePathToTestDataFolder
+		= '../../apps/guests/tests/acceptance/data/';
 
 	/**
 	 * disable CSRF
@@ -100,6 +102,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		return \trim($oldCSRFSetting);
 	}
 
+	/**
+	 * @param string $guestEmail
+	 *
+	 * @return string
+	 */
 	public function prepareUserNameAsFrontend($guestEmail) {
 		return \strtolower(\trim(\urldecode($guestEmail)));
 	}
@@ -114,7 +121,9 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @return void
 	 */
-	public function userUploadsFileFromGuestsDataFolderTo($user, $source, $destination) {
+	public function userUploadsFileFromGuestsDataFolderTo(
+		$user, $source, $destination
+	) {
 		$source = $this->relativePathToTestDataFolder . $source;
 		$this->featureContext->userUploadsAFileTo($user, $source, $destination);
 	}
@@ -130,12 +139,18 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @return void
 	 */
-	public function userCreatesAGuestUser($user, $attemptTo, $guestDisplayName, $guestEmail) {
-		$shouldHaveBeenCreated = (($attemptTo == "creates") || ($attemptTo === "created"));
-		$fullUrl = $this->featureContext->getBaseUrl() . '/index.php/apps/guests/users';
+	public function userCreatesAGuestUser(
+		$user, $attemptTo, $guestDisplayName, $guestEmail
+	) {
+		$shouldHaveBeenCreated
+			= (($attemptTo == "creates") || ($attemptTo === "created"));
+		$fullUrl
+			= $this->featureContext->getBaseUrl() . '/index.php/apps/guests/users';
 		//Replicating frontend behaviour
 		$userName = $this->prepareUserNameAsFrontend($guestEmail);
-		$fullUrl = $fullUrl . '?displayName=' . $guestDisplayName . '&email=' . $guestEmail . '&username=' . $userName;
+		$fullUrl
+			= $fullUrl
+			. "?displayName=$guestDisplayName&email=$guestEmail&username=$userName";
 		$client = new Client();
 		$options = [];
 		$options['auth'] = $this->featureContext->getAuthOptionForUser($user);
@@ -151,14 +166,15 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$this->featureContext->setResponse($response);
 		$this->createdGuests[$guestDisplayName] = $guestEmail;
 
-		// Let core acceptance test functionality know the user that has been created.
-		// Core acceptance test AfterScenario will cleanup created users.
+		// Let core acceptance test functionality know the user that has been
+		// created. Core acceptance test AfterScenario will cleanup created users.
 		$this->featureContext->addUserToCreatedUsersList(
 			$userName,
 			$this->featureContext->getPasswordForUser($userName),
 			$guestDisplayName,
 			$guestEmail,
-			$shouldHaveBeenCreated);
+			$shouldHaveBeenCreated
+		);
 	}
 
 	/**
@@ -169,7 +185,9 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function checkGuestUser($guestDisplayName) {
-		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
+		$userName = $this->prepareUserNameAsFrontend(
+			$this->createdGuests[$guestDisplayName]
+		);
 		$this->featureContext->userShouldBelongToGroup($userName, 'guest_app');
 	}
 
@@ -182,7 +200,9 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @throws Exception
 	 */
 	public function deleteGuestUser($guestDisplayName) {
-		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
+		$userName = $this->prepareUserNameAsFrontend(
+			$this->createdGuests[$guestDisplayName]
+		);
 		$this->featureContext->deleteUser($userName);
 	}
 
@@ -194,13 +214,20 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return string URL for the guest to register
 	 */
 	public function extractRegisterUrl($emailBody) {
-		$knownString = 'Activate your guest account at ownCloud by setting a password: ';
+		$knownString
+			= 'Activate your guest account at ownCloud by setting a password: ';
 		$nextString = 'Then view it';
 		$posKnownString = \strpos($emailBody, $knownString);
-		$posNextString = \strpos($emailBody, $nextString, $posKnownString + \strlen($knownString));
-		$urlRegister = \substr($emailBody,
-								 $posKnownString + \strlen($knownString),
-								 $posNextString - ($posKnownString + \strlen($knownString)));
+		$posNextString = \strpos(
+			$emailBody,
+			$nextString,
+			$posKnownString + \strlen($knownString)
+		);
+		$urlRegister = \substr(
+			$emailBody,
+			$posKnownString + \strlen($knownString),
+			$posNextString - ($posKnownString + \strlen($knownString))
+		);
 		$urlRegister = \preg_replace('/[\s]+/mu', ' ', $urlRegister);
 		$urlRegister = \str_replace('=', '', $urlRegister);
 		$urlRegister = \str_replace(' ', '', $urlRegister);
@@ -218,7 +245,9 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	public function guestUserRegisters($guestDisplayName) {
 		$oldCSRFSetting = $this->disableCSRFFromGuestsScenario();
-		$userName = $this->prepareUserNameAsFrontend($this->createdGuests[$guestDisplayName]);
+		$userName = $this->prepareUserNameAsFrontend(
+			$this->createdGuests[$guestDisplayName]
+		);
 		$emails = EmailHelper::getEmails($this->emailContext->getMailhogUrl());
 		$lastEmailBody = $emails->items[0]->Content->Body;
 		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
@@ -230,12 +259,14 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		
 		$client = new Client();
 		$options['body'] = [
-							'email' => $email,
-							'token' => $token,
-							'password' => $this->featureContext->getPasswordForUser($userName)
-							];
+			'email' => $email,
+			'token' => $token,
+			'password' => $this->featureContext->getPasswordForUser($userName)
+		];
 		try {
-			$response = $client->send($client->createRequest('POST', $registerUrl, $options));
+			$response = $client->send(
+				$client->createRequest('POST', $registerUrl, $options)
+			);
 		} catch (\GuzzleHttp\Exception\ClientException $ex) {
 			$response = $ex->getResponse();
 		}
