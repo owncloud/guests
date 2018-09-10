@@ -7,3 +7,4 @@ file_filter = <lang>/guests.po
 source_file = templates/guests.pot
 source_lang = en
 type = PO
+
