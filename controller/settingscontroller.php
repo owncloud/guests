@@ -30,6 +30,8 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Class SettingsController is used to handle configuration changes on the
@@ -54,11 +56,18 @@ class SettingsController extends Controller {
 	 */
 	private $l10n;
 
-	public function __construct($AppName, IRequest $request, $UserId, IConfig $config, IL10N $l10n) {
+	/**
+	 * @var EventDispatcherInterface
+	 */
+	private $eventDispatcher;
+
+	public function __construct($AppName, IRequest $request, $UserId, IConfig $config, IL10N $l10n,
+								EventDispatcherInterface $eventDispatcher) {
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
 		$this->config = $config;
 		$this->l10n = $l10n;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -105,9 +114,16 @@ class SettingsController extends Controller {
 			$newWhitelist[] = \trim($app);
 		}
 		$newWhitelist = \join(',', $newWhitelist);
+		$oldGroup = $this->config->getAppValue('guests', 'group', '');
 		$this->config->setAppValue('guests', 'group', $group);
 		$this->config->setAppValue('guests', 'usewhitelist', $useWhitelist);
 		$this->config->setAppValue('guests', 'whitelist', $newWhitelist);
+
+		//dispatch event when the group name changed
+		if (($oldGroup !== '') && ($oldGroup !== $group)) {
+			$event = new GenericEvent(null, ['oldgroupname' => $oldGroup, 'newgroupname' => $group]);
+			$this->eventDispatcher->dispatch('guest.grouprename', $event);
+		}
 
 		return new DataResponse([
 			'status' => 'success',
