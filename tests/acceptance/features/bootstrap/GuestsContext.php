@@ -214,6 +214,12 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return string URL for the guest to register
 	 */
 	public function extractRegisterUrl($emailBody) {
+		// The character sequence "=\r\n" encodes soft line breaks in the plain
+		// text email. Remove these so that we get the full strings that we are
+		// searching for without them being "randomly" split by the soft line
+		// breaks.
+		// https://en.wikipedia.org/wiki/Quoted-printable
+		$emailBody = \str_replace("=\r\n", "", $emailBody);
 		$knownString
 			= 'Activate your guest account at ownCloud by setting a password: ';
 		$nextString = 'Then view it';
@@ -251,7 +257,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$emails = EmailHelper::getEmails($this->emailContext->getMailhogUrl());
 		$lastEmailBody = $emails->items[0]->Content->Body;
 		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
-		
+
 		$exploded = \explode('/', $fullRegisterUrl);
 		$email = $exploded[7];
 		$token = $exploded[8];
