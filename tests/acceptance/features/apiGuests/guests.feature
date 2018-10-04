@@ -6,33 +6,33 @@ Feature: Guests
     And using new dav path
 
   Scenario: Creating a guest user works fine
-    Given as user "admin"
-    When user "admin" creates guest user "guest" with email "guest@example.com" using the API
+    Given as user "%admin%"
+    When user "%admin%" creates guest user "guest" with email "guest@example.com" using the API
     Then the HTTP status code should be "201"
     And user "guest" should be a guest user
 
   Scenario: Cannot create a guest if a user with the same email address exists
-    Given as user "admin"
+    Given as user "%admin%"
     And user "existing-user" has been created
-    And user "admin" sends HTTP method "PUT" to OCS API endpoint "/cloud/users/existing-user" with body
+    And user "%admin%" sends HTTP method "PUT" to OCS API endpoint "/cloud/users/existing-user" with body
       | key   | email             |
       | value | guest@example.com |
-    When user "admin" attempts to create guest user "guest" with email "guest@example.com" using the API
+    When user "%admin%" attempts to create guest user "guest" with email "guest@example.com" using the API
     Then the HTTP status code should be "422"
     And user "guest" should not exist
 
   Scenario: A guest user cannot upload files
-    Given as user "admin"
-    And user "admin" has created guest user "guest" with email "guest@example.com"
+    Given as user "%admin%"
+    And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder to "/myfile.txt" using the WebDAV API
     Then the HTTP status code should be "401"
 
   @mailhog
   Scenario: A guest user can upload files
-    Given as user "admin"
+    Given as user "%admin%"
     And user "user0" has been created
-    And user "admin" has created guest user "guest" with email "guest@example.com"
+    And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
@@ -42,9 +42,9 @@ Feature: Guests
 
   @mailhog
   Scenario: A guest user can upload chunked files
-    Given as user "admin"
+    Given as user "%admin%"
     And user "user0" has been created
-    And user "admin" has created guest user "guest" with email "guest@example.com"
+    And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
@@ -59,9 +59,9 @@ Feature: Guests
 
   @mailhog
   Scenario: A guest user can cancel a chunked upload
-    Given as user "admin"
+    Given as user "%admin%"
     And user "user0" has been created
-    And user "admin" has created guest user "guest" with email "guest@example.com"
+    And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
@@ -76,10 +76,10 @@ Feature: Guests
 
   @mailhog
   Scenario: A guest user can upload a file and can reshare it
-    Given as user "admin"
+    Given as user "%admin%"
     And user "user0" has been created
     And user "user1" has been created
-    And user "admin" has created guest user "guest" with email "guest@example.com"
+    And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
@@ -92,10 +92,10 @@ Feature: Guests
 
   @mailhog
   Scenario: A guest user cannot reshare files
-    Given as user "admin"
+    Given as user "%admin%"
     And user "user0" has been created
     And user "user1" has been created
-    And user "admin" has created guest user "guest" with email "guest@example.com"
+    And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
     And user "user0" has created a share with settings
@@ -113,7 +113,7 @@ Feature: Guests
     And the HTTP status code should be "200"
 
   Scenario: Check that skeleton is properly set
-    Given as user "admin"
+    Given as user "%admin%"
     And user "user0" has been created
     Then user "user0" should see the following elements
       | /FOLDER/           |
@@ -128,9 +128,9 @@ Feature: Guests
 
   @mailhog
   Scenario: A created guest user can log in
-    Given as user "admin"
+    Given as user "%admin%"
     And user "user0" has been created
-    And user "admin" has created guest user "guest" with email "guest@example.com"
+    And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "guest" should be a guest user
     And user "user0" has shared file "/textfile1.txt" with user "guest@example.com"
@@ -140,20 +140,20 @@ Feature: Guests
       | /textfile1.txt |
 
   Scenario: Trying to create a guest user that already exists
-    Given as user "admin"
-    And user "admin" has created guest user "guest" with email "guest@example.com"
+    Given as user "%admin%"
+    And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "guest" should be a guest user
-    When user "admin" creates guest user "guest" with email "guest@example.com" using the API
+    When user "%admin%" creates guest user "guest" with email "guest@example.com" using the API
     Then the HTTP status code should be "422"
 
   Scenario: removing a user from a group
-    Given as user "admin"
-    And user "admin" has created guest user "guest" with email "guest@example.com"
+    Given as user "%admin%"
+    And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And group "guests_app" has been created
     And user "guest@example.com" has been added to group "guests_app"
-    When user "admin" sends HTTP method "DELETE" to OCS API endpoint "/cloud/users/guest@example.com/groups" with body
+    When user "%admin%" sends HTTP method "DELETE" to OCS API endpoint "/cloud/users/guest@example.com/groups" with body
       | groupid | guests_app |
     Then the OCS status code should be "100"
     And user "guest@example.com" should not belong to group "guests_app"
