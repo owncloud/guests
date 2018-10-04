@@ -142,6 +142,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	public function userCreatesAGuestUser(
 		$user, $attemptTo, $guestDisplayName, $guestEmail
 	) {
+		$user = $this->featureContext->getActualUsername($user);
 		$shouldHaveBeenCreated
 			= (($attemptTo == "creates") || ($attemptTo === "created"));
 		$fullUrl
