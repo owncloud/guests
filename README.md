@@ -9,3 +9,4 @@ Furthermore, the administrator has to whitelist the applications that guests can
 By default settings, avatar, files_trashbin, files_versions, files_sharing,
 files_texteditor, activity, firstrunwizard, gallery are allowed.
 
+Trigger CI
