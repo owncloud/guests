@@ -255,7 +255,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$userName = $this->prepareUserNameAsFrontend(
 			$this->createdGuests[$guestDisplayName]
 		);
-		$emails = EmailHelper::getEmails($this->emailContext->getMailhogUrl());
+		$emails = EmailHelper::getEmails($this->emailContext->getLocalMailhogUrl());
 		$lastEmailBody = $emails->items[0]->Content->Body;
 		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
 
