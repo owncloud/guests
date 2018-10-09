@@ -31,7 +31,7 @@ use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\Mail\IMailer;
 use OCP\Security\ISecureRandom;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class UsersController extends Controller {
@@ -67,7 +67,7 @@ class UsersController extends Controller {
 	 * @param IConfig $config
 	 * @param IMailer $mailer
 	 * @param ISecureRandom $secureRandom
-	 * @param EventDispatcher $eventDispatcher
+	 * @param EventDispatcherInterface $eventDispatcher
 	 */
 	public function __construct($appName,
 								IRequest $request,
@@ -76,7 +76,7 @@ class UsersController extends Controller {
 								IConfig $config,
 								IMailer $mailer,
 								ISecureRandom $secureRandom,
-								EventDispatcher $eventDispatcher
+								EventDispatcherInterface $eventDispatcher
 	) {
 		parent::__construct($appName, $request);
 
