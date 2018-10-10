@@ -23,20 +23,14 @@
  *
  */
 
-$eventDispatcher = \OC::$server->getEventDispatcher();
-$eventDispatcher->addListener(
-	'OCA\Files::loadAdditionalScripts',
-	function () {
-		\OCP\Util::addScript('guests', 'guestshare');
-	}
-);
+$app = new \OCA\Guests\AppInfo\Application();
+$app->registerListeners();
 
 $config = \OC::$server->getConfig();
 $groupName = $config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME);
 
 $groupBackend = new \OCA\Guests\GroupBackend($groupName);
 \OC::$server->getGroupManager()->addBackend($groupBackend);
-\OCP\Util::connectHook('OCP\Share', 'post_shared', '\OCA\Guests\Hooks', 'postShareHook');
 
 $user = \OC::$server->getUserSession()->getUser();
 

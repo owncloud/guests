@@ -78,10 +78,14 @@ class Mail {
 	 * Sends out a reset password mail if the user is a guest and does not have
 	 * a password set, yet.
 	 *
+	 * @param Share\IShare $share
 	 * @param $uid
+	 * @param $token
+	 *
 	 * @throws \Exception
 	 */
-	public function sendGuestInviteMail($uid, $shareWith, $itemType, $itemSource, $token) {
+	public function sendGuestInviteMail(Share\IShare $share, $uid, $token) {
+		$shareWith = $share->getSharedWith();
 		$shareWithEmail = $this->userManager->get($shareWith)->getEMailAddress();
 		$replyTo = $this->userManager->get($uid)->getEMailAddress();
 		$senderDisplayName = $this->userSession->getUser()->getDisplayName();
@@ -93,21 +97,19 @@ class Mail {
 
 		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
-		$items = Share::getItemSharedWithUser($itemType, $itemSource, $shareWith);
-		$filename = \trim($items[0]['file_target'], '/');
+		$filename = \trim($share->getTarget(), '/');
 		$subject = (string)$this->l10n->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
-		$expiration = null;
-		if (isset($items[0]['expiration'])) {
+		$expiration = $share->getExpirationDate();
+		if ($expiration instanceof \DateTime) {
 			try {
-				$date = new \DateTime($items[0]['expiration']);
-				$expiration = $date->getTimestamp();
+				$expiration = $expiration->getTimestamp();
 			} catch (\Exception $e) {
 				$this->logger->error("Couldn't read date: " . $e->getMessage(), ['app' => 'sharing']);
 			}
 		}
 
 		$link = $this->urlGenerator->linkToRouteAbsolute(
-			'files.viewcontroller.showFile', ['fileId' => $itemSource]
+			'files.viewcontroller.showFile', ['fileId' => $share->getNode()->getId()]
 		);
 
 		list($htmlBody, $textBody) = $this->createMailBody(

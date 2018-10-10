@@ -28,6 +28,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IUserSession;
+use OCP\Share\IShare;
 
 class Hooks {
 
@@ -71,12 +72,19 @@ class Hooks {
 		$this->config = $config;
 	}
 
-	public function handlePostShare(
-		$shareType,
-		$shareWith,
-		$itemType,
-		$itemSource
-	) {
+	public function handlePostShare(IShare $share) {
+		$itemType = $share->getNodeType();
+		if ($itemType !== 'file'
+			&& $itemType !== 'folder'
+		) {
+			$this->logger->debug(
+				"ignoring share for itemType '$itemType'",
+				['app' => 'guests']
+			);
+			return;
+		}
+
+		$shareWith = $share->getSharedWith();
 		$isGuest = $this->config->getUserValue(
 			$shareWith,
 			'owncloud',
@@ -93,25 +101,17 @@ class Hooks {
 			return;
 		}
 
-		if (!($itemType === 'folder' || $itemType === 'file')) {
-			$this->logger->debug(
-				"ignoring share for itemType '$itemType'",
-				['app' => 'guests']
-			);
-
-			return;
-		}
-
 		$user = $this->userSession->getUser();
-
 		if (!$user) {
 			throw new \Exception(
 				'post_share hook triggered without user in session'
 			);
 		}
 
-		$this->logger->debug("checking if '$shareWith' has a password",
-			['app' => 'guests']);
+		$this->logger->debug(
+			"checking if '$shareWith' has a password",
+			['app' => 'guests']
+		);
 
 		$registerToken = $this->config->getUserValue(
 			$shareWith,
@@ -120,21 +120,21 @@ class Hooks {
 			null
 		);
 
-		$uid = $user->getUID();
-
 		try {
 			if ($registerToken) {
+				$uid = $user->getUID();
 				// send invitation
 				$this->mail->sendGuestInviteMail(
+					$share,
 					$uid,
-					$shareWith,
-					$itemType,
-					$itemSource,
 					$registerToken
 				);
 			}
 		} catch (DoesNotExistException $ex) {
-			$this->logger->error("'$shareWith' does not exist", ['app'=>'guests']);
+			$this->logger->error(
+				"'$shareWith' does not exist",
+				['app' => 'guests']
+			);
 		}
 	}
 }
