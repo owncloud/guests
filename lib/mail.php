@@ -26,7 +26,6 @@
 namespace OCA\Guests;
 
 use OCP\Defaults;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
@@ -38,9 +37,6 @@ use OCP\Template;
 use OCP\Util;
 
 class Mail {
-
-	/** @var IConfig */
-	private $config;
 
 	/** @var ILogger */
 	private $logger;
@@ -61,7 +57,6 @@ class Mail {
 	private $urlGenerator;
 
 	public function __construct(
-		IConfig $config,
 		ILogger $logger,
 		IUserSession $userSession,
 		IMailer $mailer,
@@ -70,7 +65,6 @@ class Mail {
 		IUserManager $userManager,
 		IURLGenerator $urlGenerator
 	) {
-		$this->config = $config;
 		$this->logger = $logger;
 		$this->userSession = $userSession;
 		$this->mailer = $mailer;
@@ -78,31 +72,6 @@ class Mail {
 		$this->l10n = $l10n;
 		$this->userManager = $userManager;
 		$this->urlGenerator = $urlGenerator;
-	}
-
-	/**
-	 * @var Mail
-	 */
-	private static $instance;
-
-	/**
-	 * @deprecated use DI
-	 * @return Mail
-	 */
-	public static function createForStaticLegacyCode() {
-		if (!self::$instance) {
-			self::$instance = new Mail(
-				\OC::$server->getConfig(),
-				\OC::$server->getLogger(),
-				\OC::$server->getUserSession(),
-				\OC::$server->getMailer(),
-				new Defaults(),
-				\OC::$server->getL10N('guests'),
-				\OC::$server->getUserManager(),
-				\OC::$server->getURLGenerator()
-			);
-		}
-		return self::$instance;
 	}
 
 	/**
