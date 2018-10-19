@@ -26,7 +26,6 @@
 namespace OCA\Guests;
 
 use OCP\Defaults;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IURLGenerator;
@@ -38,9 +37,6 @@ use OCP\Template;
 use OCP\Util;
 
 class Mail {
-
-	/** @var IConfig */
-	private $config;
 
 	/** @var ILogger */
 	private $logger;
@@ -61,7 +57,6 @@ class Mail {
 	private $urlGenerator;
 
 	public function __construct(
-		IConfig $config,
 		ILogger $logger,
 		IUserSession $userSession,
 		IMailer $mailer,
@@ -70,7 +65,6 @@ class Mail {
 		IUserManager $userManager,
 		IURLGenerator $urlGenerator
 	) {
-		$this->config = $config;
 		$this->logger = $logger;
 		$this->userSession = $userSession;
 		$this->mailer = $mailer;
@@ -81,38 +75,17 @@ class Mail {
 	}
 
 	/**
-	 * @var Mail
-	 */
-	private static $instance;
-
-	/**
-	 * @deprecated use DI
-	 * @return Mail
-	 */
-	public static function createForStaticLegacyCode() {
-		if (!self::$instance) {
-			self::$instance = new Mail(
-				\OC::$server->getConfig(),
-				\OC::$server->getLogger(),
-				\OC::$server->getUserSession(),
-				\OC::$server->getMailer(),
-				new Defaults(),
-				\OC::$server->getL10N('guests'),
-				\OC::$server->getUserManager(),
-				\OC::$server->getURLGenerator()
-			);
-		}
-		return self::$instance;
-	}
-
-	/**
 	 * Sends out a reset password mail if the user is a guest and does not have
 	 * a password set, yet.
 	 *
+	 * @param Share\IShare $share
 	 * @param $uid
+	 * @param $token
+	 *
 	 * @throws \Exception
 	 */
-	public function sendGuestInviteMail($uid, $shareWith, $itemType, $itemSource, $token) {
+	public function sendGuestInviteMail(Share\IShare $share, $uid, $token) {
+		$shareWith = $share->getSharedWith();
 		$shareWithEmail = $this->userManager->get($shareWith)->getEMailAddress();
 		$replyTo = $this->userManager->get($uid)->getEMailAddress();
 		$senderDisplayName = $this->userSession->getUser()->getDisplayName();
@@ -124,21 +97,19 @@ class Mail {
 
 		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
-		$items = Share::getItemSharedWithUser($itemType, $itemSource, $shareWith);
-		$filename = \trim($items[0]['file_target'], '/');
+		$filename = \trim($share->getTarget(), '/');
 		$subject = (string)$this->l10n->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
-		$expiration = null;
-		if (isset($items[0]['expiration'])) {
+		$expiration = $share->getExpirationDate();
+		if ($expiration instanceof \DateTime) {
 			try {
-				$date = new \DateTime($items[0]['expiration']);
-				$expiration = $date->getTimestamp();
+				$expiration = $expiration->getTimestamp();
 			} catch (\Exception $e) {
 				$this->logger->error("Couldn't read date: " . $e->getMessage(), ['app' => 'sharing']);
 			}
 		}
 
 		$link = $this->urlGenerator->linkToRouteAbsolute(
-			'files.viewcontroller.showFile', ['fileId' => $itemSource]
+			'files.viewcontroller.showFile', ['fileId' => $share->getNode()->getId()]
 		);
 
 		list($htmlBody, $textBody) = $this->createMailBody(

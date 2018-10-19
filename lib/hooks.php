@@ -27,9 +27,8 @@ namespace OCA\Guests;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IConfig;
 use OCP\ILogger;
-use OCP\IRequest;
-use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\Share\IShare;
 
 class Hooks {
 
@@ -42,10 +41,6 @@ class Hooks {
 	 * @var IUserSession
 	 */
 	private $userSession;
-	/**
-	 * @var IRequest
-	 */
-	private $request;
 
 	/**
 	 * @var Mail
@@ -53,83 +48,43 @@ class Hooks {
 	private $mail;
 
 	/**
-	 * @var IUserManager
+	 * @var IConfig
 	 */
-	private $userManager;
+	private $config;
 
 	/**
 	 * Hooks constructor.
 	 *
 	 * @param ILogger $logger
 	 * @param IUserSession $userSession
-	 * @param IRequest $request
 	 * @param Mail $mail
-	 * @param IUserManager $userManager
 	 * @param IConfig $config
 	 */
 	public function __construct(
 		ILogger $logger,
 		IUserSession $userSession,
-		IRequest $request,
 		Mail $mail,
-		IUserManager $userManager,
 		IConfig $config
 	) {
 		$this->logger = $logger;
 		$this->userSession = $userSession;
-		$this->request = $request;
 		$this->mail = $mail;
-		$this->userManager = $userManager;
 		$this->config = $config;
 	}
 
-	/**
-	 * @var Hooks
-	 */
-	private static $instance;
-
-	/**
-	 * @deprecated use DI
-	 * @return Hooks
-	 */
-	public static function createForStaticLegacyCode() {
-		if (!self::$instance) {
-			$logger = \OC::$server->getLogger();
-
-			self::$instance = new Hooks(
-				$logger,
-				\OC::$server->getUserSession(),
-				\OC::$server->getRequest(),
-				Mail::createForStaticLegacyCode(),
-				\OC::$server->getUserManager(),
-				\OC::$server->getConfig()
+	public function handlePostShare(IShare $share) {
+		$itemType = $share->getNodeType();
+		if ($itemType !== 'file'
+			&& $itemType !== 'folder'
+		) {
+			$this->logger->debug(
+				"ignoring share for itemType '$itemType'",
+				['app' => 'guests']
 			);
+			return;
 		}
-		return self::$instance;
-	}
 
-	/**
-	 * generate guest password if new
-	 *
-	 * @param array $params
-	 * @throws \Exception
-	 */
-	public static function postShareHook($params) {
-		$hook = self::createForStaticLegacyCode();
-		$hook->handlePostShare(
-				$params['shareType'],
-				$params['shareWith'],
-				$params['itemType'],
-				$params['itemSource']
-		);
-	}
-
-	public function handlePostShare(
-		$shareType,
-		$shareWith,
-		$itemType,
-		$itemSource
-	) {
+		$shareWith = $share->getSharedWith();
 		$isGuest = $this->config->getUserValue(
 			$shareWith,
 			'owncloud',
@@ -140,31 +95,23 @@ class Hooks {
 		if (!$isGuest) {
 			$this->logger->debug(
 				"ignoring user '$shareWith', not a guest",
-				['app'=>'guests']
-			);
-
-			return;
-		}
-
-		if (!($itemType === 'folder' || $itemType === 'file')) {
-			$this->logger->debug(
-				"ignoring share for itemType '$itemType'",
-				['app'=>'guests']
+				['app' => 'guests']
 			);
 
 			return;
 		}
 
 		$user = $this->userSession->getUser();
-
 		if (!$user) {
 			throw new \Exception(
 				'post_share hook triggered without user in session'
 			);
 		}
 
-		$this->logger->debug("checking if '$shareWith' has a password",
-			['app'=>'guests']);
+		$this->logger->debug(
+			"checking if '$shareWith' has a password",
+			['app' => 'guests']
+		);
 
 		$registerToken = $this->config->getUserValue(
 			$shareWith,
@@ -173,21 +120,21 @@ class Hooks {
 			null
 		);
 
-		$uid = $user->getUID();
-
 		try {
 			if ($registerToken) {
+				$uid = $user->getUID();
 				// send invitation
 				$this->mail->sendGuestInviteMail(
+					$share,
 					$uid,
-					$shareWith,
-					$itemType,
-					$itemSource,
 					$registerToken
 				);
 			}
 		} catch (DoesNotExistException $ex) {
-			$this->logger->error("'$shareWith' does not exist", ['app'=>'guests']);
+			$this->logger->error(
+				"'$shareWith' does not exist",
+				['app' => 'guests']
+			);
 		}
 	}
 }
