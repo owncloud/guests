@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add password_policy and oauth2 to default whitelist - [#227](https://github.com/owncloud/guests/issues/227)
 ### Changed
+- Set max-version to 10.1 because core platform is switching to semver - [#245](https://github.com/owncloud/guests/pull/245)
 ### Removed
 ### Fixed
 - Fix for events not being triggered properly for password policy app - [#243](https://github.com/owncloud/guests/pull/243)
