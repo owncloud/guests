@@ -258,6 +258,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$emails = EmailHelper::getEmails($this->emailContext->getLocalMailhogUrl());
 		$lastEmailBody = $emails->items[0]->Content->Body;
 		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
+		var_dump($fullRegisterUrl);
 
 		$exploded = \explode('/', $fullRegisterUrl);
 		$email = $exploded[7];

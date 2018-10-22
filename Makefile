@@ -98,12 +98,12 @@ $(KARMA): $(nodejs_deps)
 
 # Command for running all tests.
 .PHONY: test
-test: test-acceptance test-php test-js
+test: test-acceptance-api test-php test-js
 
-# Command for running acceptance tests.
-.PHONY: test-acceptance
-test-acceptance:
-	cd $(tests_acceptance_directory) && pwd && chmod +x run.sh && ./run.sh -c ../../apps/guests/tests/acceptance/config/behat.yml
+.PHONY: test-acceptance-api
+test-acceptance-api:       ## Run API acceptance tests
+test-acceptance-api:
+	../../tests/acceptance/run.sh --type api
 
 .PHONY: test-php-lint
 test-php-lint:
