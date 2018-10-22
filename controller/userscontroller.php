@@ -2,6 +2,7 @@
 /**
  * @author Ilja Neumann <ineumann@owncloud.com>
  * @author Thomas Heinisch <t.heinisch@bw-tech.de>
+ * @author Viktar Dubiniuk <dubiniuk@owncloud.com>
  *
  * @copyright Copyright (c) 2017, ownCloud GmbH
  * @license GPL-2.0
@@ -153,7 +154,7 @@ class UsersController extends Controller {
 			return new DataResponse(
 				[
 					'message' => (string)$this->l10n->t(
-						'A guest user can`t create other guest users.'
+						'A guest user can not create other guest users.'
 					)
 				],
 				Http::STATUS_FORBIDDEN
@@ -179,7 +180,7 @@ class UsersController extends Controller {
 			$user->setDisplayName($displayName);
 		}
 
-		$token = $this->secureRandom->getMediumStrengthGenerator()->generate(
+		$token = $this->secureRandom->generate(
 			21,
 			ISecureRandom::CHAR_DIGITS .
 			ISecureRandom::CHAR_LOWER .
