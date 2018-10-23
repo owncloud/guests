@@ -208,7 +208,9 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * Process the body of an email and get the URL for guest registration
+	 * Process the body of an email and get the URL for guest registration.
+	 * The guest registration URL looks something like:
+	 * http://owncloud/apps/guests/register/guest@example.com/bxuPw8ixQvxR5EvfAMEFG
 	 *
 	 * @param string $emailBody
 	 *
@@ -259,10 +261,18 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$lastEmailBody = $emails->items[0]->Content->Body;
 		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
 
-		$exploded = \explode('/', $fullRegisterUrl);
-		$email = $exploded[7];
-		$token = $exploded[8];
-		$registerUrl = \implode('/', \array_splice($exploded, 0, 7));
+		$explodedFullRegisterUrl = \explode('/', $fullRegisterUrl);
+		$sizeOfExplodedFullRegisterUrl = \count($explodedFullRegisterUrl);
+
+		// The email address is the 2nd-last part of the URL
+		$email = $explodedFullRegisterUrl[$sizeOfExplodedFullRegisterUrl - 2];
+
+		// The token is the last part of the URL
+		$token = $explodedFullRegisterUrl[$sizeOfExplodedFullRegisterUrl - 1];
+		$registerUrl = \implode(
+			'/',
+			\array_splice($explodedFullRegisterUrl, 0, $sizeOfExplodedFullRegisterUrl - 2)
+		);
 		
 		$client = new Client();
 		$options['body'] = [

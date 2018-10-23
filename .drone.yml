@@ -7,8 +7,16 @@ branches: [master, release*, release/*]
 pipeline:
   install-server:
     image: owncloudci/core
-    pull: true
     version: ${OC_VERSION}
+    pull: true
+    db_type: ${DB_TYPE}
+    db_name: ${DB_NAME}
+    db_host: ${DB_TYPE}
+    db_username: autotest
+    db_password: owncloud
+    when:
+      matrix:
+        NEED_SERVER: true
 
   install-app:
     image: owncloudci/php:${PHP_VERSION}
@@ -25,7 +33,7 @@ pipeline:
       - php occ log:manage --level 0
     when:
       matrix:
-        TEST_SUITE: php
+        NEED_INSTALL_APP: true
 
   prepare-objectstore:
     image: owncloudci/php:${PHP_VERSION}
@@ -45,6 +53,27 @@ pipeline:
       matrix:
         TEST_OBJECTSTORAGE: true
 
+  fix-permissions:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - chown www-data /var/www/owncloud -R
+      - chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R
+      - chmod +x /var/www/owncloud/tests/acceptance/run.sh
+    when:
+      matrix:
+        FIX_PERMISSIONS: true
+
+  owncloud-log:
+    image: owncloud/ubuntu:16.04
+    detach: true
+    pull: true
+    commands:
+      - tail -f /var/www/owncloud/data/owncloud.log
+    when:
+      matrix:
+        NEED_SERVER: true
+
   test-javascript:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
@@ -54,7 +83,7 @@ pipeline:
       matrix:
         TEST_SUITE: javascript
 
-  code-compliance-check:
+  owncloud-coding-standard:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     commands:
@@ -63,26 +92,21 @@ pipeline:
       - make test-php-style
     when:
       matrix:
-        TEST_SUITE: php
+        TEST_SUITE: owncloud-coding-standard
 
-  api-acceptance:
+  api-acceptance-tests:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     environment:
-      - MAILHOG_HOST=mailhog
+      - TEST_SERVER_URL=http://owncloud
+      - PLATFORM=Linux
+      - MAILHOG_HOST=email
+      - BEHAT_SUITE=${BEHAT_SUITE}
     commands:
-      - make test-acceptance
+      - make test-acceptance-api
     when:
       matrix:
-        TEST_SUITE: php
-
-  print-log:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - cat /var/www/owncloud/data/owncloud.log
-    when:
-      status:  [ failure ]
+        TEST_SUITE: api-acceptance
 
   notify:
     image: plugins/slack:1
@@ -94,12 +118,53 @@ pipeline:
       event: [ push, tag ]
 
 services:
-  mailhog:
+  mysql:
+    image: mysql:5.5
+    environment:
+      - MYSQL_USER=autotest
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=owncloud
+    when:
+      matrix:
+        DB_TYPE: mysql
+
+  pgsql:
+    image: postgres:9.4
+    environment:
+      - POSTGRES_USER=autotest
+      - POSTGRES_PASSWORD=owncloud
+      - POSTGRES_DB=${DB_NAME}
+    when:
+      matrix:
+        DB_TYPE: pgsql
+
+  oci:
+    image: deepdiver/docker-oracle-xe-11g
+    environment:
+      - ORACLE_USER=system
+      - ORACLE_PASSWORD=oracle
+      - ORACLE_DB=${DB_NAME}
+    when:
+      matrix:
+        DB_TYPE: oci
+
+  owncloud:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    environment:
+     - APACHE_WEBROOT=/var/www/owncloud/
+    command: [ "/usr/local/bin/apachectl", "-e", "debug", "-D", "FOREGROUND" ]
+    when:
+      matrix:
+        NEED_SERVER: true
+
+  email:
     image: mailhog/mailhog
     pull: true
     when:
       matrix:
-        TEST_SUITE: php
+        USE_EMAIL: true
 
   scality:
     image: owncloudci/scality-s3server
@@ -113,46 +178,164 @@ services:
 matrix:
   include:
     # Javascript
-    - TEST_SUITE: javascript
-      OC_VERSION: daily-master-qa
-      PHP_VERSION: 7.1
-
-    - TEST_SUITE: javascript
-      OC_VERSION: daily-stable10-qa
-      PHP_VERSION: 7.1
-
-    # PHP Tests
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
-      TEST_SUITE: php
+      TEST_SUITE: javascript
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+
+    - PHP_VERSION: 7.1
+      OC_VERSION: daily-stable10-qa
+      TEST_SUITE: javascript
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+
+    # owncloud-coding-standard
+    - PHP_VERSION: 7.2
+      OC_VERSION: daily-master-qa
+      TEST_SUITE: owncloud-coding-standard
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+
+    # API Acceptance Tests with core master
+    - PHP_VERSION: 7.1
+      OC_VERSION: daily-master-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
-      TEST_SUITE: php
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
 
+    - PHP_VERSION: 7.2
+      OC_VERSION: daily-master-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: pgsql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
+
+    - PHP_VERSION: 7.2
+      OC_VERSION: daily-master-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: oci
+      DB_NAME: XE
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
+
+    # API Acceptance Tests with core stable10
     - PHP_VERSION: 5.6
       OC_VERSION: daily-stable10-qa
-      TEST_SUITE: php
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
 
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
-      TEST_SUITE: php
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
-      TEST_SUITE: php
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
-      TEST_SUITE: php
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
+
+    - PHP_VERSION: 7.2
+      OC_VERSION: daily-stable10-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: pgsql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
+
+    - PHP_VERSION: 7.2
+      OC_VERSION: daily-stable10-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: oci
+      DB_NAME: XE
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
 
       # Test on Objectstore
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
-      TEST_SUITE: php
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
       TEST_OBJECTSTORAGE: true
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
-      TEST_SUITE: php
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      FIX_PERMISSIONS: true
+      USE_EMAIL: true
       TEST_OBJECTSTORAGE: true
