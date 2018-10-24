@@ -6,6 +6,4 @@ will receive an email invite with a link to create an account. He has only acces
 to files which are shared with him.
 
 Furthermore, the administrator has to whitelist the applications that guests can use.
-By default settings, avatar, files_trashbin, files_versions, files_sharing,
-files_texteditor, activity, firstrunwizard, gallery are allowed.
-
+By default settings, avatar, files_external, files_trashbin, files_versions, files_sharing, files_texteditor, activity, firstrunwizard, gallery, notifications, password_policy and oauth2 are allowed.
