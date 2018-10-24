@@ -258,6 +258,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->createdGuests[$guestDisplayName]
 		);
 		$emails = EmailHelper::getEmails($this->emailContext->getLocalMailhogUrl());
+		PHPUnit_Framework_Assert::assertGreaterThan(
+			0,
+			$emails->count,
+			"No guest registration email was found on the email server"
+		);
 		$lastEmailBody = $emails->items[0]->Content->Body;
 		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
 
