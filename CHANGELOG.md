@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
 ## [0.6.0]
 ### Added
 - Add password_policy and oauth2 to default whitelist - [#227](https://github.com/owncloud/guests/issues/227)
@@ -85,6 +87,7 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 ### Added
 - Core functionality
 
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.6.0...master
 [0.6.0]: https://github.com/owncloud/guests/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/owncloud/guests/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/owncloud/guests/compare/v.0.4...v0.4.1
