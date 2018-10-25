@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-## [0.6.0]
+## [0.6.0] - 2018-10-25
 ### Added
 - Add password_policy and oauth2 to default whitelist - [#227](https://github.com/owncloud/guests/issues/227)
 ### Changed
@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Don't remove navigation menu if only a single item is available - [#221](https://github.com/owncloud/guests/issues/221)
 - Apply owncloud-coding standard - [#211](https://github.com/owncloud/guests/issues/211)
 
-## [0.5.0]
+## [0.5.0] - 2017-11-13
 ### Changed
 - Fix guest autocomplete addition - [#151](https://github.com/owncloud/guests/issues/151)
 - Remove modal, guests now only created by email in the share panel - [#149](https://github.com/owncloud/guests/issues/149)
