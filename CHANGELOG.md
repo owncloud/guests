@@ -4,7 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [0.5.0]
+## [Unreleased]
+
+## [0.6.0] - 2018-10-25
+### Added
+- Add password_policy and oauth2 to default whitelist - [#227](https://github.com/owncloud/guests/issues/227)
+### Changed
+- Increase max-version because core platform is switching to semver - [#245](https://github.com/owncloud/guests/pull/245)
+### Removed
+### Fixed
+- Fix for events not being triggered properly for password policy app - [#243](https://github.com/owncloud/guests/pull/243)
+- Don't remove navigation menu if only a single item is available - [#221](https://github.com/owncloud/guests/issues/221)
+- Apply owncloud-coding standard - [#211](https://github.com/owncloud/guests/issues/211)
+
+## [0.5.0] - 2017-11-13
 ### Changed
 - Fix guest autocomplete addition - [#151](https://github.com/owncloud/guests/issues/151)
 - Remove modal, guests now only created by email in the share panel - [#149](https://github.com/owncloud/guests/issues/149)
@@ -74,7 +87,9 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 ### Added
 - Core functionality
 
-[0.5.0]: https://github.com/owncloud/guests/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.6.0...master
+[0.6.0]: https://github.com/owncloud/guests/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/owncloud/guests/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/owncloud/guests/compare/v.0.4...v0.4.1
 [0.4]: https://github.com/owncloud/guests/compare/v0.3...v.0.4
 [0.3]: https://github.com/owncloud/guests/compare/v0.2...v0.3
