@@ -91,6 +91,7 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 ### Added
 - Core functionality
 
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.6.2...master
 [0.6.2]: https://github.com/owncloud/guests/compare/v0.6.0...v0.6.2
 [0.6.0]: https://github.com/owncloud/guests/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/owncloud/guests/compare/v0.4.1...v0.5.0
