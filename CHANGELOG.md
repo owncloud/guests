@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-## [0.6.1] - 2018-10-29
+## [0.6.2] - 2018-10-29
 ### Fixed
-- Adjust max-version to 10 to be able to release to marketplace
+- Adjust max-version to 10.1 to be able to release to marketplace
 ## [0.6.0] - 2018-10-25
 ### Added
 - Add password_policy and oauth2 to default whitelist - [#227](https://github.com/owncloud/guests/issues/227)
