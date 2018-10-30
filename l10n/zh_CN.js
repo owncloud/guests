@@ -2,9 +2,12 @@ OC.L10N.register(
     "guests",
     {
     "Invalid mail address" : "无效的电子邮件地址",
+    "No such guest user" : "无此访客用户",
     "The token is invalid" : "无效的令牌",
+    "Password cannot be empty" : "密码不能为空",
     "Group name must not be empty." : "组名不能为空。",
     "Saved" : "已保存",
+    "A username with that email already exists." : "已有用户名使用该电子邮件。",
     "User successfully created" : "成功创建用户",
     "Loading…" : "加载中...",
     "Loaded" : "已载入",
@@ -22,7 +25,9 @@ OC.L10N.register(
     "Set password" : "设置密码",
     "The share will expire on %s." : "此分享将在 %s 过期。",
     "Cheers!" : "干杯！",
+    "Guest users are grouped under a virtual group in the user manager" : "访客用户在用户管理器中被加入一个虚拟的组",
     "Group name" : "群组名称",
+    "Limit guest access to an app whitelist" : "限制访客只能访问白名单中的应用",
     "Reset whitelist" : "重置白名单"
 },
 "nplurals=1; plural=0;");
