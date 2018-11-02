@@ -39,8 +39,7 @@
 		<p class="groupbottom<?php if (!empty($_['invalidpassword'])) { ?> shake<?php } ?>">
 			<input type="password" name="password" id="password" value=""
 				placeholder="<?php p($l->t('Password')); ?>"
-				<?php p($_['user_autofocus'] ? '' : 'autofocus'); ?>
-				autocomplete="off" autocapitalize="off" autocorrect="off" required>
+				autocomplete="off" autocapitalize="off" autocorrect="off" required autofocus>
 			<label for="password" class="infield"><?php p($l->t('Password')); ?></label>
 		</p>
 		<div class="buttons">
