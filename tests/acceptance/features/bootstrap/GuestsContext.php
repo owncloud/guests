@@ -164,6 +164,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			// 4xx and 5xx responses cause an exception
 			$response = $e->getResponse();
 		}
+
+		echo $response->getBody() . "\n";
 		$this->featureContext->setResponse($response);
 		$this->createdGuests[$guestDisplayName] = $guestEmail;
 
