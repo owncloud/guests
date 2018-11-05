@@ -108,7 +108,7 @@ class Hooks {
 			);
 		}
 
-		$this->logger->debug(
+		$this->logger->warning(
 			"checking if '$shareWith' has a password",
 			['app' => 'guests']
 		);
