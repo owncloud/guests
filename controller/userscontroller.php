@@ -2,6 +2,7 @@
 /**
  * @author Ilja Neumann <ineumann@owncloud.com>
  * @author Thomas Heinisch <t.heinisch@bw-tech.de>
+ * @author Viktar Dubiniuk <dubiniuk@owncloud.com>
  *
  * @copyright Copyright (c) 2017, ownCloud GmbH
  * @license GPL-2.0
@@ -29,6 +30,7 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\Mail\IMailer;
 use OCP\Security\ISecureRandom;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -56,6 +58,14 @@ class UsersController extends Controller {
 	 * @var ISecureRandom
 	 */
 	private $secureRandom;
+	/**
+	 * @var EventDispatcherInterface
+	 */
+	private $eventDispatcher;
+	/**
+	 * @var IUserSession
+	 */
+	private $currentUser;
 
 	/**
 	 * UsersController constructor.
@@ -68,15 +78,18 @@ class UsersController extends Controller {
 	 * @param IMailer $mailer
 	 * @param ISecureRandom $secureRandom
 	 * @param EventDispatcherInterface $eventDispatcher
+	 * @param IUserSession $currentUser
 	 */
-	public function __construct($appName,
-								IRequest $request,
-								IUserManager $userManager,
-								IL10N $l10n,
-								IConfig $config,
-								IMailer $mailer,
-								ISecureRandom $secureRandom,
-								EventDispatcherInterface $eventDispatcher
+	public function __construct(
+		$appName,
+		IRequest $request,
+		IUserManager $userManager,
+		IL10N $l10n,
+		IConfig $config,
+		IMailer $mailer,
+		ISecureRandom $secureRandom,
+		EventDispatcherInterface $eventDispatcher,
+		IUserSession $currentUser
 	) {
 		parent::__construct($appName, $request);
 
@@ -86,6 +99,7 @@ class UsersController extends Controller {
 		$this->mailer = $mailer;
 		$this->secureRandom = $secureRandom;
 		$this->eventDispatcher = $eventDispatcher;
+		$this->currentUser = $currentUser;
 	}
 
 	/**
@@ -93,9 +107,9 @@ class UsersController extends Controller {
 	 * @NoCSRFRequired
 	 * @NoAdminRequired
 	 *
-	 * @param $username
-	 * @param $email
-	 * @param $displayName
+	 * @param string $email
+	 * @param string $displayName
+	 *
 	 * @return DataResponse
 	 */
 	public function create($email, $displayName) {
@@ -131,6 +145,22 @@ class UsersController extends Controller {
 			);
 		}
 
+		$uid = $this->currentUser->getUser()->getUID();
+		$isGuest = (bool) $this->config->getUserValue(
+			$uid, 'owncloud', 'isGuest', false
+		);
+
+		if ($isGuest) {
+			return new DataResponse(
+				[
+					'message' => (string)$this->l10n->t(
+						'A guest user can not create other guest users.'
+					)
+				],
+				Http::STATUS_FORBIDDEN
+			);
+		}
+
 		$event = new GenericEvent();
 		$this->eventDispatcher->dispatch('OCP\User::createPassword', $event);
 		if ($event->hasArgument('password')) {
@@ -150,7 +180,7 @@ class UsersController extends Controller {
 			$user->setDisplayName($displayName);
 		}
 
-		$token = $this->secureRandom->getMediumStrengthGenerator()->generate(
+		$token = $this->secureRandom->generate(
 			21,
 			ISecureRandom::CHAR_DIGITS .
 			ISecureRandom::CHAR_LOWER .

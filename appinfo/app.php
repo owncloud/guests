@@ -24,31 +24,8 @@
  */
 
 $app = new \OCA\Guests\AppInfo\Application();
-$app->registerListeners();
-
-$config = \OC::$server->getConfig();
-$groupName = $config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME);
-
-$groupBackend = new \OCA\Guests\GroupBackend($groupName);
-\OC::$server->getGroupManager()->addBackend($groupBackend);
-
-$user = \OC::$server->getUserSession()->getUser();
-
-if ($user) {
-	// if the whitelist is used
-	if ($config->getAppValue('guests', 'usewhitelist', 'true') === 'true') {
-		\OCP\Util::connectHook('OC_Filesystem', 'preSetup', '\OCA\Guests\AppWhitelist', 'preSetup');
-		// apply whitelist to navigation if guest user
-		if ($groupBackend->inGroup($user->getUID(), $groupName)) {
-			\OCP\Util::addScript('guests', 'navigation');
-		}
-	}
-
-	// hide email change field via css for learned guests
-	if ($user->getBackendClassName() === 'Guests') {
-		\OCP\Util::addStyle('guests', 'personal');
-	}
-}
+$groupBackend = $app->registerBackend();
+$app->registerListeners($groupBackend);
 
 // this will initialize the
 \OCP\Util::addScript('guests', 'app');

@@ -157,3 +157,14 @@ Feature: Guests
       | groupid | guests_app |
     Then the OCS status code should be "100"
     And user "guest@example.com" should not belong to group "guests_app"
+
+  @mailhog
+  Scenario: A guest user can not create new guest users
+    Given as user "admin"
+    And user "user0" has been created
+    And user "admin" has created guest user "guest" with email "guest@example.com"
+    And user "user0" has created a folder "/tmp"
+    And user "user0" has shared folder "/tmp" with user "guest@example.com"
+    And guest user "guest" registers
+    When user "guest@example.com" has created guest user "guest2" with email "guest2@example.com"
+    Then the HTTP status code should be "403"
