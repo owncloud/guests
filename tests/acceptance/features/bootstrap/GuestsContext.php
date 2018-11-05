@@ -260,6 +260,21 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->createdGuests[$guestDisplayName]
 		);
 		$emails = EmailHelper::getEmails($this->emailContext->getLocalMailhogUrl());
+
+		$client = new Client();
+		$options = [];
+		$fullUrl = $this->emailContext->getLocalMailhogUrl() . "/api/v2/messages";
+		$request = $client->createRequest("GET", $fullUrl, $options);
+		$request->addHeader('Content-Type', 'application/json');
+
+		try {
+			$response = $client->send($request);
+		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
+			// 4xx and 5xx responses cause an exception
+			$response = $e->getResponse();
+		}
+		echo $response->getBody()->getContents() . "\n";
+
 		PHPUnit_Framework_Assert::assertGreaterThan(
 			0,
 			$emails->count,
