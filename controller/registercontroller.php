@@ -66,7 +66,7 @@ class RegisterController extends Controller {
 	 */
 	private $mailer;
 	/**
-	 *  @var IURLGenerator
+	 * @var IURLGenerator
 	 */
 	private $urlGenerator;
 

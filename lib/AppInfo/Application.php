@@ -91,6 +91,7 @@ class Application extends App {
 		$server = $container->getServer();
 		$user = $server->getUserSession()->getUser();
 		if ($user === null) {
+			$this->registerPostShareHook();
 			return;
 		}
 
@@ -117,15 +118,25 @@ class Application extends App {
 					\OCP\Util::addScript(self::APP_NAME, 'guestshare');
 				}
 			);
-			$eventDispatcher->addListener(
-				'share.afterCreate',
-				function (GenericEvent $event) use ($container) {
-					/** @var Hooks $hooks */
-					$hooks = $container->query('Hooks');
-					$hooks->handlePostShare($event->getArgument('shareObject'));
-				}
-			);
+			$this->registerPostShareHook();
 		}
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function registerPostShareHook() {
+		$container = $this->getContainer();
+		$server = $container->getServer();
+		$eventDispatcher = $server->getEventDispatcher();
+		$eventDispatcher->addListener(
+			'share.afterCreate',
+			function (GenericEvent $event) use ($container) {
+				/** @var Hooks $hooks */
+				$hooks = $container->query('Hooks');
+				$hooks->handlePostShare($event->getArgument('shareObject'));
+			}
+		);
 	}
 
 	/**
