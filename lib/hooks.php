@@ -73,6 +73,10 @@ class Hooks {
 	}
 
 	public function handlePostShare(IShare $share) {
+		$this->logger->warning(
+			"reached post share hook",
+			['app' => 'guests']
+		);
 		$itemType = $share->getNodeType();
 		if ($itemType !== 'file'
 			&& $itemType !== 'folder'
