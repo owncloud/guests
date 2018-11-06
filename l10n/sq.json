@@ -6,6 +6,7 @@
     "Group name must not be empty." : "Emri i grupit s’mund të jetë i zbrazët.",
     "Saved" : "U ruajt",
     "A username with that email already exists." : "Ka tashmë një emër përdoruesi me atë email.",
+    "A guest user can not create other guest users." : "Një përdorues vizitor s’mund të krijojë përdorues të tjerë vizitorë.",
     "User successfully created" : "Përdoruesi u krijua me sukses",
     "Loading…" : "Po ngarkohet…",
     "Loaded" : "U ngarkua",
