@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [0.7.0]
+### Changed
+- Guests now cannot invite new guests any more - [#224](https://github.com/owncloud/guests/pull/224)
+- Use new core share API as old one will be removed in OC 11 - [#245](https://github.com/owncloud/guests/pull/245)
+
+### Fixed
+- Fix warning about missing user_autofocus attribute - [#264](https://github.com/owncloud/guests/pull/264)
 
 ## [0.6.2] - 2018-10-29
 ### Fixed
@@ -91,7 +97,7 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 ### Added
 - Core functionality
 
-[Unreleased]: https://github.com/owncloud/guests/compare/v0.6.2...master
+[0.7.0]: https://github.com/owncloud/guests/compare/v0.6.2...v0.7.0
 [0.6.2]: https://github.com/owncloud/guests/compare/v0.6.0...v0.6.2
 [0.6.0]: https://github.com/owncloud/guests/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/owncloud/guests/compare/v0.4.1...v0.5.0
