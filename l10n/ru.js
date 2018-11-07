@@ -8,6 +8,7 @@ OC.L10N.register(
     "Group name must not be empty." : "Имя группы не должно быть пустым.",
     "Saved" : "Сохранено",
     "A username with that email already exists." : "Пользователь с такой электронной почтой уже существует.",
+    "A guest user can not create other guest users." : "Гостевой пользователь не может создавать других гостевых пользователей.",
     "User successfully created" : "Пользователь успешно создан",
     "Loading…" : "Загрузка...",
     "Loaded" : "Загружено",

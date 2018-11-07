@@ -8,6 +8,7 @@ OC.L10N.register(
     "Group name must not be empty." : "El nombre del grupo no debe estar vacío",
     "Saved" : "Guardado",
     "A username with that email already exists." : "Ya existe un usuario con esta dirección de email.",
+    "A guest user can not create other guest users." : "Un usuario invitado no puede crear otros usuarios invitados.",
     "User successfully created" : "Usuario creado con éxito",
     "Loading…" : "Cargando...",
     "Loaded" : "Cargado",
