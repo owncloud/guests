@@ -6,6 +6,7 @@
     "Group name must not be empty." : "จำเป็นต้องป้อนชื่อกลุ่ม",
     "Saved" : "บันทึกแล้ว",
     "A username with that email already exists." : "มีคนใช้อีเมลนี้ไปแล้ว",
+    "A guest user can not create other guest users." : "ผู้ใช้ทั่วไปไม่สามารถสร้างผู้ใช้รายอื่นได้",
     "User successfully created" : "สร้างผู้ใช้เรียบร้อยแล้ว",
     "Loading…" : "กำลังโหลด...",
     "Loaded" : "โหลดแล้ว",
