@@ -6,6 +6,7 @@
     "Group name must not be empty." : "O nome do grupo não deve estar vazio.",
     "Saved" : "Salvo",
     "A username with that email already exists." : "Um nome de usuário com esse e-mail já existe.",
+    "A guest user can not create other guest users." : "Um usuário convidado não pode criar outros usuários convidados.",
     "User successfully created" : "Usuário criado com sucesso",
     "Loading…" : "Carregando...",
     "Loaded" : "Concluído",
