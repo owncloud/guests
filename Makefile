@@ -103,7 +103,7 @@ test: test-acceptance-api test-php test-js
 .PHONY: test-acceptance-api
 test-acceptance-api:       ## Run API acceptance tests
 test-acceptance-api:
-	../../tests/acceptance/run.sh --type api
+	../../tests/acceptance/run.sh --remote --type api
 
 .PHONY: test-php-lint
 test-php-lint:
