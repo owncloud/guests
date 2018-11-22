@@ -13,7 +13,7 @@ Feature: Guests
 
   Scenario: Cannot create a guest if a user with the same email address exists
     Given as user "%admin%"
-    And user "existing-user" has been created
+    And user "existing-user" has been created with default attributes
     And user "%admin%" sends HTTP method "PUT" to OCS API endpoint "/cloud/users/existing-user" with body
       | key   | email             |
       | value | guest@example.com |
@@ -31,7 +31,7 @@ Feature: Guests
   @mailhog
   Scenario: A guest user can upload files
     Given as user "%admin%"
-    And user "user0" has been created
+    And user "user0" has been created with default attributes
     And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
@@ -43,7 +43,7 @@ Feature: Guests
   @mailhog
   Scenario: A guest user can upload chunked files
     Given as user "%admin%"
-    And user "user0" has been created
+    And user "user0" has been created with default attributes
     And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
@@ -60,7 +60,7 @@ Feature: Guests
   @mailhog
   Scenario: A guest user can cancel a chunked upload
     Given as user "%admin%"
-    And user "user0" has been created
+    And user "user0" has been created with default attributes
     And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
@@ -77,8 +77,10 @@ Feature: Guests
   @mailhog
   Scenario: A guest user can upload a file and can reshare it
     Given as user "%admin%"
-    And user "user0" has been created
-    And user "user1" has been created
+    And these users have been created with default attributes:
+      | username |
+      | user0    |
+      | user1    |
     And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
@@ -93,8 +95,10 @@ Feature: Guests
   @mailhog
   Scenario: A guest user cannot reshare files
     Given as user "%admin%"
-    And user "user0" has been created
-    And user "user1" has been created
+    And these users have been created with default attributes:
+      | username |
+      | user0    |
+      | user1    |
     And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
@@ -114,7 +118,7 @@ Feature: Guests
 
   Scenario: Check that skeleton is properly set
     Given as user "%admin%"
-    And user "user0" has been created
+    And user "user0" has been created with default attributes
     Then user "user0" should see the following elements
       | /FOLDER/           |
       | /PARENT/           |
@@ -129,7 +133,7 @@ Feature: Guests
   @mailhog
   Scenario: A created guest user can log in
     Given as user "%admin%"
-    And user "user0" has been created
+    And user "user0" has been created with default attributes
     And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "guest" should be a guest user
@@ -161,7 +165,7 @@ Feature: Guests
   @mailhog
   Scenario: A guest user can not create new guest users
     Given as user "admin"
-    And user "user0" has been created
+    And user "user0" has been created with default attributes
     And user "admin" has created guest user "guest" with email "guest@example.com"
     And user "user0" has created a folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
