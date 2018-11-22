@@ -77,8 +77,10 @@ Feature: Guests
   @mailhog
   Scenario: A guest user can upload a file and can reshare it
     Given as user "%admin%"
-    And user "user0" has been created with default attributes
-    And user "user1" has been created with default attributes
+    And these users have been created with default attributes:
+      | username |
+      | user0    |
+      | user1    |
     And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
@@ -93,8 +95,10 @@ Feature: Guests
   @mailhog
   Scenario: A guest user cannot reshare files
     Given as user "%admin%"
-    And user "user0" has been created with default attributes
-    And user "user1" has been created with default attributes
+    And these users have been created with default attributes:
+      | username |
+      | user0    |
+      | user1    |
     And user "%admin%" has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "user0" has created a folder "/tmp"
