@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [0.7.0]
+## [Unreleased]
+
+## [0.7.0] - 2018-11-30
 
 ### Changed
 
@@ -125,6 +127,7 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.7.0...master
 [0.7.0]: https://github.com/owncloud/guests/compare/v0.6.2...v0.7.0
 [0.6.2]: https://github.com/owncloud/guests/compare/v0.6.0...v0.6.2
 [0.6.0]: https://github.com/owncloud/guests/compare/v0.5.0...v0.6.0
