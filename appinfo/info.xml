@@ -18,7 +18,7 @@ Furthermore guests are fully auditable with the [ownCloud Auditing application](
 ### Resources
 - Video: [ownCloud X Insights: Guest Users](https://www.youtube.com/watch?v=L42PBHgqKVI)
 	</description>
-	<version>0.6.2</version>
+	<version>0.7.0</version>
 	<documentation>
     		<user>https://doc.owncloud.com/server/latest/user_manual/files/webgui/sharing.html?highlight=guest#sharing-files-with-guest-users</user>
     	</documentation>
