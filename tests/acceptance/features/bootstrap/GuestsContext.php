@@ -129,6 +129,71 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * Uploading with old/new dav and chunked/non-chunked.
+	 *
+	 * @When user :user uploads overwriting file :source from the guests test data folder to :destination with all mechanisms using the WebDAV API
+	 *
+	 * @param string $user
+	 * @param string $source
+	 * @param string $destination
+	 *
+	 * @return void
+	 */
+	public function userUploadsAFileToWithAllMechanisms(
+		$user, $source, $destination
+	) {
+		$source = $this->relativePathToTestDataFolder . $source;
+		$uploadResponses = $this->featureContext->uploadWithAllMechanisms(
+			$user, $source, $destination, true
+		);
+		$this->featureContext->setUploadResponses($uploadResponses);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" uploads file "([^"]*)" from the guests test data folder to "([^"]*)" in (\d+) chunks (?:with (new|old|v1|v2) chunking and)?\s?using the WebDAV API$/
+	 *
+	 * @param string $user
+	 * @param string $source
+	 * @param string $destination
+	 * @param int $noOfChunks
+	 * @param string $chunkingVersion old|v1|new|v2 null for autodetect
+	 * @param bool $async use asynchronous move at the end or not
+	 *
+	 * @return void
+	 */
+	public function userUploadsAFileToWithChunks(
+		$user,
+		$source,
+		$destination,
+		$noOfChunks = 2,
+		$chunkingVersion = null,
+		$async = false
+	) {
+		$source = $this->relativePathToTestDataFolder . $source;
+		$this->featureContext->userUploadsAFileToWithChunks(
+			$user, $source, $destination, $noOfChunks, $chunkingVersion, $async
+		);
+	}
+	
+	/**
+	 * @When /^user "([^"]*)" uploads file "([^"]*)" from the guests test data folder asynchronously to "([^"]*)" in (\d+) chunks using the WebDAV API$/
+	 *
+	 * @param string $user
+	 * @param string $source
+	 * @param string $destination
+	 * @param int  $noOfChunks
+	 *
+	 * @return void
+	 */
+	public function userUploadsAFileAsyncToWithChunks(
+		$user, $source, $destination, $noOfChunks = 2
+	) {
+		$this->userUploadsAFileToWithChunks(
+			$user, $source, $destination, $noOfChunks, "new", true
+		);
+	}
+	
+	/**
 	 * @When /^user "([^"]*)" (attempts to create|creates) guest user "([^"]*)" with email "([^"]*)" using the API$/
 	 * @Given /^user "([^"]*)" has (attempted to create|created) guest user "([^"]*)" with email "([^"]*)"$/
 	 *

@@ -22,15 +22,26 @@ Feature: Guests
   Scenario: A guest user cannot upload files
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder to "/myfile.txt" using the WebDAV API
+    When user "guest@example.com" uploads overwriting file "textfile.txt" from the guests test data folder to "/myfile.txt" with all mechanisms using the WebDAV API
+    Then the HTTP status code of all upload responses should be "401"
+    And the HTTP reason phrase of all upload responses should be "Unauthorized"
+    And as "guest@example.com" file "/textfile.txt" should not exist
+    And as "user0" file "/textfile.txt" should not exist
+
+  Scenario: A guest user cannot upload files (async upload)
+    Given the administrator has enabled async operations
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder asynchronously to "/textfile.txt" in 3 chunks using the WebDAV API
     Then the HTTP status code should be "401"
+    And as "guest@example.com" file "/textfile.txt" should not exist
+    And as "user0" file "/textfile.txt" should not exist
 
   @mailhog
   Scenario: A guest user can upload files
     Given user "user0" has been created with default attributes
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
     When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt" using the WebDAV API
@@ -41,7 +52,7 @@ Feature: Guests
     Given user "user0" has been created with default attributes
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
     When user "guest@example.com" creates a new chunking upload with id "chunking-42" using the WebDAV API
@@ -52,12 +63,62 @@ Feature: Guests
     Then as "guest@example.com" file "/tmp/myChunkedFile.txt" should exist
     And as "user0" file "/tmp/myChunkedFile.txt" should exist
 
+  @mailhog @issue-279
+  Scenario: A guest user can upload files
+    Given user "user0" has been created with default attributes
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And the HTTP status code should be "201"
+    And user "user0" has created folder "/tmp"
+    And user "user0" has shared folder "/tmp" with user "guest@example.com"
+    And guest user "guest" has registered
+    When user "guest@example.com" uploads overwriting file "textfile.txt" from the guests test data folder to "/tmp/myfile.txt" with all mechanisms using the WebDAV API
+    #Then the HTTP status code of all upload responses should be "201"
+    #ToDo: after fixing the issue merge the different upload tests
+    Then the HTTP status code of all upload responses should be between "201" and "400"
+    And the content of file "/tmp/myfile.txt" for user "user0" should be:
+    """
+    This is a testfile.
+    
+    Cheers.
+    """
+    And the content of file "/tmp/myfile.txt" for user "guest@example.com" should be:
+    """
+    This is a testfile.
+    
+    Cheers.
+    """
+
+  @mailhog
+  Scenario: A guest user can upload files (async upload)
+    Given the administrator has enabled async operations
+    And user "user0" has been created with default attributes
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "user0" has created folder "/tmp"
+    And user "user0" has shared folder "/tmp" with user "guest@example.com"
+    And guest user "guest" has registered
+    When user "user0" uploads file "textfile.txt" from the guests test data folder asynchronously to "/tmp/textfile.txt" in 3 chunks using the WebDAV API
+    Then the HTTP status code should be "202"
+    And the oc job status values of last request for user "user0" should match these regular expressions
+      | status       | /^finished$/ |
+    And the content of file "/tmp/textfile.txt" for user "user0" should be:
+    """
+    This is a testfile.
+    
+    Cheers.
+    """
+    And the content of file "/tmp/textfile.txt" for user "guest@example.com" should be:
+    """
+    This is a testfile.
+    
+    Cheers.
+    """
+
   @mailhog
   Scenario: A guest user can cancel a chunked upload
     Given user "user0" has been created with default attributes
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
     When user "guest@example.com" creates a new chunking upload with id "chunking-42" using the WebDAV API
@@ -76,7 +137,7 @@ Feature: Guests
       | user1    |
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
     And user "guest@example.com" has uploaded file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt"
@@ -93,7 +154,7 @@ Feature: Guests
       | user1    |
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has created a share with settings
       | path        | /tmp              |
       | shareType   | 0                 |
@@ -154,7 +215,7 @@ Feature: Guests
   Scenario: A guest user can not create new guest users
     Given user "user0" has been created with default attributes
     And the administrator has created guest user "guest" with email "guest@example.com"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" registers
     When user "guest@example.com" has created guest user "guest2" with email "guest2@example.com"
