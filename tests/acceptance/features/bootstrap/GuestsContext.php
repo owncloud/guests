@@ -179,6 +179,27 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^the administrator (attempts to create|creates) guest user "([^"]*)" with email "([^"]*)" using the API$/
+	 * @Given /^the administrator has (attempted to create|created) guest user "([^"]*)" with email "([^"]*)"$/
+	 *
+	 * @param string $attemptTo
+	 * @param string $guestDisplayName
+	 * @param string $guestEmail
+	 *
+	 * @return void
+	 */
+	public function theAdministratorCreatesAGuestUser(
+		$attemptTo, $guestDisplayName, $guestEmail
+	) {
+		$this->userCreatesAGuestUser(
+			$this->featureContext->getAdminUsername(),
+			$attemptTo,
+			$guestDisplayName,
+			$guestEmail
+		);
+	}
+
+	/**
 	 * @Then user :user should be a guest user
 	 *
 	 * @param string $guestDisplayName
