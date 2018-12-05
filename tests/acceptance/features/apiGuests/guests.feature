@@ -30,7 +30,7 @@ Feature: Guests
     Given user "user0" has been created with default attributes
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
     When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt" using the WebDAV API
@@ -41,7 +41,7 @@ Feature: Guests
     Given user "user0" has been created with default attributes
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
     When user "guest@example.com" creates a new chunking upload with id "chunking-42" using the WebDAV API
@@ -57,7 +57,7 @@ Feature: Guests
     Given user "user0" has been created with default attributes
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
     When user "guest@example.com" creates a new chunking upload with id "chunking-42" using the WebDAV API
@@ -76,7 +76,7 @@ Feature: Guests
       | user1    |
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
     And user "guest@example.com" has uploaded file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt"
@@ -93,7 +93,7 @@ Feature: Guests
       | user1    |
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has created a share with settings
       | path        | /tmp              |
       | shareType   | 0                 |
@@ -154,7 +154,7 @@ Feature: Guests
   Scenario: A guest user can not create new guest users
     Given user "user0" has been created with default attributes
     And the administrator has created guest user "guest" with email "guest@example.com"
-    And user "user0" has created a folder "/tmp"
+    And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" registers
     When user "guest@example.com" has created guest user "guest2" with email "guest2@example.com"
