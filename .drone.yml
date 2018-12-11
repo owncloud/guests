@@ -5,7 +5,7 @@ workspace:
 branches: [master, release*, release/*]
 
 pipeline:
-  install-server:
+  install-core:
     image: owncloudci/core
     version: ${OC_VERSION}
     pull: true
@@ -16,14 +16,12 @@ pipeline:
     db_password: owncloud
     when:
       matrix:
-        NEED_SERVER: true
+        NEED_CORE: true
 
   install-app:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     commands:
-      - cd /var/www/owncloud/apps/guests
-      - make
       - cd /var/www/owncloud/
       - php occ a:l
       - php occ a:e guests
@@ -87,7 +85,6 @@ pipeline:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     commands:
-      - make test-php-lint
       - make test-php-codecheck
       - make test-php-style
     when:
@@ -183,7 +180,7 @@ matrix:
       TEST_SUITE: javascript
       DB_TYPE: mysql
       DB_NAME: owncloud
-      NEED_SERVER: true
+      NEED_CORE: true
       NEED_INSTALL_APP: true
 
     - PHP_VERSION: 7.1
@@ -191,17 +188,19 @@ matrix:
       TEST_SUITE: javascript
       DB_TYPE: mysql
       DB_NAME: owncloud
-      NEED_SERVER: true
+      NEED_CORE: true
       NEED_INSTALL_APP: true
 
     # owncloud-coding-standard
     - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
       TEST_SUITE: owncloud-coding-standard
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
+      OC_VERSION: daily-stable10-qa
+      NEED_CORE: true
+
+    - PHP_VERSION: 5.6
+      TEST_SUITE: owncloud-coding-standard
+      OC_VERSION: daily-stable10-qa
+      NEED_CORE: true
 
     # API Acceptance Tests with core master
     - PHP_VERSION: 7.1
@@ -210,6 +209,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -221,6 +221,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -232,6 +233,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: pgsql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -243,6 +245,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: oci
       DB_NAME: XE
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -255,6 +258,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -266,6 +270,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -277,6 +282,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -288,6 +294,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -299,6 +306,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: pgsql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -310,6 +318,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: oci
       DB_NAME: XE
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -322,6 +331,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
@@ -334,6 +344,7 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
       DB_NAME: owncloud
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true

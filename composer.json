@@ -1,13 +1,17 @@
 {
+  "name": "owncloud/guests",
   "config": {
     "platform": {
       "php": "5.6"
     }
   },
+  "require": {},
   "require-dev": {
-    "owncloud/coding-standard": "^1.0"
+    "bamarni/composer-bin-plugin": "^1.2"
   },
-  "require": {
-    "php": ">=5.6"
+  "extra": {
+    "bamarni-bin": {
+      "bin-links": false
+    }
   }
 }
