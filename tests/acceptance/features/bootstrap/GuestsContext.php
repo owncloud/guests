@@ -27,6 +27,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use GuzzleHttp\Client;
 use TestHelpers\EmailHelper;
 use TestHelpers\SetupHelper;
+use TestHelpers\UploadHelper;
 
 require_once 'bootstrap.php';
 
@@ -143,8 +144,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$user, $source, $destination
 	) {
 		$source = $this->relativePathToTestDataFolder . $source;
-		$uploadResponses = $this->featureContext->uploadWithAllMechanisms(
-			$user, $source, $destination, true
+		$uploadResponses = UploadHelper::uploadWithAllMechanisms(
+			$this->featureContext->getBaseUrl(),
+			$this->featureContext->getActualUsername($user),
+			$this->featureContext->getUserPassword($user), $source,
+			$destination, true
 		);
 		$this->featureContext->setUploadResponses($uploadResponses);
 	}
