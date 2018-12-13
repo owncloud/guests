@@ -117,12 +117,34 @@ test-php-codecheck:
 	$(occ) app:check-code $(app_name) -c deprecation
 
 .PHONY: test-php-style
-test-php-style: $(composer_dev_deps)
-	$(composer_deps)/bin/php-cs-fixer fix -v --diff --diff-format udiff --dry-run --allow-risky yes
+test-php-style: ## Run php-cs-fixer and check owncloud code-style
+test-php-style: vendor-bin/owncloud-codestyle/vendor
+	$(PHP_CS_FIXER) fix -v --diff --diff-format udiff --dry-run --allow-risky yes
 
-.PHONY: test-php
-test-php: $(composer_dev_deps)
-	# TODO: add unit tests...
+.PHONY: test-php-style-fix
+test-php-style-fix: ## Run php-cs-fixer and fix code style issues
+test-php-style-fix: vendor-bin/owncloud-codestyle/vendor
+	$(PHP_CS_FIXER) fix -v --diff --diff-format udiff --allow-risky yes
+
+.PHONY: test-php-phan
+test-php-phan: ## Run phan
+test-php-phan: vendor-bin/phan/vendor
+	$(PHAN) --config-file .phan/config.php --require-config-exists
+
+.PHONY: test-php-phpstan
+test-php-phpstan: ## Run phpstan
+test-php-phpstan: vendor-bin/phpstan/vendor
+	$(PHPSTAN) analyse --memory-limit=4G --configuration=./phpstan.neon --no-progress --level=5 appinfo lib
+
+.PHONY: test-php-unit
+test-php-unit: ## Run php unit tests
+test-php-unit:
+	$(PHPUNIT) --configuration ./tests/phpunit.xml --testsuite unit
+
+.PHONY: test-php-unit-dbg
+test-php-unit-dbg: ## Run php unit tests using phpdbg
+test-php-unit-dbg:
+	$(PHPUNITDBG) --configuration ./tests/phpunit.xml --testsuite unit
 
 .PHONY: test-js
 test-js: $(nodejs_deps)
