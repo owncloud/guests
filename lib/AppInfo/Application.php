@@ -26,6 +26,7 @@ use OCA\Guests\Hooks;
 use OCA\Guests\Mail;
 use OCP\AppFramework\App;
 use OCP\GroupInterface;
+use OCP\IConfig;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -76,7 +77,7 @@ class Application extends App {
 		$container = $this->getContainer();
 		$server = $container->getServer();
 		$groupName = $this->getGroupName();
-		$groupBackend = new \OCA\Guests\GroupBackend($groupName);
+		$groupBackend = new \OCA\Guests\GroupBackend($container->query(IConfig::class), $groupName);
 		$server->getGroupManager()->addBackend($groupBackend);
 		return $groupBackend;
 	}
