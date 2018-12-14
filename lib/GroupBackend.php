@@ -2,6 +2,7 @@
 /**
  * @author Ilja Neumann <ineumann@owncloud.com>
  * @author Thomas Heinisch <t.heinisch@bw-tech.de>
+ * @author Michael Barz <mbarz@owncloud.com>
  *
  * @copyright Copyright (c) 2017, ownCloud GmbH
  * @license GPL-2.0
@@ -24,6 +25,7 @@
 namespace OCA\Guests;
 
 use OCP\GroupInterface;
+use OCP\IConfig;
 
 /**
  * Provides a virtual (not existing in the database) group for guest users.
@@ -34,21 +36,47 @@ use OCP\GroupInterface;
 class GroupBackend implements GroupInterface {
 	const DEFAULT_NAME = 'guest_app';
 
+	/**
+	 * @var array
+	 */
 	private $guestMembers = [];
 
+	/**
+	 * @var array
+	 */
 	protected $possibleActions = [
 		self::COUNT_USERS => 'countUsersInGroup',
 	];
+
+	/**
+	 * @var IConfig
+	 */
+	private $config;
+
+	/**
+	 * @var string
+	 */
 	private $groupName;
 
-	public function __construct($groupName = self::DEFAULT_NAME) {
+	/**
+	 * GroupBackend constructor.
+	 *
+	 * @param IConfig $config
+	 * @param string $groupName
+	 */
+	public function __construct(IConfig $config, $groupName = self::DEFAULT_NAME) {
+		$this->config = $config;
 		$this->groupName = $groupName;
 	}
 
+	/**
+	 * Get Guest User ID's from oc_preferences
+	 *
+	 * @return array
+	 */
 	private function getMembers() {
 		if (empty($this->guestMembers)) {
-			$cfg = \OC::$server->getConfig();
-			$this->guestMembers = $cfg->getUsersForUserValue(
+			$this->guestMembers = $this->config->getUsersForUserValue(
 				'owncloud',
 				'isGuest',
 				'1'
@@ -60,6 +88,7 @@ class GroupBackend implements GroupInterface {
 
 	/**
 	 * Get all supported actions
+	 *
 	 * @return int bitwise-or'ed actions
 	 *
 	 * Returns the supported actions as int to be
@@ -78,7 +107,9 @@ class GroupBackend implements GroupInterface {
 
 	/**
 	 * Check if backend implements actions
+	 *
 	 * @param int $actions bitwise-or'ed actions
+	 *
 	 * @return bool
 	 *
 	 * Returns the supported actions as int to be
@@ -93,6 +124,7 @@ class GroupBackend implements GroupInterface {
 	 *
 	 * @param string $uid uid of the user
 	 * @param string $gid gid of the group
+	 *
 	 * @return bool
 	 * @since 4.5.0
 	 *
@@ -106,6 +138,7 @@ class GroupBackend implements GroupInterface {
 	 * Get all groups a user belongs to
 	 *
 	 * @param string $uid Name of the user
+	 *
 	 * @return array an array of group names
 	 * @since 4.5.0
 	 *
@@ -126,6 +159,7 @@ class GroupBackend implements GroupInterface {
 	 * @param string $search
 	 * @param int $limit
 	 * @param int $offset
+	 *
 	 * @return array an array of group names
 	 * @since 4.5.0
 	 *
@@ -139,6 +173,7 @@ class GroupBackend implements GroupInterface {
 	 * check if a group exists
 	 *
 	 * @param string $gid
+	 *
 	 * @return bool
 	 * @since 4.5.0
 	 */
@@ -153,12 +188,27 @@ class GroupBackend implements GroupInterface {
 	 * @param string $search
 	 * @param int $limit
 	 * @param int $offset
+	 *
 	 * @return array an array of user ids
 	 * @since 4.5.0
 	 */
 	public function usersInGroup($gid, $search = '', $limit = -1, $offset = 0) {
-		if ($gid === $this->groupName) {
-			return $this->getMembers();
+		if ($gid === $this->groupName && $limit !== 0) {
+			if (!empty($search)) {
+				$users = \array_filter(
+					$this->getMembers(),
+					function ($var) use ($search) {
+						return \strpos($var, $search) !== false;
+					}
+				);
+			} else {
+				$users = $this->getMembers();
+			}
+
+			if ($limit > 0) {
+				return \array_slice($users, $offset, $limit);
+			}
+			return $users;
 		}
 
 		return [];
@@ -175,6 +225,7 @@ class GroupBackend implements GroupInterface {
 	 * Returns whether the groups are visible for a given scope.
 	 *
 	 * @param string|null $scope scope string
+	 *
 	 * @return bool true if searchable, false otherwise
 	 *
 	 * @since 10.0.0
