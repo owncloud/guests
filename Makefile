@@ -140,12 +140,12 @@ test-php-phpstan: vendor-bin/phpstan/vendor
 .PHONY: test-php-unit
 test-php-unit: ## Run php unit tests
 test-php-unit:
-	$(PHPUNIT) --configuration ./tests/phpunit.xml --testsuite unit
+	$(PHPUNIT) --configuration phpunit.xml --testsuite unit
 
 .PHONY: test-php-unit-dbg
 test-php-unit-dbg: ## Run php unit tests using phpdbg
 test-php-unit-dbg:
-	$(PHPUNITDBG) --configuration ./tests/phpunit.xml --testsuite unit
+	$(PHPUNITDBG) --configuration phpunit.xml --testsuite unit
 
 .PHONY: test-js
 test-js: ## Test js files
