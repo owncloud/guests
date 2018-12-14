@@ -121,10 +121,8 @@ pipeline:
     image: plugins/codecov:2
     secrets: [codecov_token]
     pull: true
-    files:
-      - '*.xml'
     paths:
-      - tests/output
+      - tests/output/*.xml
     when:
       matrix:
         COVERAGE: true
@@ -132,11 +130,11 @@ pipeline:
   notify:
     image: plugins/slack:1
     pull: true
-    secrets: [ slack_webhook ]
+    secrets: [slack_webhook]
     channel: builds
     when:
-      status: [ failure, changed ]
-      event: [ push, tag ]
+      status: [failure, changed]
+      event: [push, tag]
 
 services:
   mysql:
