@@ -265,6 +265,27 @@ matrix:
       NEED_INSTALL_APP: true
       COVERAGE: true
 
+    # Unit Tests against core stable10
+    - PHP_VERSION: 5.6
+      OC_VERSION: daily-stable10-qa
+      TEST_SUITE: phpunit
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_CORE: true
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      COVERAGE: true
+
+    - PHP_VERSION: 7.1
+      OC_VERSION: daily-stable10-qa
+      TEST_SUITE: phpunit
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_CORE: true
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      COVERAGE: true
+
     # API Acceptance Tests with core master
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
