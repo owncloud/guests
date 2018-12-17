@@ -24,8 +24,8 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use GuzzleHttp\Client;
 use TestHelpers\EmailHelper;
+use TestHelpers\HttpRequestHelper;
 use TestHelpers\SetupHelper;
 use TestHelpers\UploadHelper;
 
@@ -221,18 +221,17 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$fullUrl
 			= $fullUrl
 			. "?displayName=$guestDisplayName&email=$guestEmail&username=$userName";
-		$client = new Client();
-		$options = [];
-		$options['auth'] = $this->featureContext->getAuthOptionForUser($user);
-		$request = $client->createRequest("PUT", $fullUrl, $options);
-		$request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-		try {
-			$response = $client->send($request);
-		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
-			// 4xx and 5xx responses cause an exception
-			$response = $e->getResponse();
-		}
+		$headers = [];
+		$headers['Content-Type'] = 'application/x-www-form-urlencoded';
+		$response = HttpRequestHelper::sendRequest(
+			$fullUrl,
+			'PUT',
+			$user,
+			$this->featureContext->getPasswordForUser($user),
+			$headers
+		);
+
 		$this->featureContext->setResponse($response);
 		$this->createdGuests[$guestDisplayName] = $guestEmail;
 
@@ -368,20 +367,22 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			'/',
 			\array_splice($explodedFullRegisterUrl, 0, $sizeOfExplodedFullRegisterUrl - 2)
 		);
-		
-		$client = new Client();
-		$options['body'] = [
+
+		$headers = [];
+		$headers = ['Content-Type' => 'application/x-www-form-urlencoded'];
+		$body = [
 			'email' => $email,
 			'token' => $token,
 			'password' => $this->featureContext->getPasswordForUser($userName)
 		];
-		try {
-			$response = $client->send(
-				$client->createRequest('POST', $registerUrl, $options)
-			);
-		} catch (\GuzzleHttp\Exception\ClientException $ex) {
-			$response = $ex->getResponse();
-		}
+		$response = HttpRequestHelper::sendRequest(
+			$registerUrl,
+			'POST',
+			null,
+			null,
+			$headers,
+			$body
+		);
 
 		$this->featureContext->setResponse($response);
 		$this->setCSRFDotDisabledFromGuestsScenario($oldCSRFSetting);
