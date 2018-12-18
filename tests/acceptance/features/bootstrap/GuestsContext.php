@@ -334,14 +334,16 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 
 	/**
 	 * @When guest user :user registers
+	 * @When guest user :user registers and sets password to :password
 	 * @Given guest user :user has registered
 	 *
 	 * @param string $guestDisplayName
+	 * @param string $password
 	 *
 	 * @return void
 	 * @throws Exception
 	 */
-	public function guestUserRegisters($guestDisplayName) {
+	public function guestUserRegisters($guestDisplayName, $password = null) {
 		$oldCSRFSetting = $this->disableCSRFFromGuestsScenario();
 		$userName = $this->prepareUserNameAsFrontend(
 			$this->createdGuests[$guestDisplayName]
@@ -368,13 +370,22 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			\array_splice($explodedFullRegisterUrl, 0, $sizeOfExplodedFullRegisterUrl - 2)
 		);
 
+		if ($password === null) {
+			$password = $this->featureContext->getPasswordForUser($userName);
+		} else {
+			$password = (string) $this->featureContext->getActualPassword(
+				$password
+				);
+		}
+
 		$headers = [];
 		$headers = ['Content-Type' => 'application/x-www-form-urlencoded'];
 		$body = [
 			'email' => $email,
 			'token' => $token,
-			'password' => $this->featureContext->getPasswordForUser($userName)
+			'password' => $password
 		];
+		
 		$response = HttpRequestHelper::sendRequest(
 			$registerUrl,
 			'POST',
@@ -385,6 +396,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		);
 
 		$this->featureContext->setResponse($response);
+		$this->featureContext->rememberUserPassword($userName, $password);
 		$this->setCSRFDotDisabledFromGuestsScenario($oldCSRFSetting);
 	}
 
