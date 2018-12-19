@@ -8,13 +8,25 @@ default:
         - %paths.base%/../features/apiGuests
       contexts:
         - GuestsContext:
-        - FeatureContext:
+        - FeatureContext: &common_feature_context_params
             baseUrl:  http://localhost:8080
             adminUsername: admin
             adminPassword: admin
             regularUserPassword: 123456
             ocPath: apps/testing/api/v1/occ
         - EmailContext:
+
+    webUIGuests:
+      paths:
+        - %paths.base%/../features/webUIGuests
+      contexts:
+        - GuestsContext:
+        - EmailContext:
+        - WebUIGeneralContext:
+        - WebUIFilesContext:
+        - WebUILoginContext:
+        - WebUIGuestsContext:
+        - FeatureContext: *common_feature_context_params
 
   extensions:
       jarnaiz\JUnitFormatter\JUnitFormatterExtension:

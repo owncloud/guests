@@ -104,11 +104,16 @@ $(KARMA): $(nodejs_deps)
 # Command for running all tests.
 .PHONY: test
 test: ## Run all tests
-test: test-acceptance-api test-php test-js
+test: test-acceptance-api test-acceptance-webui test-php test-js
 
 .PHONY: test-acceptance-api
 test-acceptance-api: ## Run API acceptance tests
 	../../tests/acceptance/run.sh --remote --type api
+
+.PHONY: test-acceptance-webui
+test-acceptance-webui: ## Run webUI acceptance tests
+test-acceptance-webui:
+	../../tests/acceptance/run.sh --remote --type webUI
 
 .PHONY: test-php-codecheck
 test-php-codecheck:
