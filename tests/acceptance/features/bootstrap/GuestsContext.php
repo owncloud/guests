@@ -64,6 +64,13 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		= '../../apps/guests/tests/acceptance/data/';
 
 	/**
+	 * @return array
+	 */
+	public function getCreatedGuests() {
+		return $this->createdGuests;
+	}
+
+	/**
 	 * disable CSRF
 	 *
 	 * @throws Exception
@@ -333,6 +340,17 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getRegistrationUrl($address) {
+		$lastEmailBody = EmailHelper::getBodyOfLastEmail(
+			$this->emailContext->getLocalMailhogUrl(),
+			$address
+		);
+		return $this->extractRegisterUrl($lastEmailBody);
+	}
+
+	/**
 	 * @When guest user :user registers
 	 * @When guest user :user registers and sets password to :password
 	 * @Given guest user :user has registered
@@ -348,15 +366,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$userName = $this->prepareUserNameAsFrontend(
 			$this->createdGuests[$guestDisplayName]
 		);
-		$emails = EmailHelper::getEmails($this->emailContext->getLocalMailhogUrl());
-		PHPUnit_Framework_Assert::assertGreaterThan(
-			0,
-			$emails->count,
-			"No guest registration email was found on the email server"
-		);
-		$lastEmailBody = $emails->items[0]->Content->Body;
-		$fullRegisterUrl = $this->extractRegisterUrl($lastEmailBody);
-
+		$fullRegisterUrl = $this->getRegistrationUrl($userName);
 		$explodedFullRegisterUrl = \explode('/', $fullRegisterUrl);
 		$sizeOfExplodedFullRegisterUrl = \count($explodedFullRegisterUrl);
 
