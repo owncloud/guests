@@ -192,6 +192,13 @@ services:
       matrix:
         NEED_SERVER: true
 
+  selenium:
+    image: selenium/standalone-chrome-debug:latest
+    pull: true
+    when:
+      matrix:
+        TEST_SUITE: webui-acceptance
+
   email:
     image: mailhog/mailhog
     pull: true
