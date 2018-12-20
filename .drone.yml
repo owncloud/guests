@@ -120,9 +120,13 @@ pipeline:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     environment:
+      - BROWSER=chrome
+      - SELENIUM_HOST=selenium
+      - SELENIUM_PORT=4444
       - TEST_SERVER_URL=http://owncloud
-      - MAILHOG_HOST=email
+      - PLATFORM=Linux
       - BEHAT_SUITE=${BEHAT_SUITE}
+      - MAILHOG_HOST=email
     commands:
       - make test-acceptance-webui
     when:
