@@ -354,6 +354,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @When guest user :user registers
 	 * @When guest user :user registers and sets password to :password
 	 * @Given guest user :user has registered
+	 * @Given guest user :user has registered and set password to :password
 	 *
 	 * @param string $guestDisplayName
 	 * @param string $password
