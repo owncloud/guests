@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [0.7.1]
+
+- Prevent endless loop in activities when sharing with "guest_app" group - [#290](https://github.com/owncloud/guests/pull/290)
+
 ## [0.7.0]
 
 ### Changed
@@ -125,6 +129,7 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
+[0.7.1]: https://github.com/owncloud/guests/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/owncloud/guests/compare/v0.6.2...v0.7.0
 [0.6.2]: https://github.com/owncloud/guests/compare/v0.6.0...v0.6.2
 [0.6.0]: https://github.com/owncloud/guests/compare/v0.5.0...v0.6.0
