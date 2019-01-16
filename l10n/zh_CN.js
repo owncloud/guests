@@ -8,6 +8,7 @@ OC.L10N.register(
     "Group name must not be empty." : "组名不能为空。",
     "Saved" : "已保存",
     "A username with that email already exists." : "已有用户名使用该电子邮件。",
+    "A guest user can not create other guest users." : "访客用户账户无法创建其他访客。",
     "User successfully created" : "成功创建用户",
     "Loading…" : "加载中...",
     "Loaded" : "已载入",
