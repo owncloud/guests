@@ -59,6 +59,12 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * @var SetPasswordPage
 	 */
 	private $setPasswordPage;
+
+	/**
+	 * WebUIGuestsContext constructor.
+	 *
+	 * @param SetPasswordPage $setPasswordPage
+	 */
 	public function __construct(SetPasswordPage $setPasswordPage) {
 		$this->setPasswordPage = $setPasswordPage;
 	}
