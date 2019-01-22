@@ -340,7 +340,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @param string $address
+	 *
 	 * @return string
+	 * @throws Exception
 	 */
 	public function getRegistrationUrl($address) {
 		$lastEmailBody = EmailHelper::getBodyOfLastEmail(
@@ -386,7 +389,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		} else {
 			$password = (string) $this->featureContext->getActualPassword(
 				$password
-				);
+			);
 		}
 
 		$headers = [];
