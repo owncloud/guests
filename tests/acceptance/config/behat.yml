@@ -1,11 +1,11 @@
 default:
   autoload:
-     '': %paths.base%/../features/bootstrap
+     '': '%paths.base%/../features/bootstrap'
 
   suites:
     apiGuests:
       paths:
-        - %paths.base%/../features/apiGuests
+        - '%paths.base%/../features/apiGuests'
       contexts:
         - GuestsContext:
         - FeatureContext: &common_feature_context_params
@@ -18,7 +18,7 @@ default:
 
     webUIGuests:
       paths:
-        - %paths.base%/../features/webUIGuests
+        - '%paths.base%/../features/webUIGuests'
       contexts:
         - GuestsContext:
         - EmailContext:
@@ -31,4 +31,4 @@ default:
   extensions:
       jarnaiz\JUnitFormatter\JUnitFormatterExtension:
           filename: report.xml
-          outputDir: %paths.base%/../output/
+          outputDir: '%paths.base%/../output/'
