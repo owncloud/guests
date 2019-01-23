@@ -25,6 +25,7 @@ nodejs_deps=node_modules
 # composer
 composer_deps=
 composer_dev_deps=
+acceptance_test_deps=vendor-bin/behat/vendor
 
 occ=$(CURDIR)/../../occ
 private_key=$(HOME)/.owncloud/certificates/$(app_name).key
@@ -53,6 +54,7 @@ clean-nodejs-deps:
 .PHONY: clean-composer-deps
 clean-composer-deps:
 	rm -rf ./vendor
+	rm -Rf vendor-bin/**/vendor vendor-bin/**/composer.lock
 
 # Same as clean but also removes dependencies installed by npm
 .PHONY: distclean
@@ -66,6 +68,7 @@ PHP_CS_FIXER=php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/ph
 PHP_CODESNIFFER=vendor-bin/php_codesniffer/vendor/bin/phpcs
 PHAN=php -d zend.enable_gc=0 vendor-bin/phan/vendor/bin/phan
 PHPSTAN=php -d zend.enable_gc=0 vendor-bin/phpstan/vendor/bin/phpstan
+BEHAT_BIN=vendor-bin/behat/vendor/bin/behat
 
 .DEFAULT_GOAL := help
 
@@ -109,12 +112,13 @@ test: test-acceptance-api test-acceptance-webui test-php test-js
 
 .PHONY: test-acceptance-api
 test-acceptance-api: ## Run API acceptance tests
-	../../tests/acceptance/run.sh --remote --type api
+test-acceptance-api: $(acceptance_test_deps)
+	BEHAT_BIN=$(BEHAT_BIN) ../../tests/acceptance/run.sh --remote --type api
 
 .PHONY: test-acceptance-webui
 test-acceptance-webui: ## Run webUI acceptance tests
-test-acceptance-webui:
-	../../tests/acceptance/run.sh --remote --type webUI
+test-acceptance-webui: $(acceptance_test_deps)
+	BEHAT_BIN=$(BEHAT_BIN) ../../tests/acceptance/run.sh --remote --type webUI
 
 .PHONY: test-php-codecheck
 test-php-codecheck:
@@ -200,3 +204,9 @@ vendor-bin/phpstan/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/phpstan
 
 vendor-bin/phpstan/composer.lock: vendor-bin/phpstan/composer.json
 	@echo phpstan composer.lock is not up to date.
+
+vendor-bin/behat/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/behat/composer.lock
+	composer bin behat install --no-progress
+
+vendor-bin/behat/composer.lock: vendor-bin/behat/composer.json
+	@echo behat composer.lock is not up to date.
