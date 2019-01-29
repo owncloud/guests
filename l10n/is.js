@@ -8,6 +8,7 @@ OC.L10N.register(
     "Group name must not be empty." : "Nafn hóps getur ekki verið tómt.",
     "Saved" : "Vistað",
     "A username with that email already exists." : "Notandi með þetta netfang er þegar til staðar.",
+    "A guest user can not create other guest users." : "Gestanotandi getur ekki útbúið aðra gestanotendur.",
     "User successfully created" : "Það tókst að búa til notandann",
     "Loading…" : "Hleð inn…",
     "Loaded" : "Hlaðið",
