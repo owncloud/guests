@@ -55,13 +55,13 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	private $emailContext;
 
 	/**
-	 * The relative path from the core tests/acceptance folder to the test data
-	 * folder.
-	 *
-	 * @var string
+	 * @return string
 	 */
-	private $relativePathToTestDataFolder
-		= '../../apps/guests/tests/acceptance/data/';
+	private function getRelativePathToTestDataFolder() {
+		$relativePath
+			= $this->featureContext->getPathFromCoreToAppAcceptanceTests(__DIR__);
+		return "$relativePath/data/";
+	}
 
 	/**
 	 * @return array
@@ -132,7 +132,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	public function userUploadsFileFromGuestsDataFolderTo(
 		$user, $source, $destination
 	) {
-		$source = $this->relativePathToTestDataFolder . $source;
+		$source = $this->getRelativePathToTestDataFolder() . $source;
 		$this->featureContext->userUploadsAFileTo($user, $source, $destination);
 	}
 
@@ -150,7 +150,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	public function userUploadsAFileToWithAllMechanisms(
 		$user, $source, $destination
 	) {
-		$source = $this->relativePathToTestDataFolder . $source;
+		$source = $this->getRelativePathToTestDataFolder() . $source;
 		$uploadResponses = UploadHelper::uploadWithAllMechanisms(
 			$this->featureContext->getBaseUrl(),
 			$this->featureContext->getActualUsername($user),
@@ -180,7 +180,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$chunkingVersion = null,
 		$async = false
 	) {
-		$source = $this->relativePathToTestDataFolder . $source;
+		$source = $this->getRelativePathToTestDataFolder() . $source;
 		$this->featureContext->userUploadsAFileToWithChunks(
 			$user, $source, $destination, $noOfChunks, $chunkingVersion, $async
 		);
