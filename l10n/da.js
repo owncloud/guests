@@ -1,9 +1,6 @@
 OC.L10N.register(
     "guests",
     {
-    "Invalid mail address" : "Ugyldig mailadresse",
-    "Saved" : "Gemt",
-    "User successfully created" : "Bruger succesfuldt oprettet",
     "Loading…" : "Indlæser...",
     "Loaded" : "Loaded",
     "Reset" : "Nulstil",
@@ -12,6 +9,9 @@ OC.L10N.register(
     "Add {unknown} (guest)" : "Tilføj {ukendt} (gæst)",
     "Error loading activities" : "Fejl ved indlæsning af aktiviteter",
     "Access to this resource is forbidden for guests." : "Adgang til denne resource er forbudt for gæster.",
+    "Invalid mail address" : "Ugyldig mailadresse",
+    "Saved" : "Gemt",
+    "User successfully created" : "Bruger succesfuldt oprettet",
     "%s shared »%s« with you" : "%s delte »%s« med sig",
     "%s via %s" : "%s via %s",
     "Couldn't send reset email. Please contact your administrator." : "Der opstod et problem under afsending af e-mailen til nulstilling. Kontakt venligst systemadministratoren.",
