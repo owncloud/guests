@@ -14,6 +14,7 @@
     "Group name must not be empty." : "Il nome del gruppo non può essere vuoto.",
     "Saved" : "Salvato",
     "A username with that email already exists." : "Esiste già un username con quella email.",
+    "A guest user can not create other guest users." : "Un utente ospite non può creare altri utenti ospiti.",
     "User successfully created" : "Utente creato correttamente",
     "%s shared »%s« with you" : "%s ha condiviso «%s» con te",
     "%s via %s" : "%s tramite %s",
