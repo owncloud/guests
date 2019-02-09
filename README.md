@@ -3,6 +3,8 @@ guests
 
 [![Build Status](https://drone.owncloud.com/api/badges/owncloud/guests/status.svg?branch=master)](https://drone.owncloud.com/owncloud/guests)
 
+Trigger CI
+
 Create a guest user by typing his email address in to the sharing dialog. The guest
 will receive an email invite with a link to create an account. He has only access
 to files which are shared with him.
