@@ -48,12 +48,12 @@ $OCS = new \OCA\Guests\Controller\GuestShareController(
 	\OC::$server->getRequest(),
 	\OC::$server->getRootFolder(),
 	\OC::$server->getURLGenerator(),
-	\OC::$server->getUserSession()->getUser(),
+	\OC::$server->getUserSession(),
 	\OC::$server->getL10N('files_sharing'),
 	\OC::$server->getConfig()
 );
 
-API::register('get',
+\OCP\API::register('get',
 	'/apps/guests/api/v1/shares',
 	[$OCS, 'getShares'],
 	'guests'

@@ -37,6 +37,7 @@ use OCP\Lock\LockedException;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
 use OCA\Files_Sharing\API\Share20OCS;
+use OCP\IUserSession;
 
 class GuestShareController extends Share20OCS {
 
@@ -49,7 +50,7 @@ class GuestShareController extends Share20OCS {
 	 * @param IRequest $request
 	 * @param IRootFolder $rootFolder
 	 * @param IURLGenerator $urlGenerator
-	 * @param IUser $currentUser
+	 * @param IUserSession $userSession
 	 * @param IL10N $l10n
 	 * @param IConfig $config
 	 */
@@ -60,7 +61,7 @@ class GuestShareController extends Share20OCS {
 			IRequest $request,
 			IRootFolder $rootFolder,
 			IURLGenerator $urlGenerator,
-			IUser $currentUser,
+			IUserSession $userSession,
 			IL10N $l10n,
 			IConfig $config
 	) {
@@ -70,7 +71,7 @@ class GuestShareController extends Share20OCS {
 		$this->request = $request;
 		$this->rootFolder = $rootFolder;
 		$this->urlGenerator = $urlGenerator;
-		$this->currentUser = $currentUser;
+		$this->userSession = $userSession;
 		$this->l = $l10n;
 		$this->config = $config;
 	}
@@ -100,7 +101,7 @@ class GuestShareController extends Share20OCS {
 			'displayname_file_owner' => $shareOwner !== null ? $shareOwner->getDisplayName() : $share->getShareOwner(),
 		];
 
-		$userFolder = $this->rootFolder->getUserFolder($this->currentUser->getUID());
+		$userFolder = $this->rootFolder->getUserFolder($this->userSession->getUser()->getUID());
 		$nodes = $userFolder->getById($share->getNodeId());
 
 		if (empty($nodes)) {
@@ -154,7 +155,7 @@ class GuestShareController extends Share20OCS {
 		$includeTags = $this->request->getParam('include_tags', false);
 
 		if ($path !== null) {
-			$userFolder = $this->rootFolder->getUserFolder($this->currentUser->getUID());
+			$userFolder = $this->rootFolder->getUserFolder($this->userSession->getUser()->getUID());
 			try {
 				$path = $userFolder->get($path);
 				$path->lock(ILockingProvider::LOCK_SHARED);
@@ -176,7 +177,7 @@ class GuestShareController extends Share20OCS {
 		$reshares = false;
 
 		// Get all shares of type SHARE_TYPE_USER
-		$shares = $this->shareManager->getSharesBy($this->currentUser->getUID(), \OCP\Share::SHARE_TYPE_USER, $path, $reshares, -1, 0);
+		$shares = $this->shareManager->getSharesBy($this->userSession->getUser()->getUID(), \OCP\Share::SHARE_TYPE_USER, $path, $reshares, -1, 0);
 
 		$formatted = [];
 		foreach ($shares as $share) {

@@ -31,6 +31,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Files\IRootFolder;
+use OCP\IUserSession;
 
 /**
  * @group DB
@@ -73,6 +74,9 @@ class GuestShareControllerTest extends \Test\TestCase {
 		// Create a dummy user
 		$this->currentUser = $this->createMock(IUser::class);
 
+		$userSession = $this->createMock(IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->currentUser);
+
 		$this->controller = new GuestShareController(
 			$this->shareManager,
 			$this->groupManager,
@@ -80,7 +84,7 @@ class GuestShareControllerTest extends \Test\TestCase {
 			$this->request,
 			$this->rootFolder,
 			$this->urlGenerator,
-			$this->currentUser,
+			$userSession,
 			$this->createMock(IL10N::class),
 			$this->config
 		);
