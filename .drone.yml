@@ -8,6 +8,7 @@ pipeline:
   install-core:
     image: owncloudci/core
     version: ${OC_VERSION}
+    git_reference: ${GIT_BRANCH}
     pull: true
     db_type: ${DB_TYPE}
     db_name: ${DB_NAME}
@@ -224,6 +225,7 @@ matrix:
     # Javascript
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: javascript
       DB_TYPE: mysql
       DB_NAME: owncloud
@@ -232,6 +234,7 @@ matrix:
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: javascript
       DB_TYPE: mysql
       DB_NAME: owncloud
@@ -242,16 +245,19 @@ matrix:
     - PHP_VERSION: 7.2
       TEST_SUITE: owncloud-coding-standard
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       NEED_CORE: true
 
     - PHP_VERSION: 5.6
       TEST_SUITE: owncloud-coding-standard
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       NEED_CORE: true
 
     # Unit Tests against core master
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: phpunit
       DB_TYPE: mysql
       DB_NAME: owncloud
@@ -262,6 +268,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: phpunit
       DB_TYPE: mysql
       DB_NAME: owncloud
@@ -272,6 +279,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: phpunit
       DB_TYPE: pgsql
       DB_NAME: owncloud
@@ -282,6 +290,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: phpunit
       DB_TYPE: oci
       DB_NAME: XE
@@ -293,6 +302,7 @@ matrix:
     # Unit Tests against core stable10
     - PHP_VERSION: 5.6
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: phpunit
       DB_TYPE: mysql
       DB_NAME: owncloud
@@ -302,6 +312,7 @@ matrix:
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: phpunit
       DB_TYPE: mysql
       DB_NAME: owncloud
@@ -312,6 +323,7 @@ matrix:
     # API Acceptance Tests with core master
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
@@ -324,6 +336,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
@@ -336,6 +349,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: pgsql
@@ -348,6 +362,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: oci
@@ -361,6 +376,7 @@ matrix:
     # API Acceptance Tests with core stable10
     - PHP_VERSION: 5.6
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
@@ -373,6 +389,7 @@ matrix:
 
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
@@ -385,6 +402,7 @@ matrix:
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
@@ -397,6 +415,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
@@ -409,6 +428,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: pgsql
@@ -422,6 +442,7 @@ matrix:
     # webUI Acceptance Tests with core master
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: mysql
@@ -434,6 +455,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: mysql
@@ -446,6 +468,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: pgsql
@@ -458,6 +481,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: oci
@@ -471,6 +495,7 @@ matrix:
     # webUI Acceptance Tests with core stable10
     - PHP_VERSION: 5.6
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: mysql
@@ -483,6 +508,7 @@ matrix:
 
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: mysql
@@ -495,6 +521,7 @@ matrix:
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: mysql
@@ -507,6 +534,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: mysql
@@ -519,6 +547,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: pgsql
@@ -531,6 +560,7 @@ matrix:
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: oci
@@ -544,6 +574,7 @@ matrix:
       # Test on Objectstore
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
@@ -557,6 +588,7 @@ matrix:
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
+      GIT_BRANCH: stable10-provide-common-makefiles
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
