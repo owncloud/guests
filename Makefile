@@ -7,3 +7,12 @@ include ../../build/rules/help.mk
 include ../../build/rules/dist.mk
 include ../../build/rules/test-all.mk
 include ../../build/rules/clean.mk
+
+# App codecheck
+.PHONY: test-php-codecheck
+test-php-codecheck:
+	# currently fails - as we use a private api
+	#	$(occ) app:check-code $(app_name) -c private
+	# Note: occ definition comes "for free" from dist.mk
+	$(occ) app:check-code $(app_name) -c strong-comparison
+	$(occ) app:check-code $(app_name) -c deprecation
