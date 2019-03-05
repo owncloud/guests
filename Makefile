@@ -5,7 +5,9 @@ src_dirs=appinfo controller js l10n lib settings templates
 # Include standard app makefile targets provided by core
 include ../../build/rules/help.mk
 include ../../build/rules/dist.mk
-include ../../build/rules/test-all.mk
+include ../../build/rules/test-acceptance.mk
+include ../../build/rules/test-js.mk
+include ../../build/rules/test-php.mk
 include ../../build/rules/clean.mk
 
 # App codecheck
