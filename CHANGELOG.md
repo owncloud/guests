@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.8.0] - 2019-03-05
+
+### Changed
+
+- Changes core min-version requirement to 10.1.0 - [#274](https://github.com/owncloud/guests/issues/274)
+- Use email validation functions from core, requires core >= 10.1.0 - [#274](https://github.com/owncloud/guests/issues/274)
+- Code style cleanup, now PSR-4 - [#305](https://github.com/owncloud/guests/issues/305)
+
+### Fixed
+
+- Fix share with guest_app endless loop, add unit tests - [#290](https://github.com/owncloud/guests/issues/290)
+
 ## [0.7.0] - 2018-11-30
 
 ### Changed
@@ -127,7 +139,8 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
-[Unreleased]: https://github.com/owncloud/guests/compare/v0.7.0...master
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.8.0...master
+[0.8.0]: https://github.com/owncloud/guests/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/owncloud/guests/compare/v0.6.2...v0.7.0
 [0.6.2]: https://github.com/owncloud/guests/compare/v0.6.0...v0.6.2
 [0.6.0]: https://github.com/owncloud/guests/compare/v0.5.0...v0.6.0
