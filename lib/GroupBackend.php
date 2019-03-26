@@ -131,7 +131,16 @@ class GroupBackend implements GroupInterface {
 	 * Checks whether the user is member of a group or not.
 	 */
 	public function inGroup($uid, $gid) {
-		return \in_array($uid, $this->getMembers()) && $gid === $this->groupName;
+		if ($gid !== $this->groupName) {
+			return false;
+		}
+		$isGuest = $this->config->getUserValue(
+			$uid,
+			'owncloud',
+			'isGuest',
+			'0'
+		);
+		return $isGuest === '1' ;
 	}
 
 	/**
@@ -146,7 +155,13 @@ class GroupBackend implements GroupInterface {
 	 * if the user exists at all.
 	 */
 	public function getUserGroups($uid) {
-		if (\in_array($uid, $this->getMembers())) {
+		$isGuest = $this->config->getUserValue(
+			$uid,
+			'owncloud',
+			'isGuest',
+			'0'
+		);
+		if ($isGuest === '1') {
 			return [$this->groupName];
 		}
 
