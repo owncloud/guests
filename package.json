@@ -9,19 +9,18 @@
   "private": true,
   "homepage": "https://github.com/owncloud/guests/",
   "contributors": [],
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "jasmine-core": "^2.8.0",
     "jasmine-sinon": "^0.4.0",
-    "sinon": "^2.0.0",
     "karma": "^1.5.0",
     "karma-coverage": "*",
     "karma-jasmine": "^1.1.1",
     "karma-jasmine-sinon": "^1.0.4",
     "karma-junit-reporter": "*",
     "karma-phantomjs-launcher": "*",
-    "phantomjs-prebuilt": "*"
+    "phantomjs-prebuilt": "*",
+    "sinon": "^2.0.0"
   },
   "engines": {
     "node": ">= 6.9",
