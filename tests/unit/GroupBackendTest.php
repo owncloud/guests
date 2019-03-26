@@ -66,9 +66,32 @@ class GroupBackendTest extends TestCase {
 		$this->config
 			->method('getUsersForUserValue')
 			->willReturn($this->members);
+
+		$this->config
+			->method('getUserValue')
+			->willReturnCallback([$this, 'getUserValue']);
+
 		parent::setUp();
 	}
 
+	/**
+	 * Callback function to check group membership
+	 *
+	 * @param string $userId
+	 * @param string $arg2
+	 * @param string $arg3
+	 *
+	 * @return int|string
+	 */
+	public function getUserValue($userId, $arg2, $arg3) {
+		if ($arg2 !== 'owncloud' || $arg3 !== 'isGuest') {
+			return '0';
+		}
+		if (\in_array($userId, $this->members, true)) {
+			return '1';
+		}
+		return '0';
+	}
 	/**
 	 * Test if Group exists
 	 *
@@ -115,7 +138,13 @@ class GroupBackendTest extends TestCase {
 	 */
 	public function testGroupMembership() {
 		$isMember = $this->groupbackend->inGroup(
-			$this->members[0],
+			'User1',
+			GroupBackend::DEFAULT_NAME
+		);
+		self::assertTrue($isMember);
+
+		$isMember = $this->groupbackend->inGroup(
+			'User20',
 			GroupBackend::DEFAULT_NAME
 		);
 		self::assertTrue($isMember);
@@ -123,6 +152,12 @@ class GroupBackendTest extends TestCase {
 		$isMember = $this->groupbackend->inGroup(
 			self::getUniqueID(),
 			GroupBackend::DEFAULT_NAME
+		);
+		self::assertFalse($isMember);
+
+		$isMember = $this->groupbackend->inGroup(
+			'User21',
+			'someothergroup'
 		);
 		self::assertFalse($isMember);
 	}
