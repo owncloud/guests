@@ -24,6 +24,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Page\SetPasswordPage;
+use PHPUnit\Framework\Assert;
 
 require_once 'bootstrap.php';
 
@@ -103,7 +104,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 				return true;
 			}
 		}
-		PHPUnit_Framework_Assert::fail(
+		Assert::fail(
 			"could not find message with the text '$expectedMessage'"
 		);
 	}
