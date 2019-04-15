@@ -42,22 +42,22 @@ class HooksTest extends TestCase {
 	const GUEST_UID = 'me@example.org';
 
 	/**
-	 * @var ILogger | \PHPUnit_Framework_MockObject_MockObject
+	 * @var ILogger | \PHPUnit\Framework\MockObject\MockObject
 	 */
 	private $logger;
 
 	/**
-	 * @var IUserSession | \PHPUnit_Framework_MockObject_MockObject
+	 * @var IUserSession | \PHPUnit\Framework\MockObject\MockObject
 	 */
 	private $userSession;
 
 	/**
-	 * @var Mail | \PHPUnit_Framework_MockObject_MockObject
+	 * @var Mail | \PHPUnit\Framework\MockObject\MockObject
 	 */
 	private $mail;
 
 	/**
-	 * @var IConfig | \PHPUnit_Framework_MockObject_MockObject
+	 * @var IConfig | \PHPUnit\Framework\MockObject\MockObject
 	 */
 	private $config;
 

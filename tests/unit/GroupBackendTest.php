@@ -34,7 +34,7 @@ use Test\TestCase;
  */
 class GroupBackendTest extends TestCase {
 	/**
-	 * @var GroupBackend | \PHPUnit_Framework_MockObject_MockObject
+	 * @var GroupBackend | \PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected $groupbackend;
 
@@ -44,7 +44,7 @@ class GroupBackendTest extends TestCase {
 	protected $members;
 
 	/**
-	 * @var IConfig | \PHPUnit_Framework_MockObject_MockObject
+	 * @var IConfig | \PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected $config;
 
