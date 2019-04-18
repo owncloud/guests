@@ -116,7 +116,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return string
 	 */
 	public function prepareUserNameAsFrontend($guestEmail) {
-		return \strtolower(\trim(\urldecode($guestEmail)));
+		return \trim(\urldecode($guestEmail));
 	}
 
 	/**
