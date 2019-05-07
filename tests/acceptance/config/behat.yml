@@ -26,6 +26,9 @@ default:
         - WebUIFilesContext:
         - WebUILoginContext:
         - WebUIGuestsContext:
+        - WebUISharingContext:
+        - WebUIUsersContext:
+        - OccContext:
         - FeatureContext: *common_feature_context_params
 
   extensions:

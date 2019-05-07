@@ -33,6 +33,19 @@ pipeline:
       matrix:
         NEED_INSTALL_APP: true
 
+  install-user-management-app:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - git clone https://github.com/owncloud/user_management.git /var/www/owncloud/apps/user_management
+      - cd /var/www/owncloud/
+      - php occ a:l
+      - php occ a:e user_management
+      - php occ a:l
+    when:
+      matrix:
+        NEED_USER_MANAGEMENT_APP: true
+
   prepare-objectstore:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
@@ -419,6 +432,7 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
+      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
@@ -431,6 +445,7 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
+      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
@@ -443,6 +458,7 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
+      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
@@ -455,6 +471,7 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
+      NEED_USER_MANAGEMENT_APP: true
 
     # webUI Acceptance Tests with core stable10
     - PHP_VERSION: 7.0
@@ -468,6 +485,7 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
+      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
@@ -480,6 +498,7 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
+      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
@@ -492,6 +511,7 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
+      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
@@ -504,6 +524,7 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
+      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
