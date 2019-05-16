@@ -25,6 +25,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Page\SetPasswordPage;
 use PHPUnit\Framework\Assert;
+use Page\FilesPage;
 
 require_once 'bootstrap.php';
 
@@ -37,13 +38,13 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * @var FeatureContext
 	 */
 	private $featureContext;
-	
+
 	/**
 	 *
 	 * @var WebUIGeneralContext
 	 */
 	private $webUIGeneralContext;
-	
+
 	/**
 	 *
 	 * @var GuestsContext
@@ -55,6 +56,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * @var EmailContext
 	 */
 	private $emailContext;
+
 	/**
 	 *
 	 * @var SetPasswordPage
@@ -62,14 +64,56 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	private $setPasswordPage;
 
 	/**
+	 *
+	 * @var string
+	 */
+	private $userAddDialogBoxFramework = "Add %s (guest)";
+
+	/**
+	 *
+	 * @var FilesPage
+	 */
+	private $filesPage;
+
+	/**
 	 * WebUIGuestsContext constructor.
 	 *
 	 * @param SetPasswordPage $setPasswordPage
+	 * @param FilesPage $filesPage
 	 */
-	public function __construct(SetPasswordPage $setPasswordPage) {
+	public function __construct(SetPasswordPage $setPasswordPage, FilesPage $filesPage) {
 		$this->setPasswordPage = $setPasswordPage;
+		$this->filesPage = $filesPage;
 	}
-	
+
+	/**
+	 * @return string|null
+	 */
+	public function getGuestGroupName() {
+		$configkeyList = $this->featureContext->getConfigKeyList('guests');
+		foreach ($configkeyList as $config) {
+			if ($config['configkey'] === 'group') {
+				return $config['value'];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @Given guest user :user has been created with email :email and password :password
+	 *
+	 * @param string $user
+	 * @param string $email
+	 * @param string $password
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function guestUserHasBeenCreatedWithEmailAndPassword($user, $email, $password) {
+		$this->featureContext->createUser($user, $password, $user, $email);
+		$this->featureContext->addUserToGroup($user, $this->getGuestGroupName());
+	}
+
 	/**
 	 * @When guest user :user registers and sets password to :password using the webUI
 	 *
@@ -89,6 +133,38 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 		$this->setPasswordPage->waitTillPageIsLoaded($session);
 		$this->setPasswordPage->setThePassword($password, $session);
 		$this->featureContext->rememberUserPassword($userName, $password);
+	}
+
+	/**
+	 * @When the user shares file :fileName with guest user with email :email using webUI
+	 *
+	 * @param string $fileName
+	 * @param string $email
+	 *
+	 * @return void
+	 */
+	public function theUserSharesFileWithGuestUserWithEmailUsingWebui($fileName, $email) {
+		$this->filesPage->openSharingDialog($fileName, $this->getSession());
+		$sharingDialog = $this->filesPage->getSharingDialog();
+		$userAddDialog = \sprintf($this->userAddDialogBoxFramework, $email);
+		$sharingDialog->shareWithUserOrGroup(
+			$email, $userAddDialog, $this->getSession()
+		);
+		$this->featureContext->addUserToCreatedUsersList($email, null);
+	}
+
+	/**
+	 * @Then user :user should not be displayed in dropdown as guest user
+	 *
+	 * @param string $user
+	 *
+	 * @return void
+	 */
+	public function userShouldNotBeDisplayedInTheDropdownAsGuestUser($user) {
+		$sharingDialog = $this->filesPage->getSharingDialog();
+		$arrayList = $sharingDialog->getAutoCompleteItemsList();
+		$userAddDialog = \sprintf($this->userAddDialogBoxFramework, $user);
+		PHPUnit\Framework\Assert::assertNotContains($userAddDialog, $arrayList);
 	}
 
 	/**
