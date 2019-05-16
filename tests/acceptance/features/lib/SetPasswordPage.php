@@ -35,6 +35,7 @@ class SetPasswordPage extends OwncloudPage {
 	 */
 	protected $path = '/';
 	protected $passwordInputId = "password";
+	protected $emailInputId = "email";
 	protected $submitLoginId = "submit";
 	protected $warningMessagesXpath = "//div[@class='warning']";
 
@@ -55,6 +56,15 @@ class SetPasswordPage extends OwncloudPage {
 		$submitButton->click();
 	}
 
+	/**
+	 *
+	 * @param string $newEmail
+	 *
+	 * @return void
+	 */
+	public function setTheEmail($newEmail) {
+		$this->fillField($this->emailInputId, $newEmail);
+	}
 	/**
 	 *
 	 * @return NodeElement[]
