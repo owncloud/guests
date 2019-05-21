@@ -16,6 +16,7 @@ OC.L10N.register(
     "Group name must not be empty." : "שם קבוצה אינו יכול להיות ריק.",
     "Saved" : "נשמר",
     "A username with that email already exists." : "משתמש עם כתובת דואר אלקטרוני זו כבר קיים.",
+    "A guest user can not create other guest users." : "משתמש אורח לא יכול ליצור משתמשי אורח אחרים.",
     "User successfully created" : "משתמש נוצר בהצלחה",
     "%s shared »%s« with you" : "%s שיתף/שיתפה איתך את »%s«",
     "%s via %s" : "%s על בסיס %s",
