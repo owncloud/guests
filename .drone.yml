@@ -485,7 +485,6 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
@@ -498,7 +497,6 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
@@ -511,7 +509,6 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
@@ -524,7 +521,6 @@ matrix:
       NEED_INSTALL_APP: true
       FIX_PERMISSIONS: true
       USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
