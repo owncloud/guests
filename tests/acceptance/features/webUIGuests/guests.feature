@@ -80,15 +80,15 @@ Feature: Guests
 
   @mailhog
   Scenario: Administrator changes the guest user's password in users menu
-    Given guest user "user0" has been created with email "user0@example.com" and password "%alt2%"
+    Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
+    And the user shares file "new-file.txt" with guest user with email "valid@email.com" using webUI
     And the administrator has browsed to the users page
-    When the administrator changes the password of user "user0" to "newpassword" using the webUI
-    Then user "user0" should exist
-    And notifications should be displayed on the webUI with the text
+    When the administrator changes the password of user "valid@email.com" to "newpassword" using the webUI
+    Then notifications should be displayed on the webUI with the text
       | Password successfully changed |
     When the administrator logs out of the webUI
-    And the user logs in with username "user0" and password "newpassword" using the webUI
+    And the user logs in with username "valid@email.com" and password "newpassword" using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
 
   @mailhog @issue-329
@@ -105,8 +105,9 @@ Feature: Guests
 
   @mailhog
   Scenario: Administrator deletes a guest user in user's menu
-    Given guest user "user0" has been created with email "test@example.com" and password "%alt2%"
+    Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
+    And the user shares file "new-file.txt" with guest user with email "valid@email.com" using webUI
     And the administrator has browsed to the users page
-    When the administrator deletes user "user0" using the webUI and confirms the deletion using the webUI
-    Then user "user0" should not exist
+    When the administrator deletes user "valid@email.com" using the webUI and confirms the deletion using the webUI
+    Then user "valid@email.com" should not exist
