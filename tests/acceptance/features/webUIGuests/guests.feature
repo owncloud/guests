@@ -111,3 +111,21 @@ Feature: Guests
     And the administrator has browsed to the users page
     When the administrator deletes user "valid@email.com" using the webUI and confirms the deletion using the webUI
     Then user "valid@email.com" should not exist
+
+  @mailhog
+  Scenario Outline: User creates a guest user with email that contains capital letters
+    Given user "user0" has been created with default attributes
+    And user "user0" has logged in using the webUI
+    When the user shares file "data.zip" with guest user with email "<share-email>" using webUI
+    And the user logs out of the webUI
+    And guest user "<share-email>" registers with email "<register-email>" and sets password to "password" using the webUI
+    And the user logs in with username "<login-email>" and password "password" using the webUI
+    Then the user should be redirected to a webUI page with the title "Files - %productname%"
+    And file "data.zip" should be listed on the webUI
+    Examples:
+      | share-email      | register-email   | login-email      |
+      | user@example.com | USER@example.com | user@example.com |
+      | USER@example.com | user@example.com | user@example.com |
+      | USER@example.com | USER@example.com | USER@example.com |
+      | USER@example.com | USER@example.com | user@example.com |
+      | user@example.com | USER@example.com | user@EXAMPLE.com |

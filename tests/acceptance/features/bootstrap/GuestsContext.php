@@ -71,6 +71,16 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 *
+	 * @param string $guestDisplayName
+	 * @param string $guestEmail
+	 *
+	 * @return void
+	 */
+	public function addToCreatedGuestsList($guestDisplayName, $guestEmail) {
+		$this->createdGuests[$guestDisplayName] = $guestEmail;
+	}
+	/**
 	 * disable CSRF
 	 *
 	 * @throws Exception
