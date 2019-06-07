@@ -7,7 +7,7 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user sets its own password
-    Given user "user0" has been created with default attributes
+    Given user "user0" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
@@ -18,7 +18,7 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user uses the link twice
-    Given user "user0" has been created with default attributes
+    Given user "user0" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
@@ -29,14 +29,14 @@ Feature: Guests
 
   @mailhog
   Scenario: User uses valid email to create a guest user
-    Given user "user0" has been created with default attributes
+    Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
     When the user shares file "data.zip" with guest user with email "valid@email.com" using webUI
     Then user "valid@email.com" should exist
 
   @mailhog
   Scenario: User uses some random string email to crete a guest user
-    Given user "user0" has been created with default attributes
+    Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
     And the user has opened the share dialog for folder "lorem.txt"
     When the user types "somestring" in the share-with-field
@@ -46,7 +46,7 @@ Feature: Guests
 
   @mailhog
   Scenario: User uses invalid email to create a guest user
-    Given user "user0" has been created with default attributes
+    Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
     When the user shares file "testimage.jpg" with guest user with email "invalid@email.com()9876a" using webUI
     Then dialog should be displayed on the webUI
@@ -56,7 +56,7 @@ Feature: Guests
 
   @mailhog
   Scenario: User tries to create a guest user via email with an already used email
-    Given these users have been created:
+    Given these users have been created with skeleton files:
       |    username    |    email        |
       |     user0      |  user0@oc.com   |
       |     user1      |  user1@oc.com   |
@@ -68,7 +68,7 @@ Feature: Guests
 
   @mailhog @issue-329
   Scenario: User tries to create a guest user when a server email mode is not set
-    Given user "user1" has been created with default attributes
+    Given user "user1" has been created with default attributes and skeleton files
     And user "user1" has logged in using the webUI
     When the administrator deletes system config key "mail_smtpmode" using the occ command
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using webUI
@@ -93,7 +93,7 @@ Feature: Guests
 
   @mailhog @issue-329
   Scenario: User tries to create a guest user when a server email is invalid
-    Given user "user1" has been created with default attributes
+    Given user "user1" has been created with default attributes and skeleton files
     And user "user1" has logged in using the webUI
     When the administrator adds system config key "mail_smtphost" with value "conkey" using the occ command
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using webUI
@@ -114,7 +114,7 @@ Feature: Guests
 
   @mailhog
   Scenario Outline: User creates a guest user with email that contains capital letters
-    Given user "user0" has been created with default attributes
+    Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
     When the user shares file "data.zip" with guest user with email "<share-email>" using webUI
     And the user logs out of the webUI
