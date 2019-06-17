@@ -35,7 +35,7 @@ Feature: Guests
     Then user "valid@email.com" should exist
 
   @mailhog
-  Scenario: User uses some random string email to crete a guest user
+  Scenario: User uses some random string email to create a guest user
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
     And the user has opened the share dialog for folder "lorem.txt"
