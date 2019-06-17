@@ -140,7 +140,7 @@
 
 							if (provideGuestEntry) {
 								result.push({
-									label: t('core', 'Add {unknown} (guest)', {unknown: searchTerm}),
+									label: t('core', 'Add {unknown}', {unknown: searchTerm}),
 									value: {
 										shareType: OC.Share.SHARE_TYPE_GUEST,
 										shareWith: searchTerm
