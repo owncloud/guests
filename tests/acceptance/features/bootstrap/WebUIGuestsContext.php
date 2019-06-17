@@ -67,7 +67,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 *
 	 * @var string
 	 */
-	private $userAddDialogBoxFramework = "Add %s (guest) Guest";
+	private $userAddDialogBoxFramework = "Add %s Guest";
 
 	/**
 	 *
