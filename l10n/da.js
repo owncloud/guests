@@ -6,7 +6,6 @@ OC.L10N.register(
     "Reset" : "Nulstil",
     "Error" : "Fejl",
     "Error while sharing" : "Fejl under deling",
-    "Add {unknown} (guest)" : "Tilføj {ukendt} (gæst)",
     "Error loading activities" : "Fejl ved indlæsning af aktiviteter",
     "Access to this resource is forbidden for guests." : "Adgang til denne resource er forbudt for gæster.",
     "Invalid mail address" : "Ugyldig mailadresse",

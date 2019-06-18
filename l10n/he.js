@@ -6,7 +6,6 @@ OC.L10N.register(
     "Reset" : "לאפס",
     "Error" : "שגיאה",
     "Error while sharing" : "שגיאה במהלך השיתוף",
-    "Add {unknown} (guest)" : "הוספת {unknown} (אורח)",
     "Error loading activities" : "שגיאה בטעינת פעילויות",
     "Access to this resource is forbidden for guests." : "גישה למשאב זה אסור למשתמשים ברמת אורח.",
     "Invalid mail address" : "כתובת דואר אלקטרוני לא חוקית",

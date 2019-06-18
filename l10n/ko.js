@@ -6,7 +6,6 @@ OC.L10N.register(
     "Reset" : "초기화",
     "Error" : "오류",
     "Error while sharing" : "공유하는 중 오류 발생",
-    "Add {unknown} (guest)" : "{unknown}(손님) 추가",
     "Error loading activities" : "활동 불러오기 오류",
     "Access to this resource is forbidden for guests." : "손님은 이 자원에 접근할 수 없습니다.",
     "Invalid mail address" : "잘못된 이메일 주소",

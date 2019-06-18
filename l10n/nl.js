@@ -6,7 +6,6 @@ OC.L10N.register(
     "Reset" : "Reset",
     "Error" : "Fout",
     "Error while sharing" : "Fout tijdens het delen",
-    "Add {unknown} (guest)" : "Toevoegen {unknown} (guest)",
     "Error loading activities" : "Fout bij laden activiteiten",
     "Access to this resource is forbidden for guests." : "Toegang tot dit object is verboden voor gasten.",
     "Invalid mail address" : "Ongeldig e-mailadres",

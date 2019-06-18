@@ -6,7 +6,6 @@ OC.L10N.register(
     "Reset" : "Сброс",
     "Error" : "Ошибка",
     "Error while sharing" : "При попытке поделиться произошла ошибка",
-    "Add {unknown} (guest)" : "Добавить {unknown} (гостя)",
     "Error loading activities" : "Ошибка загрузки событий",
     "Access to this resource is forbidden for guests." : "Доступ к этому ресурсу закрыт для гостей.",
     "Invalid mail address" : "Некорректный адрес электронной почты",

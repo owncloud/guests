@@ -6,7 +6,6 @@ OC.L10N.register(
     "Reset" : "重置",
     "Error" : "错误",
     "Error while sharing" : "共享时出错",
-    "Add {unknown} (guest)" : "增加 {unknown} (guest)",
     "Error loading activities" : "加载动态出错",
     "Access to this resource is forbidden for guests." : "访客无法访问此资源。",
     "Invalid mail address" : "无效的电子邮件地址",
