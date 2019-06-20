@@ -6,6 +6,7 @@ OC.L10N.register(
     "Reset" : "Ricaktoje",
     "Error" : "Gabim",
     "Error while sharing" : "Gabim gjatë ndarjes",
+    "Add {unknown}" : "Shto {unknown}",
     "Error loading activities" : "Gabim në ngarkimin e veprimtarisë",
     "Access to this resource is forbidden for guests." : "Hyrja në këtë burim është e ndaluar për vizitorët.",
     "Invalid mail address" : "Adresë email e pavlefshme",
