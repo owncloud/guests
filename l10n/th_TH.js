@@ -6,6 +6,7 @@ OC.L10N.register(
     "Reset" : "ตั้งค่าใหม่",
     "Error" : "ข้อผิดพลาด",
     "Error while sharing" : "เกิดข้อผิดพลาดขณะกำลังแชร์ข้อมูล",
+    "Add {unknown}" : "เพิ่ม {unknown}",
     "Error loading activities" : "เกิดข้อผิดพลาดขณะโหลดกิจกรรม",
     "Access to this resource is forbidden for guests." : "บุคคลทั่วไปไม่สามารถเข้าถึงทรัพยากรนี้ได้",
     "Invalid mail address" : "ที่อยู่อีเมลไม่ถูกต้อง",
