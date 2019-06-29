@@ -6,6 +6,7 @@ OC.L10N.register(
     "Reset" : "Поништи",
     "Error" : "Грешка",
     "Error while sharing" : "Грешка при споделување",
+    "Add {unknown}" : "Додади {unknown}",
     "Error loading activities" : "Грешка при вчитување на активностите",
     "Access to this resource is forbidden for guests." : "Пристапот до овој ресурс е забранет за гости.",
     "Invalid mail address" : "Невалидна Email адреса",
