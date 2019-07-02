@@ -6,6 +6,7 @@ OC.L10N.register(
     "Reset" : "Endurstilla",
     "Error" : "Villa",
     "Error while sharing" : "Villa við deilingu",
+    "Add {unknown}" : "Bæta við {unknown}",
     "Error loading activities" : "Villa við hleðslu virkniupplýsinga",
     "Access to this resource is forbidden for guests." : "Gestum er bannaður aðgangur að þessu tilfangi.",
     "Invalid mail address" : "Ógilt tölvupóstfang",
