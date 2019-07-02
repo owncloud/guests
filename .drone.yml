@@ -2,7 +2,6 @@ workspace:
   base: /var/www/owncloud
   path: apps/guests
 
-
 pipeline:
   install-core:
     image: owncloudci/core
@@ -17,6 +16,18 @@ pipeline:
       matrix:
         NEED_CORE: true
 
+  install-testrunner:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - git clone -b stable10 --depth=1 https://github.com/owncloud/core.git /var/www/owncloud/testrunner
+      - cp -r /var/www/owncloud/apps/guests /var/www/owncloud/testrunner/apps/
+      - cd /var/www/owncloud/testrunner
+      - make
+    when:
+      matrix:
+        USE_RELEASE_TARBALL: true
+
   install-app:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
@@ -27,7 +38,7 @@ pipeline:
       - php occ a:e testing
       - php occ a:l
       - php occ config:system:set trusted_domains 1 --value=owncloud
-      - php occ log:manage --level 0
+      - php occ log:manage --level 2
     when:
       matrix:
         NEED_INSTALL_APP: true
@@ -68,8 +79,14 @@ pipeline:
     pull: true
     commands:
       - chown www-data /var/www/owncloud -R
-      - chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R
-      - chmod +x /var/www/owncloud/tests/acceptance/run.sh
+      - if [ "${USE_RELEASE_TARBALL}" = "true" ];
+        then
+        chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R;
+        chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh;
+        else
+        chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R;
+        chmod +x /var/www/owncloud/tests/acceptance/run.sh;
+        fi
     when:
       matrix:
         FIX_PERMISSIONS: true
@@ -123,6 +140,7 @@ pipeline:
       - MAILHOG_HOST=email
       - BEHAT_SUITE=${BEHAT_SUITE}
     commands:
+      - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
       - make test-acceptance-api
     when:
       matrix:
@@ -140,6 +158,7 @@ pipeline:
       - BEHAT_SUITE=${BEHAT_SUITE}
       - MAILHOG_HOST=email
     commands:
+      - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
       - make test-acceptance-webui
     when:
       matrix:
@@ -559,3 +578,30 @@ matrix:
       FIX_PERMISSIONS: true
       USE_EMAIL: true
       TEST_OBJECTSTORAGE: true
+
+      # Release Tarball
+    - PHP_VERSION: 7.1
+      OC_VERSION: 10.2.0
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      USE_EMAIL: true
+      NEED_CORE: true
+      USE_RELEASE_TARBALL: true
+      FIX_PERMISSIONS: true
+
+    - PHP_VERSION: 7.1
+      OC_VERSION: 10.2.0
+      TEST_SUITE: webui-acceptance
+      BEHAT_SUITE: webUIGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      USE_EMAIL: true
+      NEED_CORE: true
+      USE_RELEASE_TARBALL: true
+      FIX_PERMISSIONS: true

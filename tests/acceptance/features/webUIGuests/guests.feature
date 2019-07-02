@@ -27,7 +27,7 @@ Feature: Guests
     Then the user should be redirected to a webUI page with the title "%productname%"
     And a warning should be displayed on the set-password-page saying "The token is invalid"
 
-  @mailhog
+  @mailhog @skipOnOcV10.2
   Scenario: User uses valid email to create a guest user
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
@@ -44,7 +44,7 @@ Feature: Guests
     And user "somestring" should not be displayed in dropdown as guest user
     And user "somestring" should not exist
 
-  @mailhog
+  @mailhog @skipOnOcV10.2
   Scenario: User uses invalid email to create a guest user
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
@@ -54,7 +54,7 @@ Feature: Guests
       | Error | Invalid mail address  |
     And user "invalid@email.com()9876a" should not exist
 
-  @mailhog
+  @mailhog @skipOnOcV10.2
   Scenario: User tries to create a guest user via email with an already used email
     Given these users have been created with skeleton files:
       |    username    |    email        |
@@ -66,7 +66,7 @@ Feature: Guests
     Then user "user1" should be listed in the autocomplete list on the webUI
     And user "user1@oc.com" should not be displayed in dropdown as guest user
 
-  @mailhog @issue-329
+  @mailhog @issue-329 @skipOnOcV10.2
   Scenario: User tries to create a guest user when a server email mode is not set
     Given user "user1" has been created with default attributes and skeleton files
     And user "user1" has logged in using the webUI
@@ -78,7 +78,7 @@ Feature: Guests
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
-  @mailhog @issue-332
+  @mailhog @issue-332 @skipOnOcV10.2
   Scenario: Administrator changes the guest user's password in users menu
     Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
@@ -91,7 +91,7 @@ Feature: Guests
     And the user logs in with username "valid@email.com" and password "newpassword" using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
 
-  @mailhog @issue-329
+  @mailhog @issue-329 @skipOnOcV10.2
   Scenario: User tries to create a guest user when a server email is invalid
     Given user "user1" has been created with default attributes and skeleton files
     And user "user1" has logged in using the webUI
@@ -103,7 +103,7 @@ Feature: Guests
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
-  @mailhog
+  @mailhog @skipOnOcV10.2
   Scenario: Administrator deletes a guest user in user's menu
     Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
@@ -112,7 +112,7 @@ Feature: Guests
     When the administrator deletes user "valid@email.com" using the webUI and confirms the deletion using the webUI
     Then user "valid@email.com" should not exist
 
-  @mailhog
+  @mailhog @skipOnOcV10.2
   Scenario Outline: User creates a guest user with email that contains capital letters
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
