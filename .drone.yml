@@ -582,7 +582,7 @@ matrix:
 
       # Release Tarball
     - PHP_VERSION: 7.1
-      OC_VERSION: 10.2.0
+      OC_VERSION: 10.2.1
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
@@ -595,7 +595,7 @@ matrix:
       FIX_PERMISSIONS: true
 
     - PHP_VERSION: 7.1
-      OC_VERSION: 10.2.0
+      OC_VERSION: 10.2.1
       TEST_SUITE: webui-acceptance
       BEHAT_SUITE: webUIGuests
       DB_TYPE: mysql
