@@ -157,13 +157,13 @@ Feature: Guests
     And user "user0" has created folder "/tmp"
     And user "user0" has created a share with settings
       | path        | /tmp              |
-      | shareType   | 0                 |
+      | shareType   | user              |
       | shareWith   | guest@example.com |
       | permissions | delete            |
     And guest user "guest" has registered
     When user "guest@example.com" creates a share using the sharing API with settings
       | path        | /tmp  |
-      | shareType   | 0     |
+      | shareType   | user  |
       | shareWith   | user1 |
       | permissions | all   |
     Then the OCS status code should be "404"
