@@ -31,7 +31,7 @@ Feature: Guests
   Scenario: User uses valid email to create a guest user
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
-    When the user shares file "data.zip" with guest user with email "valid@email.com" using webUI
+    When the user shares file "data.zip" with guest user with email "valid@email.com" using the webUI
     Then user "valid@email.com" should exist
 
   @mailhog
@@ -48,7 +48,7 @@ Feature: Guests
   Scenario: User uses invalid email to create a guest user
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
-    When the user shares file "testimage.jpg" with guest user with email "invalid@email.com()9876a" using webUI
+    When the user shares file "testimage.jpg" with guest user with email "invalid@email.com()9876a" using the webUI
     Then dialog should be displayed on the webUI
       | title | content               |
       | Error | Invalid mail address  |
@@ -71,7 +71,7 @@ Feature: Guests
     Given user "user1" has been created with default attributes and skeleton files
     And user "user1" has logged in using the webUI
     When the administrator deletes system config key "mail_smtpmode" using the occ command
-    And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using webUI
+    And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
     Then dialog should be displayed on the webUI
       | title | content               |
       | Error | Error while sharing   |
@@ -82,7 +82,7 @@ Feature: Guests
   Scenario: Administrator changes the guest user's password in users menu
     Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
-    And the user shares file "new-file.txt" with guest user with email "valid@email.com" using webUI
+    And the user shares file "new-file.txt" with guest user with email "valid@email.com" using the webUI
     And the administrator has browsed to the users page
     When the administrator changes the password of user "valid@email.com" to "newpassword" using the webUI
     #Then notifications should be displayed on the webUI with the text
@@ -96,7 +96,7 @@ Feature: Guests
     Given user "user1" has been created with default attributes and skeleton files
     And user "user1" has logged in using the webUI
     When the administrator adds system config key "mail_smtphost" with value "conkey" using the occ command
-    And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using webUI
+    And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
     Then dialog should be displayed on the webUI
       | title | content               |
       | Error | Error while sharing   |
@@ -107,7 +107,7 @@ Feature: Guests
   Scenario: Administrator deletes a guest user in user's menu
     Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
-    And the user shares file "new-file.txt" with guest user with email "valid@email.com" using webUI
+    And the user shares file "new-file.txt" with guest user with email "valid@email.com" using the webUI
     And the administrator has browsed to the users page
     When the administrator deletes user "valid@email.com" using the webUI and confirms the deletion using the webUI
     Then user "valid@email.com" should not exist
@@ -116,7 +116,7 @@ Feature: Guests
   Scenario Outline: User creates a guest user with email that contains capital letters
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
-    When the user shares file "data.zip" with guest user with email "<share-email>" using webUI
+    When the user shares file "data.zip" with guest user with email "<share-email>" using the webUI
     And the user logs out of the webUI
     And guest user "<share-email>" registers with email "<register-email>" and sets password to "password" using the webUI
     And the user logs in with username "<login-email>" and password "password" using the webUI
