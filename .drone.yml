@@ -20,7 +20,7 @@ pipeline:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     commands:
-      - git clone -b stable10 --depth=1 https://github.com/owncloud/core.git /var/www/owncloud/testrunner
+      - git clone -b master --depth=1 https://github.com/owncloud/core.git /var/www/owncloud/testrunner
       - cp -r /var/www/owncloud/apps/guests /var/www/owncloud/testrunner/apps/
       - cd /var/www/owncloud/testrunner
       - make install-composer-deps
@@ -262,23 +262,15 @@ matrix:
       NEED_CORE: true
       NEED_INSTALL_APP: true
 
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: javascript
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
-
     # owncloud-coding-standard
     - PHP_VERSION: 7.2
       TEST_SUITE: owncloud-coding-standard
-      OC_VERSION: daily-stable10-qa
+      OC_VERSION: daily-master-qa
       NEED_CORE: true
 
     - PHP_VERSION: 7.0
       TEST_SUITE: owncloud-coding-standard
-      OC_VERSION: daily-stable10-qa
+      OC_VERSION: daily-master-qa
       NEED_CORE: true
 
     # Unit Tests against core master
@@ -322,18 +314,8 @@ matrix:
       NEED_INSTALL_APP: true
       COVERAGE: true
 
-    # Unit Tests against core stable10
     - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-stable10-qa
+      OC_VERSION: daily-master-qa
       TEST_SUITE: phpunit
       DB_TYPE: mysql
       DB_NAME: owncloud
@@ -384,55 +366,6 @@ matrix:
       BEHAT_SUITE: apiGuests
       DB_TYPE: oci
       DB_NAME: XE
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-
-    # API Acceptance Tests with core stable10
-    - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
       NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
@@ -492,83 +425,9 @@ matrix:
       USE_EMAIL: true
       NEED_USER_MANAGEMENT_APP: true
 
-    # webUI Acceptance Tests with core stable10
-    - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: oci
-      DB_NAME: XE
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-
       # Test on Objectstore
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      TEST_OBJECTSTORAGE: true
-
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-stable10-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiGuests
       DB_TYPE: mysql
