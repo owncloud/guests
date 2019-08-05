@@ -26,7 +26,7 @@ Furthermore guests are fully auditable with the [ownCloud Auditing application](
 	<licence>GPLv2</licence>
 	<author>ownCloud GmbH</author>
 	<dependencies>
-		<owncloud min-version="10.2" max-version="10" />
+		<owncloud min-version="10.3" max-version="10" />
 	</dependencies>
 	<category>collaboration</category>
 	<types>
