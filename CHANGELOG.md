@@ -4,13 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-
 ## [0.8.2] - (final release date unknown)
 
 ### Fixed
 
+- Creation of guest shares are now case insensitive for Upper/lowercased emails  - [#326](https://github.com/owncloud/guests/pull/326)
+
+### Changed
+
 - Removed guest label in drop down to adjust with core display changes - [#337](https://github.com/owncloud/guests/pull/337)
-- Convert shareWith value to lower case when passing attributes to create guest share - [#326](https://github.com/owncloud/guests/pull/326)
+
 
 ## [0.8.1] - 2019-04-15
 
