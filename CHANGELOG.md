@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Added various apps to the default default application whitelist for guests [#315](https://github.com/owncloud/guests/pull/315)
 - Removed guest label in drop down to adjust with core display changes - [#337](https://github.com/owncloud/guests/pull/337)
 
 
