@@ -1,468 +1,1675 @@
+---
+kind: pipeline
+name: matrix-1
+
+platform:
+  os: linux
+  arch: amd64
+
 workspace:
   base: /var/www/owncloud
   path: apps/guests
 
-pipeline:
-  install-core:
-    image: owncloudci/core
-    version: ${OC_VERSION}
-    pull: true
-    db_type: ${DB_TYPE}
-    db_name: ${DB_NAME}
-    db_host: ${DB_TYPE}
-    db_username: autotest
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: mysql
+    db_name: owncloud
     db_password: owncloud
-    when:
-      matrix:
-        NEED_CORE: true
+    db_type: mysql
+    db_username: autotest
+    version: daily-master-qa
 
-  install-testrunner:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - git clone -b master --depth=1 https://github.com/owncloud/core.git /var/www/owncloud/testrunner
-      - cp -r /var/www/owncloud/apps/guests /var/www/owncloud/testrunner/apps/
-      - cd /var/www/owncloud/testrunner
-      - make install-composer-deps
-      - make vendor-bin-deps
-    when:
-      matrix:
-        USE_RELEASE_TARBALL: true
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
 
-  install-app:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - cd /var/www/owncloud/
-      - php occ a:l
-      - php occ a:e guests
-      - php occ a:e testing
-      - php occ a:l
-      - php occ config:system:set trusted_domains 1 --value=owncloud
-      - php occ log:manage --level 2
-    when:
-      matrix:
-        NEED_INSTALL_APP: true
+- name: test-javascript
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-js
 
-  install-user-management-app:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - git clone https://github.com/owncloud/user_management.git /var/www/owncloud/apps/user_management
-      - cd /var/www/owncloud/
-      - php occ a:l
-      - php occ a:e user_management
-      - php occ a:l
-    when:
-      matrix:
-        NEED_USER_MANAGEMENT_APP: true
-
-  prepare-objectstore:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - cd /var/www/owncloud/apps
-      - git clone https://github.com/owncloud/files_primary_s3.git
-      - cd files_primary_s3
-      - composer install
-      - cp tests/drone/scality.config.php /var/www/owncloud/config
-      - cd /var/www/owncloud
-      - php occ a:l
-      - php occ a:e files_primary_s3
-      - php occ a:l
-      - php occ s3:create-bucket owncloud --accept-warning
-    when:
-      matrix:
-        TEST_OBJECTSTORAGE: true
-
-  fix-permissions:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - chown www-data /var/www/owncloud -R
-      - if [ "${USE_RELEASE_TARBALL}" = "true" ];
-        then
-        chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R;
-        chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh;
-        else
-        chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R;
-        chmod +x /var/www/owncloud/tests/acceptance/run.sh;
-        fi
-    when:
-      matrix:
-        FIX_PERMISSIONS: true
-
-  owncloud-log:
-    image: owncloud/ubuntu:16.04
-    detach: true
-    pull: true
-    commands:
-      - tail -f /var/www/owncloud/data/owncloud.log
-    when:
-      matrix:
-        NEED_SERVER: true
-
-  test-javascript:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - make test-js
-    when:
-      matrix:
-        TEST_SUITE: javascript
-
-  owncloud-coding-standard:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - make test-php-codecheck
-      - make test-php-style
-    when:
-      matrix:
-        TEST_SUITE: owncloud-coding-standard
-
-  phpunit-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-      - COVERAGE=${COVERAGE}
-    commands:
-      - if [ -z "${COVERAGE}" ]; then make test-php-unit; fi
-      - if [ "${COVERAGE}" = "true" ]; then make test-php-unit-dbg; fi
-    when:
-      matrix:
-        TEST_SUITE: phpunit
-
-  api-acceptance-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-      - TEST_SERVER_URL=http://owncloud
-      - MAILHOG_HOST=email
-      - BEHAT_SUITE=${BEHAT_SUITE}
-    commands:
-      - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
-      - make test-acceptance-api
-    when:
-      matrix:
-        TEST_SUITE: api-acceptance
-
-  webui-acceptance-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-      - BROWSER=chrome
-      - SELENIUM_HOST=selenium
-      - SELENIUM_PORT=4444
-      - TEST_SERVER_URL=http://owncloud
-      - PLATFORM=Linux
-      - BEHAT_SUITE=${BEHAT_SUITE}
-      - MAILHOG_HOST=email
-    commands:
-      - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
-      - make test-acceptance-webui
-    when:
-      matrix:
-        TEST_SUITE: webui-acceptance
-
-  codecov:
-    image: plugins/codecov:2
-    secrets: [codecov_token]
-    pull: true
-    files:
-      - '*.xml'
-    paths:
-      - tests/output
-    when:
-      matrix:
-        COVERAGE: true
-
-  notify:
-    image: plugins/slack:1
-    pull: true
-    secrets: [ slack_webhook ]
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
     channel: builds
-    when:
-      status: [ failure, changed ]
-      event: [ push, tag ]
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
 
 services:
-  mysql:
-    image: mysql:5.5
-    environment:
-      - MYSQL_USER=autotest
-      - MYSQL_PASSWORD=owncloud
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_ROOT_PASSWORD=owncloud
-    when:
-      matrix:
-        DB_TYPE: mysql
+- name: mysql
+  pull: if-not-exists
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: autotest
 
-  pgsql:
-    image: postgres:9.4
-    environment:
-      - POSTGRES_USER=autotest
-      - POSTGRES_PASSWORD=owncloud
-      - POSTGRES_DB=${DB_NAME}
-    when:
-      matrix:
-        DB_TYPE: pgsql
+---
+kind: pipeline
+name: matrix-2
 
-  oci:
-    image: deepdiver/docker-oracle-xe-11g
-    environment:
-      - ORACLE_USER=system
-      - ORACLE_PASSWORD=oracle
-      - ORACLE_DB=${DB_NAME}
-    when:
-      matrix:
-        DB_TYPE: oci
+platform:
+  os: linux
+  arch: amd64
 
-  owncloud:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-     - APACHE_WEBROOT=/var/www/owncloud/
-    command: [ "/usr/local/bin/apachectl", "-e", "debug", "-D", "FOREGROUND" ]
-    when:
-      matrix:
-        NEED_SERVER: true
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
 
-  selenium:
-    image: selenium/standalone-chrome-debug:3.141.59-oxygen
-    pull: true
-    when:
-      matrix:
-        TEST_SUITE: webui-acceptance
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: ${DB_TYPE}
+    db_name: ${DB_NAME}
+    db_password: owncloud
+    db_type: ${DB_TYPE}
+    db_username: autotest
+    version: daily-master-qa
 
-  email:
-    image: mailhog/mailhog
-    pull: true
-    when:
-      matrix:
-        USE_EMAIL: true
+- name: owncloud-coding-standard
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - make test-php-codecheck
+  - make test-php-style
 
-  scality:
-    image: owncloudci/scality-s3server
-    pull: true
-    environment:
-      - HOST_NAME=scality
-    when:
-      matrix:
-        TEST_OBJECTSTORAGE: true
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
 
-matrix:
-  include:
-    # Javascript
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: javascript
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+---
+kind: pipeline
+name: matrix-3
 
-    # owncloud-coding-standard
-    - PHP_VERSION: 7.2
-      TEST_SUITE: owncloud-coding-standard
-      OC_VERSION: daily-master-qa
-      NEED_CORE: true
+platform:
+  os: linux
+  arch: amd64
 
-    - PHP_VERSION: 7.0
-      TEST_SUITE: owncloud-coding-standard
-      OC_VERSION: daily-master-qa
-      NEED_CORE: true
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
 
-    # Unit Tests against core master
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: ${DB_TYPE}
+    db_name: ${DB_NAME}
+    db_password: owncloud
+    db_type: ${DB_TYPE}
+    db_username: autotest
+    version: daily-master-qa
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+- name: owncloud-coding-standard
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-codecheck
+  - make test-php-style
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: oci
-      DB_NAME: XE
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+---
+kind: pipeline
+name: matrix-4
 
-    - PHP_VERSION: 7.0
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
+platform:
+  os: linux
+  arch: amd64
 
-    # API Acceptance Tests with core master
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: autotest
+    version: daily-master-qa
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: oci
-      DB_NAME: XE
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
 
-    # webUI Acceptance Tests with core master
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - if [ -z "true" ]; then make test-php-unit; fi
+  - if [ "true" = "true" ]; then make test-php-unit-dbg; fi
+  environment:
+    COVERAGE: true
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
+- name: codecov
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    files:
+    - "*.xml"
+    paths:
+    - tests/output
+  environment:
+    CODECOV_TOKEN:
+      from_secret: codecov_token
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: oci
-      DB_NAME: XE
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
+services:
+- name: mysql
+  pull: if-not-exists
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: autotest
 
-      # Test on Objectstore
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      TEST_OBJECTSTORAGE: true
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.1
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
 
-# TODO: needs to be uncommented once 10.3 is available
-#      # Release Tarball
-#    - PHP_VERSION: 7.1
-#      OC_VERSION: 10.3.0
-#      TEST_SUITE: api-acceptance
-#      BEHAT_SUITE: apiGuests
-#      DB_TYPE: mysql
-#      DB_NAME: owncloud
-#      NEED_SERVER: true
-#      NEED_INSTALL_APP: true
-#      USE_EMAIL: true
-#      NEED_CORE: true
-#      USE_RELEASE_TARBALL: true
-#      FIX_PERMISSIONS: true
-#
-#    - PHP_VERSION: 7.1
-#      OC_VERSION: 10.3.0
-#      TEST_SUITE: webui-acceptance
-#      BEHAT_SUITE: webUIGuests
-#      DB_TYPE: mysql
-#      DB_NAME: owncloud
-#      NEED_SERVER: true
-#      NEED_INSTALL_APP: true
-#      USE_EMAIL: true
-#      NEED_CORE: true
-#      USE_RELEASE_TARBALL: true
-#      FIX_PERMISSIONS: true
+---
+kind: pipeline
+name: matrix-5
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - if [ -z "true" ]; then make test-php-unit; fi
+  - if [ "true" = "true" ]; then make test-php-unit-dbg; fi
+  environment:
+    COVERAGE: true
+
+- name: codecov
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    files:
+    - "*.xml"
+    paths:
+    - tests/output
+  environment:
+    CODECOV_TOKEN:
+      from_secret: codecov_token
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: mysql
+  pull: if-not-exists
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.2
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+---
+kind: pipeline
+name: matrix-6
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: pgsql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - if [ -z "true" ]; then make test-php-unit; fi
+  - if [ "true" = "true" ]; then make test-php-unit-dbg; fi
+  environment:
+    COVERAGE: true
+
+- name: codecov
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    files:
+    - "*.xml"
+    paths:
+    - tests/output
+  environment:
+    CODECOV_TOKEN:
+      from_secret: codecov_token
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: pgsql
+  pull: if-not-exists
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.2
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+---
+kind: pipeline
+name: matrix-7
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: oci
+    db_name: XE
+    db_password: owncloud
+    db_type: oci
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - if [ -z "true" ]; then make test-php-unit; fi
+  - if [ "true" = "true" ]; then make test-php-unit-dbg; fi
+  environment:
+    COVERAGE: true
+
+- name: codecov
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    files:
+    - "*.xml"
+    paths:
+    - tests/output
+  environment:
+    CODECOV_TOKEN:
+      from_secret: codecov_token
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: oci
+  pull: if-not-exists
+  image: deepdiver/docker-oracle-xe-11g
+  environment:
+    ORACLE_DB: XE
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.2
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+---
+kind: pipeline
+name: matrix-8
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - if [ -z "${COVERAGE}" ]; then make test-php-unit; fi
+  - if [ "${COVERAGE}" = "true" ]; then make test-php-unit-dbg; fi
+  environment:
+    COVERAGE: ${COVERAGE}
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: mysql
+  pull: if-not-exists
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+---
+kind: pipeline
+name: matrix-9
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - chown www-data /var/www/owncloud -R
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh; else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: api-acceptance-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://owncloud
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: mysql
+  pull: if-not-exists
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.1
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+---
+kind: pipeline
+name: matrix-10
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - chown www-data /var/www/owncloud -R
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh; else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: api-acceptance-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://owncloud
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: mysql
+  pull: if-not-exists
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.2
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+---
+kind: pipeline
+name: matrix-11
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: pgsql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - chown www-data /var/www/owncloud -R
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh; else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: api-acceptance-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://owncloud
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: pgsql
+  pull: if-not-exists
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.2
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+---
+kind: pipeline
+name: matrix-12
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: oci
+    db_name: XE
+    db_password: owncloud
+    db_type: oci
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - chown www-data /var/www/owncloud -R
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh; else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: api-acceptance-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://owncloud
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: oci
+  pull: if-not-exists
+  image: deepdiver/docker-oracle-xe-11g
+  environment:
+    ORACLE_DB: XE
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.2
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+---
+kind: pipeline
+name: matrix-13
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: install-user-management-app
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - git clone https://github.com/owncloud/user_management.git /var/www/owncloud/apps/user_management
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e user_management
+  - php occ a:l
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - chown www-data /var/www/owncloud -R
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh; else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: webui-acceptance-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://owncloud
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: mysql
+  pull: if-not-exists
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.1
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+---
+kind: pipeline
+name: matrix-14
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: install-user-management-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - git clone https://github.com/owncloud/user_management.git /var/www/owncloud/apps/user_management
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e user_management
+  - php occ a:l
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - chown www-data /var/www/owncloud -R
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh; else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: webui-acceptance-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://owncloud
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: mysql
+  pull: if-not-exists
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.2
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+---
+kind: pipeline
+name: matrix-15
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: pgsql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: install-user-management-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - git clone https://github.com/owncloud/user_management.git /var/www/owncloud/apps/user_management
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e user_management
+  - php occ a:l
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - chown www-data /var/www/owncloud -R
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh; else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: webui-acceptance-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://owncloud
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: pgsql
+  pull: if-not-exists
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.2
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+---
+kind: pipeline
+name: matrix-16
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: oci
+    db_name: XE
+    db_password: owncloud
+    db_type: oci
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: install-user-management-app
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - git clone https://github.com/owncloud/user_management.git /var/www/owncloud/apps/user_management
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e user_management
+  - php occ a:l
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - chown www-data /var/www/owncloud -R
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh; else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: webui-acceptance-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://owncloud
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: oci
+  pull: if-not-exists
+  image: deepdiver/docker-oracle-xe-11g
+  environment:
+    ORACLE_DB: XE
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.2
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+---
+kind: pipeline
+name: matrix-17
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: autotest
+    version: daily-master-qa
+
+- name: install-app
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=owncloud
+  - php occ log:manage --level 2
+
+- name: prepare-objectstore
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/apps
+  - git clone https://github.com/owncloud/files_primary_s3.git
+  - cd files_primary_s3
+  - composer install
+  - cp tests/drone/scality.config.php /var/www/owncloud/config
+  - cd /var/www/owncloud
+  - php occ a:l
+  - php occ a:e files_primary_s3
+  - php occ a:l
+  - php occ s3:create-bucket owncloud --accept-warning
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - chown www-data /var/www/owncloud -R
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh; else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R; chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
+
+- name: owncloud-log
+  pull: always
+  image: owncloud/ubuntu:16.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/data/owncloud.log
+
+- name: api-acceptance-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://owncloud
+
+- name: notify
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    event:
+    - push
+    - tag
+    status:
+    - failure
+    - changed
+
+services:
+- name: mysql
+  pull: if-not-exists
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: autotest
+
+- name: owncloud
+  pull: always
+  image: owncloudci/php:7.1
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: scality
+  pull: always
+  image: owncloudci/scality-s3server
+  environment:
+    HOST_NAME: scality
+
+...
