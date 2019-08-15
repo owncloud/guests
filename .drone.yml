@@ -448,30 +448,29 @@ matrix:
       USE_EMAIL: true
       TEST_OBJECTSTORAGE: true
 
-# TODO: needs to be uncommented once 10.3 is available
-#      # Release Tarball
-#    - PHP_VERSION: 7.1
-#      OC_VERSION: 10.3.0
-#      TEST_SUITE: api-acceptance
-#      BEHAT_SUITE: apiGuests
-#      DB_TYPE: mysql
-#      DB_NAME: owncloud
-#      NEED_SERVER: true
-#      NEED_INSTALL_APP: true
-#      USE_EMAIL: true
-#      NEED_CORE: true
-#      USE_RELEASE_TARBALL: true
-#      FIX_PERMISSIONS: true
-#
-#    - PHP_VERSION: 7.1
-#      OC_VERSION: 10.3.0
-#      TEST_SUITE: webui-acceptance
-#      BEHAT_SUITE: webUIGuests
-#      DB_TYPE: mysql
-#      DB_NAME: owncloud
-#      NEED_SERVER: true
-#      NEED_INSTALL_APP: true
-#      USE_EMAIL: true
-#      NEED_CORE: true
-#      USE_RELEASE_TARBALL: true
-#      FIX_PERMISSIONS: true
+      # Release Tarball
+    - PHP_VERSION: 7.1
+      OC_VERSION: 10.2.1
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      USE_EMAIL: true
+      NEED_CORE: true
+      USE_RELEASE_TARBALL: true
+      FIX_PERMISSIONS: true
+
+    - PHP_VERSION: 7.1
+      OC_VERSION: 10.2.1
+      TEST_SUITE: webui-acceptance
+      BEHAT_SUITE: webUIGuests
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      USE_EMAIL: true
+      NEED_CORE: true
+      USE_RELEASE_TARBALL: true
+      FIX_PERMISSIONS: true
