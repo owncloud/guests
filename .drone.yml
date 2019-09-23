@@ -1,476 +1,3302 @@
+---
+kind: pipeline
+type: docker
+name: coding-standard-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
 workspace:
   base: /var/www/owncloud
-  path: apps/guests
+  path: server/apps/guests
 
-pipeline:
-  install-core:
-    image: owncloudci/core
-    version: ${OC_VERSION}
-    pull: true
-    db_type: ${DB_TYPE}
-    db_name: ${DB_NAME}
-    db_host: ${DB_TYPE}
-    db_username: autotest
+steps:
+- name: coding-standard
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-style
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+---
+kind: pipeline
+type: docker
+name: coding-standard-php7.1
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: coding-standard
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-php-style
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+---
+kind: pipeline
+type: docker
+name: coding-standard-php7.2
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: coding-standard
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - make test-php-style
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+---
+kind: pipeline
+type: docker
+name: coding-standard-php7.3
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: coding-standard
+  pull: always
+  image: owncloudci/php:7.3
+  commands:
+  - make test-php-style
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+---
+kind: pipeline
+type: docker
+name: javascript-tests
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: sqlite
+    db_name: owncloud
     db_password: owncloud
-    when:
-      matrix:
-        NEED_CORE: true
+    db_type: sqlite
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
 
-  install-testrunner:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - git clone -b master --depth=1 https://github.com/owncloud/core.git /var/www/owncloud/testrunner
-      - cp -r /var/www/owncloud/apps/guests /var/www/owncloud/testrunner/apps/
-      - cd /var/www/owncloud/testrunner
-      - make install-composer-deps
-      - make vendor-bin-deps
-    when:
-      matrix:
-        USE_RELEASE_TARBALL: true
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
 
-  install-app:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - cd /var/www/owncloud/
-      - php occ a:l
-      - php occ a:e guests
-      - php occ a:e testing
-      - php occ a:l
-      - php occ config:system:set trusted_domains 1 --value=owncloud
-      - php occ log:manage --level 2
-    when:
-      matrix:
-        NEED_INSTALL_APP: true
+- name: js-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-js
 
-  install-user-management-app:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - git clone https://github.com/owncloud/user_management.git /var/www/owncloud/apps/user_management
-      - cd /var/www/owncloud/
-      - php occ a:l
-      - php occ a:e user_management
-      - php occ a:l
-    when:
-      matrix:
-        NEED_USER_MANAGEMENT_APP: true
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
 
-  prepare-objectstore:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - cd /var/www/owncloud/apps
-      - git clone https://github.com/owncloud/files_primary_s3.git
-      - cd files_primary_s3
-      - composer install
-      - cp tests/drone/scality.config.php /var/www/owncloud/config
-      - cd /var/www/owncloud
-      - php occ a:l
-      - php occ a:e files_primary_s3
-      - php occ a:l
-      - php occ s3:create-bucket owncloud --accept-warning
-    when:
-      matrix:
-        TEST_OBJECTSTORAGE: true
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
 
-  fix-permissions:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - chown www-data /var/www/owncloud -R
-      - if [ "${USE_RELEASE_TARBALL}" = "true" ];
-        then
-        chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R;
-        chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh;
-        else
-        chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R;
-        chmod +x /var/www/owncloud/tests/acceptance/run.sh;
-        fi
-    when:
-      matrix:
-        FIX_PERMISSIONS: true
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-sqlite
 
-  owncloud-log:
-    image: owncloud/ubuntu:16.04
-    detach: true
-    pull: true
-    commands:
-      - tail -f /var/www/owncloud/data/owncloud.log
-    when:
-      matrix:
-        NEED_SERVER: true
+platform:
+  os: linux
+  arch: amd64
 
-  test-javascript:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - make test-js
-    when:
-      matrix:
-        TEST_SUITE: javascript
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
 
-  owncloud-coding-standard:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - make test-php-codecheck
-      - make test-php-style
-    when:
-      matrix:
-        TEST_SUITE: owncloud-coding-standard
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: sqlite
+    db_name: owncloud
+    db_password: owncloud
+    db_type: sqlite
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
 
-  phpunit-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-      - COVERAGE=${COVERAGE}
-    commands:
-      - if [ -z "${COVERAGE}" ]; then make test-php-unit; fi
-      - if [ "${COVERAGE}" = "true" ]; then make test-php-unit-dbg; fi
-    when:
-      matrix:
-        TEST_SUITE: phpunit
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
 
-  api-acceptance-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-      - TEST_SERVER_URL=http://owncloud
-      - MAILHOG_HOST=email
-      - BEHAT_SUITE=${BEHAT_SUITE}
-    commands:
-      - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
-      - make test-acceptance-api
-    when:
-      matrix:
-        TEST_SUITE: api-acceptance
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
 
-  webui-acceptance-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-      - BROWSER=chrome
-      - SELENIUM_HOST=selenium
-      - SELENIUM_PORT=4444
-      - TEST_SERVER_URL=http://owncloud
-      - PLATFORM=Linux
-      - BEHAT_SUITE=${BEHAT_SUITE}
-      - MAILHOG_HOST=email
-    commands:
-      - if [ "${USE_RELEASE_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner/apps/guests; fi
-      - make test-acceptance-webui
-    when:
-      matrix:
-        TEST_SUITE: webui-acceptance
-
-  codecov:
-    image: plugins/codecov:2
-    secrets: [codecov_token]
-    pull: true
-    files:
-      - '*.xml'
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
     paths:
-      - tests/output
-    when:
-      matrix:
-        COVERAGE: true
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
 
-  notify:
-    image: plugins/slack:1
-    pull: true
-    secrets: [ slack_webhook ]
-    channel: builds
-    when:
-      status: [ failure, changed ]
-      event: [ push, tag ]
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-mariadb10.2
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mariadb
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
 
 services:
-  mysql:
-    image: mysql:5.5
-    environment:
-      - MYSQL_USER=autotest
-      - MYSQL_PASSWORD=owncloud
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_ROOT_PASSWORD=owncloud
-    when:
-      matrix:
-        DB_TYPE: mysql
+- name: mariadb
+  pull: always
+  image: mariadb:10.2
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
 
-  pgsql:
-    image: postgres:9.4
-    environment:
-      - POSTGRES_USER=autotest
-      - POSTGRES_PASSWORD=owncloud
-      - POSTGRES_DB=${DB_NAME}
-    when:
-      matrix:
-        DB_TYPE: pgsql
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
 
-  oci:
-    image: deepdiver/docker-oracle-xe-11g
-    environment:
-      - ORACLE_USER=system
-      - ORACLE_PASSWORD=oracle
-      - ORACLE_DB=${DB_NAME}
-    when:
-      matrix:
-        DB_TYPE: oci
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
 
-  owncloud:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-     - APACHE_WEBROOT=/var/www/owncloud/
-    command: [ "/usr/local/bin/apachectl", "-e", "debug", "-D", "FOREGROUND" ]
-    when:
-      matrix:
-        NEED_SERVER: true
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-mysql5.5
 
-  selenium:
-    image: selenium/standalone-chrome-debug:3.141.59-oxygen
-    pull: true
-    when:
-      matrix:
-        TEST_SUITE: webui-acceptance
+platform:
+  os: linux
+  arch: amd64
 
-  email:
-    image: mailhog/mailhog
-    pull: true
-    when:
-      matrix:
-        USE_EMAIL: true
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
 
-  scality:
-    image: owncloudci/scality-s3server
-    pull: true
-    environment:
-      - HOST_NAME=scality
-    when:
-      matrix:
-        TEST_OBJECTSTORAGE: true
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
 
-matrix:
-  include:
-    # Javascript
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: javascript
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
 
-    # owncloud-coding-standard
-    - PHP_VERSION: 7.2
-      TEST_SUITE: owncloud-coding-standard
-      OC_VERSION: daily-master-qa
-      NEED_CORE: true
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
 
-    - PHP_VERSION: 7.0
-      TEST_SUITE: owncloud-coding-standard
-      OC_VERSION: daily-master-qa
-      NEED_CORE: true
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
 
-    # Unit Tests against core master
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: oci
-      DB_NAME: XE
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-mysql5.7
 
-    - PHP_VERSION: 7.3
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
+platform:
+  os: linux
+  arch: amd64
 
-    - PHP_VERSION: 7.0
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
 
-    # API Acceptance Tests with core master
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: oci
-      DB_NAME: XE
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
 
-    # webUI Acceptance Tests with core master
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.7
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: oci
-      DB_NAME: XE
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      NEED_USER_MANAGEMENT_APP: true
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-postgres9.4
 
-      # Test on Objectstore
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      FIX_PERMISSIONS: true
-      USE_EMAIL: true
-      TEST_OBJECTSTORAGE: true
+platform:
+  os: linux
+  arch: amd64
 
-      # Release Tarball
-    - PHP_VERSION: 7.1
-      OC_VERSION: 10.3.0alpha
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      USE_EMAIL: true
-      NEED_CORE: true
-      USE_RELEASE_TARBALL: true
-      FIX_PERMISSIONS: true
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
 
-    - PHP_VERSION: 7.1
-      OC_VERSION: 10.3.0alpha
-      TEST_SUITE: webui-acceptance
-      BEHAT_SUITE: webUIGuests
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      USE_EMAIL: true
-      NEED_CORE: true
-      USE_RELEASE_TARBALL: true
-      FIX_PERMISSIONS: true
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-oracle
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.1-mariadb10.2
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mariadb
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-php-unit
+
+services:
+- name: mariadb
+  pull: always
+  image: mariadb:10.2
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.2-mariadb10.2
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mariadb
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - make test-php-unit
+
+services:
+- name: mariadb
+  pull: always
+  image: mariadb:10.2
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.3-mariadb10.2
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mariadb
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.3
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.3
+  commands:
+  - make test-php-unit
+
+services:
+- name: mariadb
+  pull: always
+  image: mariadb:10.2
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-master-chrome-mysql5.5-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-master-chrome-postgres9.4-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-master-chrome-oracle-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-master-firefox-mysql5.5-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: firefox
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-firefox-debug:3.8.1
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+    SE_OPTS: -enablePassThrough false
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-master-firefox-postgres9.4-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: firefox
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-firefox-debug:3.8.1
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+    SE_OPTS: -enablePassThrough false
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-master-firefox-oracle-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: firefox
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-firefox-debug:3.8.1
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+    SE_OPTS: -enablePassThrough false
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-latest-chrome-mysql5.5-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-latest-chrome-postgres9.4-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-latest-chrome-oracle-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: chrome
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-chrome-debug:3.141.59-oxygen
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-latest-firefox-mysql5.5-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: firefox
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-firefox-debug:3.8.1
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+    SE_OPTS: -enablePassThrough false
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-latest-firefox-postgres9.4-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: firefox
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-firefox-debug:3.8.1
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+    SE_OPTS: -enablePassThrough false
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: webUIGuests-latest-firefox-oracle-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-webui
+  environment:
+    BEHAT_SUITE: webUIGuests
+    BROWSER: firefox
+    MAILHOG_HOST: email
+    PLATFORM: Linux
+    SELENIUM_HOST: selenium
+    SELENIUM_PORT: 4444
+    TEST_SERVER_URL: http://server
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+- name: selenium
+  pull: always
+  image: selenium/standalone-firefox-debug:3.8.1
+  environment:
+    JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+    SE_OPTS: -enablePassThrough false
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: apiGuests-master-mysql5.5-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://server
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: apiGuests-master-postgres9.4-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://server
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: apiGuests-master-oracle-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://server
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: apiGuests-latest-mysql5.5-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://server
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: apiGuests-latest-postgres9.4-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://server
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: apiGuests-latest-oracle-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://server
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: apiGuestsObjectstore-master-mysql5.5-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: install-extra-apps
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - git clone https://github.com/owncloud/files_primary_s3.git /var/www/owncloud/testrunner/apps/files_primary_s3
+  - cp -r /var/www/owncloud/testrunner/apps/files_primary_s3 /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/server/apps/files_primary_s3
+  - composer install
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e files_primary_s3
+  - php occ a:l
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: configure-app
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server/apps/files_primary_s3
+  - cp tests/drone/scality.config.php /var/www/owncloud/server/config
+  - cd /var/www/owncloud/server
+  - php occ s3:create-bucket owncloud --accept-warning
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://server
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: scality
+  pull: always
+  image: owncloudci/scality-s3server
+  environment:
+    HOST_NAME: scality
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: apiGuestsObjectstore-latest-mysql5.5-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: testrunner/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: latest
+
+- name: install-testrunner
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - mkdir /tmp/testrunner
+  - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
+  - rsync -aIX /tmp/testrunner /var/www/owncloud
+  - cp -r /var/www/owncloud/testrunner/apps/guests /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/testrunner
+  - make install-composer-deps vendor-bin-deps
+
+- name: install-extra-apps
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - git clone https://github.com/owncloud/files_primary_s3.git /var/www/owncloud/testrunner/apps/files_primary_s3
+  - cp -r /var/www/owncloud/testrunner/apps/files_primary_s3 /var/www/owncloud/server/apps/
+  - cd /var/www/owncloud/server/apps/files_primary_s3
+  - composer install
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e files_primary_s3
+  - php occ a:l
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: owncloud-log-server
+  pull: always
+  image: owncloud/ubuntu:18.04
+  detach: true
+  commands:
+  - tail -f /var/www/owncloud/server/data/owncloud.log
+
+- name: configure-app
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server/apps/files_primary_s3
+  - cp tests/drone/scality.config.php /var/www/owncloud/server/config
+  - cd /var/www/owncloud/server
+  - php occ s3:create-bucket owncloud --accept-warning
+
+- name: fix-permissions
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - chown -R www-data /var/www/owncloud/server
+
+- name: acceptance-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - touch /var/www/owncloud/saved-settings.sh
+  - . /var/www/owncloud/saved-settings.sh
+  - make test-acceptance-api
+  environment:
+    BEHAT_SUITE: apiGuests
+    MAILHOG_HOST: email
+    TEST_SERVER_URL: http://server
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+- name: email
+  pull: always
+  image: mailhog/mailhog
+
+- name: scality
+  pull: always
+  image: owncloudci/scality-s3server
+  environment:
+    HOST_NAME: scality
+
+- name: server
+  pull: always
+  image: owncloudci/php:7.0
+  command:
+  - /usr/local/bin/apachectl
+  - -e
+  - debug
+  - -D
+  - FOREGROUND
+  environment:
+    APACHE_WEBROOT: /var/www/owncloud/server
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: chat-notifications
+
+platform:
+  os: linux
+  arch: amd64
+
+clone:
+  disable: true
+
+steps:
+- name: notify-rocketchat
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+    webhook:
+      from_secret: private_rocketchat
+
+trigger:
+  ref:
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- javascript-tests
+- phpunit-php7.0-sqlite
+- phpunit-php7.0-mariadb10.2
+- phpunit-php7.0-mysql5.5
+- phpunit-php7.0-mysql5.7
+- phpunit-php7.0-postgres9.4
+- phpunit-php7.0-oracle
+- phpunit-php7.1-mariadb10.2
+- phpunit-php7.2-mariadb10.2
+- phpunit-php7.3-mariadb10.2
+- webUIGuests-master-chrome-mysql5.5-php7.0
+- webUIGuests-master-chrome-postgres9.4-php7.0
+- webUIGuests-master-chrome-oracle-php7.0
+- webUIGuests-master-firefox-mysql5.5-php7.0
+- webUIGuests-master-firefox-postgres9.4-php7.0
+- webUIGuests-master-firefox-oracle-php7.0
+- webUIGuests-latest-chrome-mysql5.5-php7.0
+- webUIGuests-latest-chrome-postgres9.4-php7.0
+- webUIGuests-latest-chrome-oracle-php7.0
+- webUIGuests-latest-firefox-mysql5.5-php7.0
+- webUIGuests-latest-firefox-postgres9.4-php7.0
+- webUIGuests-latest-firefox-oracle-php7.0
+- apiGuests-master-mysql5.5-php7.0
+- apiGuests-master-postgres9.4-php7.0
+- apiGuests-master-oracle-php7.0
+- apiGuests-latest-mysql5.5-php7.0
+- apiGuests-latest-postgres9.4-php7.0
+- apiGuests-latest-oracle-php7.0
+- apiGuestsObjectstore-master-mysql5.5-php7.0
+- apiGuestsObjectstore-latest-mysql5.5-php7.0
+
+...
