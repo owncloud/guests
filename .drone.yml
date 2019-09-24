@@ -808,7 +808,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-master-chrome-mysql5.5-php7.0
+name: webUIGuest-master-chrome-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -931,7 +931,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-master-chrome-postgres9.4-php7.0
+name: webUIGuest-master-chrome-postgres9.4-php7.0
 
 platform:
   os: linux
@@ -1053,7 +1053,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-master-chrome-oracle-php7.0
+name: webUIGuest-master-chrome-oracle-php7.0
 
 platform:
   os: linux
@@ -1176,7 +1176,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-master-firefox-mysql5.5-php7.0
+name: webUIGuest-master-firefox-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -1300,7 +1300,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-master-firefox-postgres9.4-php7.0
+name: webUIGuest-master-firefox-postgres9.4-php7.0
 
 platform:
   os: linux
@@ -1423,7 +1423,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-master-firefox-oracle-php7.0
+name: webUIGuest-master-firefox-oracle-php7.0
 
 platform:
   os: linux
@@ -1547,7 +1547,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-latest-chrome-mysql5.5-php7.0
+name: webUIGuest-10.3.0alpha2-chrome-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -1569,7 +1569,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -1670,7 +1670,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-latest-chrome-postgres9.4-php7.0
+name: webUIGuest-10.3.0alpha2-chrome-postgres9.4-php7.0
 
 platform:
   os: linux
@@ -1692,7 +1692,7 @@ steps:
     db_type: pgsql
     db_username: owncloud
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -1792,7 +1792,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-latest-chrome-oracle-php7.0
+name: webUIGuest-10.3.0alpha2-chrome-oracle-php7.0
 
 platform:
   os: linux
@@ -1814,7 +1814,7 @@ steps:
     db_type: oci
     db_username: system
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -1915,7 +1915,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-latest-firefox-mysql5.5-php7.0
+name: webUIGuest-10.3.0alpha2-firefox-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -1937,7 +1937,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -2039,7 +2039,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-latest-firefox-postgres9.4-php7.0
+name: webUIGuest-10.3.0alpha2-firefox-postgres9.4-php7.0
 
 platform:
   os: linux
@@ -2061,7 +2061,7 @@ steps:
     db_type: pgsql
     db_username: owncloud
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -2162,7 +2162,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuests-latest-firefox-oracle-php7.0
+name: webUIGuest-10.3.0alpha2-firefox-oracle-php7.0
 
 platform:
   os: linux
@@ -2184,7 +2184,7 @@ steps:
     db_type: oci
     db_username: system
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -2624,7 +2624,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-latest-mysql5.5-php7.0
+name: apiGuests-10.3.0alpha2-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -2646,7 +2646,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -2737,7 +2737,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-latest-postgres9.4-php7.0
+name: apiGuests-10.3.0alpha2-postgres9.4-php7.0
 
 platform:
   os: linux
@@ -2759,7 +2759,7 @@ steps:
     db_type: pgsql
     db_username: owncloud
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -2849,7 +2849,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-latest-oracle-php7.0
+name: apiGuests-10.3.0alpha2-oracle-php7.0
 
 platform:
   os: linux
@@ -2871,7 +2871,7 @@ steps:
     db_type: oci
     db_username: system
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -3103,7 +3103,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuestsObjectstore-latest-mysql5.5-php7.0
+name: apiGuestsObjectstore-10.3.0alpha2-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -3125,7 +3125,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/guests
-    version: latest
+    version: 10.3.0alpha2
 
 - name: install-testrunner
   pull: always
@@ -3278,25 +3278,25 @@ depends_on:
 - phpunit-php7.1-mariadb10.2
 - phpunit-php7.2-mariadb10.2
 - phpunit-php7.3-mariadb10.2
-- webUIGuests-master-chrome-mysql5.5-php7.0
-- webUIGuests-master-chrome-postgres9.4-php7.0
-- webUIGuests-master-chrome-oracle-php7.0
-- webUIGuests-master-firefox-mysql5.5-php7.0
-- webUIGuests-master-firefox-postgres9.4-php7.0
-- webUIGuests-master-firefox-oracle-php7.0
-- webUIGuests-latest-chrome-mysql5.5-php7.0
-- webUIGuests-latest-chrome-postgres9.4-php7.0
-- webUIGuests-latest-chrome-oracle-php7.0
-- webUIGuests-latest-firefox-mysql5.5-php7.0
-- webUIGuests-latest-firefox-postgres9.4-php7.0
-- webUIGuests-latest-firefox-oracle-php7.0
+- webUIGuest-master-chrome-mysql5.5-php7.0
+- webUIGuest-master-chrome-postgres9.4-php7.0
+- webUIGuest-master-chrome-oracle-php7.0
+- webUIGuest-master-firefox-mysql5.5-php7.0
+- webUIGuest-master-firefox-postgres9.4-php7.0
+- webUIGuest-master-firefox-oracle-php7.0
+- webUIGuest-10.3.0alpha2-chrome-mysql5.5-php7.0
+- webUIGuest-10.3.0alpha2-chrome-postgres9.4-php7.0
+- webUIGuest-10.3.0alpha2-chrome-oracle-php7.0
+- webUIGuest-10.3.0alpha2-firefox-mysql5.5-php7.0
+- webUIGuest-10.3.0alpha2-firefox-postgres9.4-php7.0
+- webUIGuest-10.3.0alpha2-firefox-oracle-php7.0
 - apiGuests-master-mysql5.5-php7.0
 - apiGuests-master-postgres9.4-php7.0
 - apiGuests-master-oracle-php7.0
-- apiGuests-latest-mysql5.5-php7.0
-- apiGuests-latest-postgres9.4-php7.0
-- apiGuests-latest-oracle-php7.0
+- apiGuests-10.3.0alpha2-mysql5.5-php7.0
+- apiGuests-10.3.0alpha2-postgres9.4-php7.0
+- apiGuests-10.3.0alpha2-oracle-php7.0
 - apiGuestsObjectstore-master-mysql5.5-php7.0
-- apiGuestsObjectstore-latest-mysql5.5-php7.0
+- apiGuestsObjectstore-10.3.0alpha2-mysql5.5-php7.0
 
 ...
