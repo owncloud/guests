@@ -78,7 +78,7 @@ Feature: Guests
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
-  @mailhog @issue-332 @skipOnOcV10.2
+  @mailhog @issue-332 @skipOnOcV10.2 @skipOnFIREFOX
   Scenario: Administrator changes the guest user's password in users menu
     Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
