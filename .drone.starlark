@@ -96,6 +96,44 @@ config = {
 					}
 				}
 			]
+		},
+		'api-ceph': {
+			'suites': {
+				'apiGuests': 'apiGuestsCeph',
+			},
+			'databases': [
+				'mysql:5.5',
+			],
+			'emailNeeded': True,
+			'extraApps': {
+				'files_primary_s3': 'composer install'
+			},
+			'extraSetup': {
+				'name': 'configure-app',
+				'image': 'owncloudci/php:7.0',
+				'pull': 'always',
+				'commands': [
+					'cd /var/www/owncloud/server/apps/files_primary_s3',
+					'cp tests/drone/ceph.config.php /var/www/owncloud/server/config',
+					'cd /var/www/owncloud/server',
+					'./apps/files_primary_s3/tests/drone/create-bucket.sh',
+				]
+			},
+			'extraServices': [
+				{
+					'name': 'ceph',
+					'image': 'owncloudci/ceph:tag-build-master-jewel-ubuntu-16.04',
+					'pull': 'always',
+					'environment': {
+						'NETWORK_AUTO_DETECT': '4',
+						'CEPH_DAEMON': 'demo',
+						'RGW_NAME': 'ceph',
+						'CEPH_DEMO_UID': 'owncloud',
+						'CEPH_DEMO_ACCESS_KEY': 'owncloud123456',
+						'CEPH_DEMO_SECRET_KEY': 'secret123456',
+					}
+				}
+			]
 		}
 	},
 
