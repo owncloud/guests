@@ -2962,7 +2962,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuestsObjectstore-master-mysql5.5-php7.0
+name: apiGuestsScality-master-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -3103,7 +3103,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuestsObjectstore-10.3.0alpha2-mysql5.5-php7.0
+name: apiGuestsScality-10.3.0alpha2-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -3296,7 +3296,7 @@ depends_on:
 - apiGuests-10.3.0alpha2-mysql5.5-php7.0
 - apiGuests-10.3.0alpha2-postgres9.4-php7.0
 - apiGuests-10.3.0alpha2-oracle-php7.0
-- apiGuestsObjectstore-master-mysql5.5-php7.0
-- apiGuestsObjectstore-10.3.0alpha2-mysql5.5-php7.0
+- apiGuestsScality-master-mysql5.5-php7.0
+- apiGuestsScality-10.3.0alpha2-mysql5.5-php7.0
 
 ...
