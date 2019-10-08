@@ -22,12 +22,15 @@
 
 namespace OCA\Guests\AppInfo;
 
+use OCA\Guests\AppWhitelist;
 use OCA\Guests\Capabilities;
 use OCA\Guests\Hooks;
 use OCA\Guests\Mail;
 use OCP\AppFramework\App;
 use OCP\GroupInterface;
 use OCP\IConfig;
+use OCP\IServerContainer;
+use OCP\User\UserExtendedAttributesEvent;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -73,6 +76,47 @@ class Application extends App {
 			return new Capabilities();
 		});
 		$container->registerCapability('Capabilities');
+
+		$server->getEventDispatcher()->addListener(
+			UserExtendedAttributesEvent::USER_EXTENDED_ATTRIBUTES,
+			function (UserExtendedAttributesEvent $attributesEvent) use ($server) {
+				$userAppAttributes = $attributesEvent->getAttributes();
+				$this->addUserAppAttributes($server, $attributesEvent, $userAppAttributes);
+			}
+		);
+	}
+
+	/**
+	 * Sets the app attributes for the user.
+	 * The guestUser, whitelistedApps are added only if they don't exist in the
+	 * attributes array. Also, the attributes are updated only if the previous value
+	 * does not match with the current attribute value.
+	 *
+	 * @param IServerContainer $server
+	 * @param UserExtendedAttributesEvent $attributesEvent
+	 * @param $userAppAttributes
+	 */
+	private function addUserAppAttributes(IServerContainer $server, UserExtendedAttributesEvent $attributesEvent, $userAppAttributes) {
+		$user = $attributesEvent->getUser();
+		$isGuestUser = $server->getConfig()->getUserValue($user->getUID(), 'owncloud', 'isGuest', '0');
+		if ($isGuestUser !== '0') {
+			$appWhiteList = AppWhitelist::getWhitelist();
+
+			/**
+			 * Add whitelistedAppsForGuests attribute if it is not present. There is a
+			 * case where the whitelistedAppsForGuests could be changed by the admin.
+			 * Under such circumstance, if the whiteListedApp is present in
+			 * userAppAttributes array we have to update it.
+			 */
+			if (!isset($userAppAttributes['whitelistedAppsForGuests']) ||
+				$userAppAttributes['whitelistedAppsForGuests'] !== $appWhiteList) {
+				if ($attributesEvent->setAttributes('whitelistedAppsForGuests', $appWhiteList)) {
+					$server->getLogger()->debug("Add new user attributes key = whiteListedApps and value = " . \implode(',', $appWhiteList) . " for guest user " . $user->getUID());
+				} else {
+					$server->getLogger()->debug("The attributes key = whiteListedApps already exist for guest user " . $user->getUID());
+				}
+			}
+		}
 	}
 
 	/**
