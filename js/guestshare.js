@@ -47,38 +47,32 @@
 			};
 
 			$.ajax(xhrObject).done(function (xhr) {
-				self._addGuestShare();
+				var properties = {
+					shareType: 0,
+					shareWith: self.email.toLowerCase(),
+					permissions: OC.PERMISSION_CREATE | OC.PERMISSION_UPDATE
+						| OC.PERMISSION_READ | OC.PERMISSION_DELETE
+				};
+				var options = {
+					success: function() {
+						if (self.model) {
+							self.model.fetch();
+						}
+					},
+					error: function(obj, msg) {
+						OC.dialogs.alert(
+							t('core', 'Error while sharing'), // text
+							t('core', 'Error') // title
+						);
+					}
+				};
+
+				self.model.addShare(properties, options);
 			}).fail(function (xhr) {
 				var response = JSON.parse(xhr.responseText);
 				var error = response.errorMessages;
 				OC.dialogs.alert(
 					error.email, // text
-					t('core', 'Error') // title
-				);
-			});
-		},
-
-		_addGuestShare: function () {
-			var self = this;
-			var attributes = {
-				shareType: 0,
-				shareWith: this.email.toLowerCase(),
-				permissions: OC.PERMISSION_CREATE | OC.PERMISSION_UPDATE | OC.PERMISSION_READ | OC.PERMISSION_DELETE,
-				path: this.model.fileInfoModel.getFullPath()
-			};
-
-			return $.ajax({
-				type: 'POST',
-				url: OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares?format=json',
-				data: attributes,
-				dataType: 'json'
-			}).done(function () {
-				if (self.model) {
-					self.model.fetch();
-				}
-			}).fail(function () {
-				OCdialogs.alert(
-					t('core', 'Error while sharing'), // text
 					t('core', 'Error') // title
 				);
 			});
