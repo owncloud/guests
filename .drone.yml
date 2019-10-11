@@ -3029,10 +3029,11 @@ steps:
   commands:
   - tail -f /var/www/owncloud/server/data/owncloud.log
 
-- name: configure-app
+- name: setup-scality
   pull: always
   image: owncloudci/php:7.0
   commands:
+  - wait-for-it -t 60 scality:8000
   - cd /var/www/owncloud/server/apps/files_primary_s3
   - cp tests/drone/scality.config.php /var/www/owncloud/server/config
   - cd /var/www/owncloud/server
@@ -3054,6 +3055,8 @@ steps:
   environment:
     BEHAT_SUITE: apiGuests
     MAILHOG_HOST: email
+    OC_TEST_ON_OBJECTSTORE: 1
+    S3_TYPE: scality
     TEST_SERVER_URL: http://server
 
 services:
@@ -3170,10 +3173,11 @@ steps:
   commands:
   - tail -f /var/www/owncloud/server/data/owncloud.log
 
-- name: configure-app
+- name: setup-scality
   pull: always
   image: owncloudci/php:7.0
   commands:
+  - wait-for-it -t 60 scality:8000
   - cd /var/www/owncloud/server/apps/files_primary_s3
   - cp tests/drone/scality.config.php /var/www/owncloud/server/config
   - cd /var/www/owncloud/server
@@ -3195,6 +3199,8 @@ steps:
   environment:
     BEHAT_SUITE: apiGuests
     MAILHOG_HOST: email
+    OC_TEST_ON_OBJECTSTORE: 1
+    S3_TYPE: scality
     TEST_SERVER_URL: http://server
 
 services:
@@ -3311,10 +3317,11 @@ steps:
   commands:
   - tail -f /var/www/owncloud/server/data/owncloud.log
 
-- name: configure-app
+- name: setup-ceph
   pull: always
   image: owncloudci/php:7.0
   commands:
+  - wait-for-it -t 60 ceph:80
   - cd /var/www/owncloud/server/apps/files_primary_s3
   - cp tests/drone/ceph.config.php /var/www/owncloud/server/config
   - cd /var/www/owncloud/server
@@ -3336,6 +3343,8 @@ steps:
   environment:
     BEHAT_SUITE: apiGuests
     MAILHOG_HOST: email
+    OC_TEST_ON_OBJECTSTORE: 1
+    S3_TYPE: ceph
     TEST_SERVER_URL: http://server
 
 services:
@@ -3356,7 +3365,6 @@ services:
   pull: always
   image: owncloudci/ceph:tag-build-master-jewel-ubuntu-16.04
   environment:
-    CEPH_DAEMON: demo
     CEPH_DEMO_ACCESS_KEY: owncloud123456
     CEPH_DEMO_SECRET_KEY: secret123456
     CEPH_DEMO_UID: owncloud
@@ -3457,10 +3465,11 @@ steps:
   commands:
   - tail -f /var/www/owncloud/server/data/owncloud.log
 
-- name: configure-app
+- name: setup-ceph
   pull: always
   image: owncloudci/php:7.0
   commands:
+  - wait-for-it -t 60 ceph:80
   - cd /var/www/owncloud/server/apps/files_primary_s3
   - cp tests/drone/ceph.config.php /var/www/owncloud/server/config
   - cd /var/www/owncloud/server
@@ -3482,6 +3491,8 @@ steps:
   environment:
     BEHAT_SUITE: apiGuests
     MAILHOG_HOST: email
+    OC_TEST_ON_OBJECTSTORE: 1
+    S3_TYPE: ceph
     TEST_SERVER_URL: http://server
 
 services:
@@ -3502,7 +3513,6 @@ services:
   pull: always
   image: owncloudci/ceph:tag-build-master-jewel-ubuntu-16.04
   environment:
-    CEPH_DAEMON: demo
     CEPH_DEMO_ACCESS_KEY: owncloud123456
     CEPH_DEMO_SECRET_KEY: secret123456
     CEPH_DEMO_UID: owncloud
