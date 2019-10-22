@@ -1547,7 +1547,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-10.3.0-chrome-mysql5.5-php7.0
+name: webUIGuest-latest-chrome-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -1569,7 +1569,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -1670,7 +1670,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-10.3.0-chrome-postgres9.4-php7.0
+name: webUIGuest-latest-chrome-postgres9.4-php7.0
 
 platform:
   os: linux
@@ -1692,7 +1692,7 @@ steps:
     db_type: pgsql
     db_username: owncloud
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -1792,7 +1792,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-10.3.0-chrome-oracle-php7.0
+name: webUIGuest-latest-chrome-oracle-php7.0
 
 platform:
   os: linux
@@ -1814,7 +1814,7 @@ steps:
     db_type: oci
     db_username: system
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -1915,7 +1915,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-10.3.0-firefox-mysql5.5-php7.0
+name: webUIGuest-latest-firefox-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -1937,7 +1937,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -2039,7 +2039,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-10.3.0-firefox-postgres9.4-php7.0
+name: webUIGuest-latest-firefox-postgres9.4-php7.0
 
 platform:
   os: linux
@@ -2061,7 +2061,7 @@ steps:
     db_type: pgsql
     db_username: owncloud
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -2162,7 +2162,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-10.3.0-firefox-oracle-php7.0
+name: webUIGuest-latest-firefox-oracle-php7.0
 
 platform:
   os: linux
@@ -2184,7 +2184,7 @@ steps:
     db_type: oci
     db_username: system
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -2624,7 +2624,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-10.3.0-mysql5.5-php7.0
+name: apiGuests-latest-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -2646,7 +2646,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -2737,7 +2737,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-10.3.0-postgres9.4-php7.0
+name: apiGuests-latest-postgres9.4-php7.0
 
 platform:
   os: linux
@@ -2759,7 +2759,7 @@ steps:
     db_type: pgsql
     db_username: owncloud
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -2849,7 +2849,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-10.3.0-oracle-php7.0
+name: apiGuests-latest-oracle-php7.0
 
 platform:
   os: linux
@@ -2871,7 +2871,7 @@ steps:
     db_type: oci
     db_username: system
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -3106,7 +3106,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuestsScality-10.3.0-mysql5.5-php7.0
+name: apiGuestsScality-latest-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -3128,7 +3128,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -3398,7 +3398,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuestsCeph-10.3.0-mysql5.5-php7.0
+name: apiGuestsCeph-latest-mysql5.5-php7.0
 
 platform:
   os: linux
@@ -3420,7 +3420,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/guests
-    version: 10.3.0
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -3589,21 +3589,21 @@ depends_on:
 - webUIGuest-master-firefox-mysql5.5-php7.0
 - webUIGuest-master-firefox-postgres9.4-php7.0
 - webUIGuest-master-firefox-oracle-php7.0
-- webUIGuest-10.3.0-chrome-mysql5.5-php7.0
-- webUIGuest-10.3.0-chrome-postgres9.4-php7.0
-- webUIGuest-10.3.0-chrome-oracle-php7.0
-- webUIGuest-10.3.0-firefox-mysql5.5-php7.0
-- webUIGuest-10.3.0-firefox-postgres9.4-php7.0
-- webUIGuest-10.3.0-firefox-oracle-php7.0
+- webUIGuest-latest-chrome-mysql5.5-php7.0
+- webUIGuest-latest-chrome-postgres9.4-php7.0
+- webUIGuest-latest-chrome-oracle-php7.0
+- webUIGuest-latest-firefox-mysql5.5-php7.0
+- webUIGuest-latest-firefox-postgres9.4-php7.0
+- webUIGuest-latest-firefox-oracle-php7.0
 - apiGuests-master-mysql5.5-php7.0
 - apiGuests-master-postgres9.4-php7.0
 - apiGuests-master-oracle-php7.0
-- apiGuests-10.3.0-mysql5.5-php7.0
-- apiGuests-10.3.0-postgres9.4-php7.0
-- apiGuests-10.3.0-oracle-php7.0
+- apiGuests-latest-mysql5.5-php7.0
+- apiGuests-latest-postgres9.4-php7.0
+- apiGuests-latest-oracle-php7.0
 - apiGuestsScality-master-mysql5.5-php7.0
-- apiGuestsScality-10.3.0-mysql5.5-php7.0
+- apiGuestsScality-latest-mysql5.5-php7.0
 - apiGuestsCeph-master-mysql5.5-php7.0
-- apiGuestsCeph-10.3.0-mysql5.5-php7.0
+- apiGuestsCeph-latest-mysql5.5-php7.0
 
 ...
