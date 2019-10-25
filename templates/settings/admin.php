@@ -30,9 +30,8 @@ script('guests', 'guests');
 		<span class="inlineblock user-info-label"><?php p($l->t('Guest users are grouped under a virtual group in the user manager'));?></span><br/><br/>
 		<label for="guestGroup"><?php p($l->t('Group name'));?>
 		</label><input type="text" id="guestGroup" value="" /><br/>
-		<br/>
-		<input type="checkbox" id="guestUseWhitelist" value="useWhitelist"/><label for="guestUseWhitelist"><?php p($l->t('Limit guest access to an app whitelist'));?></label><br/>
-		<input type="text" id="guestWhitelist" value="" style="display:none; width:99%;"/><br/>
+		<label for="guestUseWhitelist"><?php p($l->t('Whitelisted apps for the guest'));?></label><br/>
+		<input type="text" id="guestWhitelist" value="" style="width:99%;"/><br/>
 		<button type="button" id="guestResetWhitelist"><?php p($l->t('Reset whitelist'));?></button><span class="msg"></span>
 	</div>
 </div>

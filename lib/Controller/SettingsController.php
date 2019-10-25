@@ -25,9 +25,12 @@
 namespace OCA\Guests\Controller;
 
 use OCA\Guests\AppWhitelist;
+use OCA\Guests\GroupBackend;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 
@@ -54,11 +57,20 @@ class SettingsController extends Controller {
 	 */
 	private $l10n;
 
-	public function __construct($AppName, IRequest $request, $UserId, IConfig $config, IL10N $l10n) {
+	/** @var IAppManager */
+	private $appManager;
+
+	/** @var IGroupManager */
+	private $groupManager;
+
+	public function __construct($AppName, IRequest $request, $UserId, IConfig $config,
+								IL10N $l10n, IAppManager $appManager, IGroupManager $groupManager) {
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
 		$this->config = $config;
 		$this->l10n = $l10n;
+		$this->appManager = $appManager;
+		$this->groupManager = $groupManager;
 	}
 
 	/**
@@ -73,12 +85,14 @@ class SettingsController extends Controller {
 		} else {
 			$useWhitelist = false;
 		}
-		$whitelist = $this->config->getAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
-		$whitelist = \explode(',', $whitelist);
+
+		$groupName = $this->config->getAppValue('guests', 'group', GroupBackend::DEFAULT_NAME);
+		$appAccessService = $this->appManager->getAppsAccessService();
+		$whitelistedApps = $appAccessService->getWhitelistedAppsForGroup($this->groupManager->get($groupName));
 		return new DataResponse([
-			'group' => $this->config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME),
+			'group' => $groupName,
 			'useWhitelist' => $useWhitelist,
-			'whitelist' => $whitelist,
+			'whitelist' => $whitelistedApps,
 		]);
 	}
 	/**
@@ -91,6 +105,7 @@ class SettingsController extends Controller {
 	 * @return DataResponse
 	 */
 	public function setConfig($conditions, $group, $useWhitelist, $whitelist) {
+		$newWhitelist = [];
 		if (empty($group)) {
 			return new DataResponse([
 				'status' => 'error',
@@ -99,15 +114,28 @@ class SettingsController extends Controller {
 				],
 			]);
 		}
+		$oldGid = $this->config->getAppValue('guests', 'group', GroupBackend::DEFAULT_NAME);
+		if ($group !== $oldGid) {
+			$this->config->setAppValue('guests', 'group', $group);
+			/**
+			 * Delete the old entry, else it becomes stale information.
+			 */
+			$this->appManager->getAppsAccessService()->wipeWhitelistedAppsForGroup($oldGid);
+		}
 
-		$newWhitelist = [];
 		foreach ($whitelist as $app) {
 			$newWhitelist[] = \trim($app);
 		}
 		$newWhitelist = \join(',', $newWhitelist);
-		$this->config->setAppValue('guests', 'group', $group);
-		$this->config->setAppValue('guests', 'usewhitelist', $useWhitelist);
-		$this->config->setAppValue('guests', 'whitelist', $newWhitelist);
+
+		if (!$this->setWhitelistApps(\explode(',', $newWhitelist))) {
+			return new DataResponse([
+				'status' => 'failure',
+				'data' => [
+					'message' => $this->l10n->t('Failed to update apps to be whitelisted.')
+				],
+			]);
+		}
 
 		return new DataResponse([
 			'status' => 'success',
@@ -124,10 +152,12 @@ class SettingsController extends Controller {
 	 * @return array whitelisted apps
 	 */
 	public function getWhitelist() {
+		$gid = $this->config->getAppValue('guests', 'group', GroupBackend::DEFAULT_NAME);
+		$group = $this->groupManager->get($gid);
 		return [
 			'isGuest' => false,
 			'enabled' => $this->config->getAppValue('guests', 'usewhitelist', 'true') === 'true',
-			'apps' => \OCA\Guests\AppWhitelist::getWhitelist()
+			'apps' => $this->appManager->getAppsAccessService()->getWhitelistedAppsForGroup($group)
 		];
 	}
 
@@ -138,9 +168,33 @@ class SettingsController extends Controller {
 	 * @return DataResponse with the reset whitelist
 	 */
 	public function resetWhitelist() {
-		$this->config->setAppValue('guests', 'whitelist', AppWhitelist::DEFAULT_WHITELIST);
+		$resetWhiteListApps = AppWhitelist::CORE_WHITELIST . ',' . AppWhitelist::DEFAULT_WHITELIST;
+		if (!$this->setWhitelistApps(\explode(',', $resetWhiteListApps))) {
+			return new DataResponse([
+				'status' => 'failure',
+				'data' => [
+					'message' => 'Failed to update the apps'
+				],
+			]);
+		}
+
 		return new DataResponse([
-			'whitelist' => \explode(',', AppWhitelist::DEFAULT_WHITELIST),
+			'whitelist' => \explode(',', $resetWhiteListApps),
 		]);
+	}
+
+	/**
+	 * Insert or update whitelisted apps
+	 * This method would be called if the whitelisted apps are updated/reset to
+	 * default whitelist.
+	 *
+	 * @param array $apps
+	 * @return bool, true if the apps are set/updated else false
+	 */
+	private function setWhitelistApps(array $apps) {
+		$gid = $this->config->getAppValue('guests', 'group', GroupBackend::DEFAULT_NAME);
+		$group = $this->groupManager->get($gid);
+		$appAccessService = $this->appManager->getAppsAccessService();
+		return $appAccessService->setWhitelistedAppsForGroup($group, $apps);
 	}
 }

@@ -47,7 +47,12 @@ class AppWhitelist {
 		if ($isGuest && $whitelistEnabled) {
 			$path = \OC::$server->getRequest()->getRawPathInfo();
 			$app = self::getRequestedApp($path);
-			$whitelist = self::getWhitelist();
+
+			//Get whitelisted apps
+			$appAccessService = \OC::$server->getAppManager()->getAppsAccessService();
+			$gid = \OC::$server->getConfig()->getAppValue('guests', 'group', GroupBackend::DEFAULT_NAME);
+			$group = \OC::$server->getGroupManager()->get($gid);
+			$whitelist = $appAccessService->getWhitelistedAppsForGroup($group);
 
 			if (!\in_array($app, $whitelist)) {
 				\header('HTTP/1.0 403 Forbidden');
@@ -58,17 +63,6 @@ class AppWhitelist {
 				exit;
 			}
 		}
-	}
-
-	public static function getWhitelist() {
-		$whitelist = self::CORE_WHITELIST;
-		$whitelist .=  ',' . \OC::$server->getConfig()->getAppValue(
-			'guests',
-			'whitelist',
-			self::DEFAULT_WHITELIST
-		);
-
-		return \explode(',', $whitelist);
 	}
 
 	/**

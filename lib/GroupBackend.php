@@ -54,19 +54,12 @@ class GroupBackend implements GroupInterface {
 	private $config;
 
 	/**
-	 * @var string
-	 */
-	private $groupName;
-
-	/**
 	 * GroupBackend constructor.
 	 *
 	 * @param IConfig $config
-	 * @param string $groupName
 	 */
-	public function __construct(IConfig $config, $groupName = self::DEFAULT_NAME) {
+	public function __construct(IConfig $config) {
 		$this->config = $config;
-		$this->groupName = $groupName;
 	}
 
 	/**
@@ -131,7 +124,8 @@ class GroupBackend implements GroupInterface {
 	 * Checks whether the user is member of a group or not.
 	 */
 	public function inGroup($uid, $gid) {
-		if ($gid !== $this->groupName) {
+		$groupName = $this->config->getAppValue('guests', 'group', self::DEFAULT_NAME);
+		if ($gid !== $groupName) {
 			return false;
 		}
 		$isGuest = $this->config->getUserValue(
@@ -161,8 +155,9 @@ class GroupBackend implements GroupInterface {
 			'isGuest',
 			'0'
 		);
+		$groupName = $this->config->getAppValue('guests', 'group', self::DEFAULT_NAME);
 		if ($isGuest === '1') {
-			return [$this->groupName];
+			return [$groupName];
 		}
 
 		return [];
@@ -181,7 +176,8 @@ class GroupBackend implements GroupInterface {
 	 * Returns a list with all groups
 	 */
 	public function getGroups($search = '', $limit = -1, $offset = 0) {
-		return [$this->groupName];
+		$groupName = $this->config->getAppValue('guests', 'group', self::DEFAULT_NAME);
+		return [$groupName];
 	}
 
 	/**
@@ -193,7 +189,8 @@ class GroupBackend implements GroupInterface {
 	 * @since 4.5.0
 	 */
 	public function groupExists($gid) {
-		return $gid === $this->groupName;
+		$groupName = $this->config->getAppValue('guests', 'group', self::DEFAULT_NAME);
+		return $gid === $groupName;
 	}
 
 	/**
@@ -208,7 +205,8 @@ class GroupBackend implements GroupInterface {
 	 * @since 4.5.0
 	 */
 	public function usersInGroup($gid, $search = '', $limit = -1, $offset = 0) {
-		if ($gid === $this->groupName && $limit !== 0) {
+		$groupName = $this->config->getAppValue('guests', 'group', self::DEFAULT_NAME);
+		if ($gid === $groupName && $limit !== 0) {
 			if (!empty($search)) {
 				$users = \array_filter(
 					$this->getMembers(),

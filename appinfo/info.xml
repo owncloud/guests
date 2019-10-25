@@ -32,6 +32,7 @@ Furthermore guests are fully auditable with the [ownCloud Auditing application](
 	<types>
 		<authentication/>
 	</types>
+	<use-migrations>true</use-migrations>
 	<settings>
 		<admin>OCA\Guests\Settings\Admin</admin>
 	</settings>

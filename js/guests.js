@@ -30,7 +30,6 @@
 		var $section = $('#guests');
 		var $guestsByGroup = $section.find('#guestsByGroup');
 		var $guestGroup = $section.find('#guestGroup');
-		var $guestUseWhitelist = $section.find('#guestUseWhitelist');
 		var $guestWhitelist = $section.find('#guestWhitelist');
 		var $resetWhitelist = $section.find('#guestResetWhitelist');
 		var $msg = $section.find('.msg');
@@ -46,15 +45,6 @@
 					// update model
 					config = data;
 					// update ui
-					if (config.useWhitelist) {
-						$guestUseWhitelist.prop('checked', true);
-						$guestWhitelist.show();
-						$resetWhitelist.show();
-					} else {
-						$guestUseWhitelist.prop('checked', false);
-						$guestWhitelist.hide();
-						$resetWhitelist.hide();
-					}
 					if (config.group) {
 						$guestGroup.val(config.group);
 					} else {
@@ -133,18 +123,6 @@
 				saveGroup();
 				return true;
 			}
-		});
-		
-		$guestUseWhitelist.on('change', function () {
-			config.useWhitelist = $guestUseWhitelist.prop('checked');
-			if(config.useWhitelist) {
-				$guestWhitelist.show();
-				$resetWhitelist.show()
-			} else {
-				$guestWhitelist.hide();
-				$resetWhitelist.hide();
-			}
-			saveConfig();
 		});
 		
 		$guestWhitelist.on('change', function () {

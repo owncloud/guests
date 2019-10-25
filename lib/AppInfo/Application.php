@@ -76,8 +76,7 @@ class Application extends App {
 	public function registerBackend() {
 		$container = $this->getContainer();
 		$server = $container->getServer();
-		$groupName = $this->getGroupName();
-		$groupBackend = new \OCA\Guests\GroupBackend($container->query(IConfig::class), $groupName);
+		$groupBackend = new \OCA\Guests\GroupBackend($container->query(IConfig::class));
 		$server->getGroupManager()->addBackend($groupBackend);
 		return $groupBackend;
 	}
