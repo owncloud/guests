@@ -4,8 +4,8 @@ OC.L10N.register(
     "Loading…" : "กำลังโหลด...",
     "Loaded" : "โหลดแล้ว",
     "Reset" : "ตั้งค่าใหม่",
-    "Error" : "ข้อผิดพลาด",
     "Error while sharing" : "เกิดข้อผิดพลาดขณะกำลังแชร์ข้อมูล",
+    "Error" : "ข้อผิดพลาด",
     "Add {unknown}" : "เพิ่ม {unknown}",
     "Error loading activities" : "เกิดข้อผิดพลาดขณะโหลดกิจกรรม",
     "Access to this resource is forbidden for guests." : "บุคคลทั่วไปไม่สามารถเข้าถึงทรัพยากรนี้ได้",
@@ -30,7 +30,7 @@ OC.L10N.register(
     "Hey there,<br><br>\n         \n         just letting you know that %s shared <strong>%s</strong> with you.<br><br>\n         Activate your guest account at %s by <a href=\"%s\">setting a password</a>.<br><br>\n         Then <a href=\"%s\">view it!</a><br><br>You can login using the email address <strong>\"%s\"</strong> .<br><br>" : "ดีจร้า,<br><br>\n\nเราอยากจะแจ้งให้คุณทราบว่า %s ได้แชร์ <strong>%s</strong> ร่วมกับคุณ<br><br>\nเปิดใช้งานบัญชีผู้ใช้ทั่วไปของคุณ</a><br><br> \nโดย<a href=\"%s\">ตั้งค่ารหัสผ่านที่: %s จากนั้น <a href=\"%s\">ดูที่นี่</a><br><br>คุณสามารถเข้าสู่ระบบโดยใช้ที่อยู่อีเมล <strong>\"%s\"</strong>.<br><br>",
     "Guest users are grouped under a virtual group in the user manager" : "ผู้ใช้ทั่วไปจะถูกจัดกลุ่มภายใต้กลุ่มเสมือนในการจัดการผู้ใช้",
     "Group name" : "ชื่อกลุ่ม",
-    "Limit guest access to an app whitelist" : "จำกัดการใช้งานรายการที่อนุญาตในแอพฯ",
+    "Limit guest access to an app whitelist" : "จำกัดการใช้งานรายการที่อนุญาตในแอปฯ",
     "Reset whitelist" : "รีเซ็ตรายการที่อนุญาต"
 },
 "nplurals=1; plural=0;");
