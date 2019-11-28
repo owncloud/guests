@@ -1,32 +1,6 @@
 ---
 kind: pipeline
 type: docker
-name: coding-standard-php7.0
-
-platform:
-  os: linux
-  arch: amd64
-
-workspace:
-  base: /var/www/owncloud
-  path: server/apps/guests
-
-steps:
-- name: coding-standard
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - make test-php-style
-
-trigger:
-  ref:
-  - refs/pull/**
-  - refs/tags/**
-  - refs/heads/master
-
----
-kind: pipeline
-type: docker
 name: coding-standard-php7.1
 
 platform:
@@ -131,7 +105,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -143,7 +117,7 @@ steps:
 
 - name: js-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - make test-js
 
@@ -154,7 +128,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -162,7 +135,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: phpunit-php7.0-sqlite
+name: phpunit-php7.1-sqlite
 
 platform:
   os: linux
@@ -188,7 +161,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -200,7 +173,7 @@ steps:
 
 - name: phpunit-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - make test-php-unit-dbg
 
@@ -220,386 +193,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
-- coding-standard-php7.1
-- coding-standard-php7.2
-- coding-standard-php7.3
-
----
-kind: pipeline
-type: docker
-name: phpunit-php7.0-mariadb10.2
-
-platform:
-  os: linux
-  arch: amd64
-
-workspace:
-  base: /var/www/owncloud
-  path: server/apps/guests
-
-steps:
-- name: install-core
-  pull: always
-  image: owncloudci/core
-  settings:
-    core_path: /var/www/owncloud/server
-    db_host: mariadb
-    db_name: owncloud
-    db_password: owncloud
-    db_type: mysql
-    db_username: owncloud
-    exclude: apps/guests
-    version: daily-master-qa
-
-- name: setup-server-guests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - cd /var/www/owncloud/server
-  - php occ a:l
-  - php occ a:e guests
-  - php occ a:e testing
-  - php occ a:l
-  - php occ config:system:set trusted_domains 1 --value=server
-  - php occ log:manage --level 2
-
-- name: phpunit-tests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - make test-php-unit-dbg
-
-- name: codecov-upload
-  pull: always
-  image: plugins/codecov:2
-  settings:
-    paths:
-    - tests/output/clover.xml
-    token:
-      from_secret: codecov_token
-
-services:
-- name: mariadb
-  pull: always
-  image: mariadb:10.2
-  environment:
-    MYSQL_DATABASE: owncloud
-    MYSQL_PASSWORD: owncloud
-    MYSQL_ROOT_PASSWORD: owncloud
-    MYSQL_USER: owncloud
-
-trigger:
-  ref:
-  - refs/pull/**
-  - refs/tags/**
-  - refs/heads/master
-
-depends_on:
-- coding-standard-php7.0
-- coding-standard-php7.1
-- coding-standard-php7.2
-- coding-standard-php7.3
-
----
-kind: pipeline
-type: docker
-name: phpunit-php7.0-mysql5.5
-
-platform:
-  os: linux
-  arch: amd64
-
-workspace:
-  base: /var/www/owncloud
-  path: server/apps/guests
-
-steps:
-- name: install-core
-  pull: always
-  image: owncloudci/core
-  settings:
-    core_path: /var/www/owncloud/server
-    db_host: mysql
-    db_name: owncloud
-    db_password: owncloud
-    db_type: mysql
-    db_username: owncloud
-    exclude: apps/guests
-    version: daily-master-qa
-
-- name: setup-server-guests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - cd /var/www/owncloud/server
-  - php occ a:l
-  - php occ a:e guests
-  - php occ a:e testing
-  - php occ a:l
-  - php occ config:system:set trusted_domains 1 --value=server
-  - php occ log:manage --level 2
-
-- name: phpunit-tests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - make test-php-unit-dbg
-
-- name: codecov-upload
-  pull: always
-  image: plugins/codecov:2
-  settings:
-    paths:
-    - tests/output/clover.xml
-    token:
-      from_secret: codecov_token
-
-services:
-- name: mysql
-  pull: always
-  image: mysql:5.5
-  environment:
-    MYSQL_DATABASE: owncloud
-    MYSQL_PASSWORD: owncloud
-    MYSQL_ROOT_PASSWORD: owncloud
-    MYSQL_USER: owncloud
-
-trigger:
-  ref:
-  - refs/pull/**
-  - refs/tags/**
-  - refs/heads/master
-
-depends_on:
-- coding-standard-php7.0
-- coding-standard-php7.1
-- coding-standard-php7.2
-- coding-standard-php7.3
-
----
-kind: pipeline
-type: docker
-name: phpunit-php7.0-mysql5.7
-
-platform:
-  os: linux
-  arch: amd64
-
-workspace:
-  base: /var/www/owncloud
-  path: server/apps/guests
-
-steps:
-- name: install-core
-  pull: always
-  image: owncloudci/core
-  settings:
-    core_path: /var/www/owncloud/server
-    db_host: mysql
-    db_name: owncloud
-    db_password: owncloud
-    db_type: mysql
-    db_username: owncloud
-    exclude: apps/guests
-    version: daily-master-qa
-
-- name: setup-server-guests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - cd /var/www/owncloud/server
-  - php occ a:l
-  - php occ a:e guests
-  - php occ a:e testing
-  - php occ a:l
-  - php occ config:system:set trusted_domains 1 --value=server
-  - php occ log:manage --level 2
-
-- name: phpunit-tests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - make test-php-unit-dbg
-
-- name: codecov-upload
-  pull: always
-  image: plugins/codecov:2
-  settings:
-    paths:
-    - tests/output/clover.xml
-    token:
-      from_secret: codecov_token
-
-services:
-- name: mysql
-  pull: always
-  image: mysql:5.7
-  environment:
-    MYSQL_DATABASE: owncloud
-    MYSQL_PASSWORD: owncloud
-    MYSQL_ROOT_PASSWORD: owncloud
-    MYSQL_USER: owncloud
-
-trigger:
-  ref:
-  - refs/pull/**
-  - refs/tags/**
-  - refs/heads/master
-
-depends_on:
-- coding-standard-php7.0
-- coding-standard-php7.1
-- coding-standard-php7.2
-- coding-standard-php7.3
-
----
-kind: pipeline
-type: docker
-name: phpunit-php7.0-postgres9.4
-
-platform:
-  os: linux
-  arch: amd64
-
-workspace:
-  base: /var/www/owncloud
-  path: server/apps/guests
-
-steps:
-- name: install-core
-  pull: always
-  image: owncloudci/core
-  settings:
-    core_path: /var/www/owncloud/server
-    db_host: postgres
-    db_name: owncloud
-    db_password: owncloud
-    db_type: pgsql
-    db_username: owncloud
-    exclude: apps/guests
-    version: daily-master-qa
-
-- name: setup-server-guests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - cd /var/www/owncloud/server
-  - php occ a:l
-  - php occ a:e guests
-  - php occ a:e testing
-  - php occ a:l
-  - php occ config:system:set trusted_domains 1 --value=server
-  - php occ log:manage --level 2
-
-- name: phpunit-tests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - make test-php-unit-dbg
-
-- name: codecov-upload
-  pull: always
-  image: plugins/codecov:2
-  settings:
-    paths:
-    - tests/output/clover.xml
-    token:
-      from_secret: codecov_token
-
-services:
-- name: postgres
-  pull: always
-  image: postgres:9.4
-  environment:
-    POSTGRES_DB: owncloud
-    POSTGRES_PASSWORD: owncloud
-    POSTGRES_USER: owncloud
-
-trigger:
-  ref:
-  - refs/pull/**
-  - refs/tags/**
-  - refs/heads/master
-
-depends_on:
-- coding-standard-php7.0
-- coding-standard-php7.1
-- coding-standard-php7.2
-- coding-standard-php7.3
-
----
-kind: pipeline
-type: docker
-name: phpunit-php7.0-oracle
-
-platform:
-  os: linux
-  arch: amd64
-
-workspace:
-  base: /var/www/owncloud
-  path: server/apps/guests
-
-steps:
-- name: install-core
-  pull: always
-  image: owncloudci/core
-  settings:
-    core_path: /var/www/owncloud/server
-    db_host: oracle
-    db_name: XE
-    db_password: oracle
-    db_type: oci
-    db_username: system
-    exclude: apps/guests
-    version: daily-master-qa
-
-- name: setup-server-guests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - cd /var/www/owncloud/server
-  - php occ a:l
-  - php occ a:e guests
-  - php occ a:e testing
-  - php occ a:l
-  - php occ config:system:set trusted_domains 1 --value=server
-  - php occ log:manage --level 2
-
-- name: phpunit-tests
-  pull: always
-  image: owncloudci/php:7.0
-  commands:
-  - make test-php-unit-dbg
-
-- name: codecov-upload
-  pull: always
-  image: plugins/codecov:2
-  settings:
-    paths:
-    - tests/output/clover.xml
-    token:
-      from_secret: codecov_token
-
-services:
-- name: oracle
-  pull: always
-  image: deepdiver/docker-oracle-xe-11g:latest
-  environment:
-    ORACLE_DB: XE
-    ORACLE_DISABLE_ASYNCH_IO: true
-    ORACLE_PASSWORD: oracle
-    ORACLE_USER: system
-
-trigger:
-  ref:
-  - refs/pull/**
-  - refs/tags/**
-  - refs/heads/master
-
-depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -647,7 +240,16 @@ steps:
   pull: always
   image: owncloudci/php:7.1
   commands:
-  - make test-php-unit
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
 
 services:
 - name: mariadb
@@ -666,7 +268,305 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.1-mysql5.5
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.1-mysql5.7
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.7
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.1-postgres9.4
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.1-oracle
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/guests
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/guests
+    version: daily-master-qa
+
+- name: setup-server-guests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e guests
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -733,7 +633,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -800,7 +699,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -808,7 +706,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-master-chrome-mysql5.5-php7.0
+name: webUIGuest-master-chrome-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -834,7 +732,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -845,7 +743,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -864,13 +762,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -906,7 +804,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -923,7 +821,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -931,7 +828,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-master-chrome-postgres9.4-php7.0
+name: webUIGuest-master-chrome-postgres9.4-php7.1
 
 platform:
   os: linux
@@ -957,7 +854,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -968,7 +865,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -987,13 +884,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -1028,7 +925,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -1045,7 +942,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -1053,7 +949,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-master-chrome-oracle-php7.0
+name: webUIGuest-master-chrome-oracle-php7.1
 
 platform:
   os: linux
@@ -1079,7 +975,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -1090,7 +986,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -1109,13 +1005,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -1151,7 +1047,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -1168,7 +1064,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -1176,7 +1071,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-master-firefox-mysql5.5-php7.0
+name: webUIGuest-master-firefox-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -1202,7 +1097,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -1213,7 +1108,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -1232,13 +1127,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -1275,7 +1170,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -1292,7 +1187,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -1300,7 +1194,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-master-firefox-postgres9.4-php7.0
+name: webUIGuest-master-firefox-postgres9.4-php7.1
 
 platform:
   os: linux
@@ -1326,7 +1220,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -1337,7 +1231,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -1356,13 +1250,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -1398,7 +1292,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -1415,7 +1309,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -1423,7 +1316,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-master-firefox-oracle-php7.0
+name: webUIGuest-master-firefox-oracle-php7.1
 
 platform:
   os: linux
@@ -1449,7 +1342,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -1460,7 +1353,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -1479,13 +1372,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -1522,7 +1415,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -1539,7 +1432,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -1547,7 +1439,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-latest-chrome-mysql5.5-php7.0
+name: webUIGuest-latest-chrome-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -1573,7 +1465,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -1584,7 +1476,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -1603,13 +1495,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -1645,7 +1537,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -1662,7 +1554,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -1670,7 +1561,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-latest-chrome-postgres9.4-php7.0
+name: webUIGuest-latest-chrome-postgres9.4-php7.1
 
 platform:
   os: linux
@@ -1696,7 +1587,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -1707,7 +1598,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -1726,13 +1617,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -1767,7 +1658,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -1784,7 +1675,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -1792,7 +1682,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-latest-chrome-oracle-php7.0
+name: webUIGuest-latest-chrome-oracle-php7.1
 
 platform:
   os: linux
@@ -1818,7 +1708,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -1829,7 +1719,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -1848,13 +1738,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -1890,7 +1780,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -1907,7 +1797,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -1915,7 +1804,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-latest-firefox-mysql5.5-php7.0
+name: webUIGuest-latest-firefox-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -1941,7 +1830,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -1952,7 +1841,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -1971,13 +1860,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -2014,7 +1903,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -2031,7 +1920,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -2039,7 +1927,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-latest-firefox-postgres9.4-php7.0
+name: webUIGuest-latest-firefox-postgres9.4-php7.1
 
 platform:
   os: linux
@@ -2065,7 +1953,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -2076,7 +1964,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -2095,13 +1983,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -2137,7 +2025,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -2154,7 +2042,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -2162,7 +2049,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: webUIGuest-latest-firefox-oracle-php7.0
+name: webUIGuest-latest-firefox-oracle-php7.1
 
 platform:
   os: linux
@@ -2188,7 +2075,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -2199,7 +2086,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -2218,13 +2105,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -2261,7 +2148,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -2278,7 +2165,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -2286,7 +2172,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-master-mysql5.5-php7.0
+name: apiGuests-master-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -2312,7 +2198,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -2323,7 +2209,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -2342,13 +2228,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -2374,7 +2260,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -2391,7 +2277,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -2399,7 +2284,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-master-postgres9.4-php7.0
+name: apiGuests-master-postgres9.4-php7.1
 
 platform:
   os: linux
@@ -2425,7 +2310,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -2436,7 +2321,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -2455,13 +2340,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -2486,7 +2371,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -2503,7 +2388,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -2511,7 +2395,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-master-oracle-php7.0
+name: apiGuests-master-oracle-php7.1
 
 platform:
   os: linux
@@ -2537,7 +2421,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -2548,7 +2432,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -2567,13 +2451,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -2599,7 +2483,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -2616,7 +2500,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -2624,7 +2507,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-latest-mysql5.5-php7.0
+name: apiGuests-latest-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -2650,7 +2533,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -2661,7 +2544,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -2680,13 +2563,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -2712,7 +2595,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -2729,7 +2612,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -2737,7 +2619,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-latest-postgres9.4-php7.0
+name: apiGuests-latest-postgres9.4-php7.1
 
 platform:
   os: linux
@@ -2763,7 +2645,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -2774,7 +2656,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -2793,13 +2675,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -2824,7 +2706,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -2841,7 +2723,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -2849,7 +2730,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuests-latest-oracle-php7.0
+name: apiGuests-latest-oracle-php7.1
 
 platform:
   os: linux
@@ -2875,7 +2756,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -2886,7 +2767,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -2905,13 +2786,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -2937,7 +2818,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -2954,7 +2835,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -2962,7 +2842,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuestsScality-master-mysql5.5-php7.0
+name: apiGuestsScality-master-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -2988,7 +2868,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -2999,7 +2879,7 @@ steps:
 
 - name: install-extra-apps
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - git clone https://github.com/owncloud/files_primary_s3.git /var/www/owncloud/testrunner/apps/files_primary_s3
   - cp -r /var/www/owncloud/testrunner/apps/files_primary_s3 /var/www/owncloud/server/apps/
@@ -3012,7 +2892,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -3031,9 +2911,9 @@ steps:
 
 - name: setup-scality
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
-  - wait-for-it -t 60 scality:8000
+  - wait-for-it -t 120 scality:8000
   - cd /var/www/owncloud/server/apps/files_primary_s3
   - cp tests/drone/scality.config.php /var/www/owncloud/server/config
   - cd /var/www/owncloud/server
@@ -3041,13 +2921,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -3081,7 +2961,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -3098,7 +2978,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -3106,7 +2985,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuestsScality-latest-mysql5.5-php7.0
+name: apiGuestsScality-latest-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -3132,7 +3011,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -3143,7 +3022,7 @@ steps:
 
 - name: install-extra-apps
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - git clone https://github.com/owncloud/files_primary_s3.git /var/www/owncloud/testrunner/apps/files_primary_s3
   - cp -r /var/www/owncloud/testrunner/apps/files_primary_s3 /var/www/owncloud/server/apps/
@@ -3156,7 +3035,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -3175,9 +3054,9 @@ steps:
 
 - name: setup-scality
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
-  - wait-for-it -t 60 scality:8000
+  - wait-for-it -t 120 scality:8000
   - cd /var/www/owncloud/server/apps/files_primary_s3
   - cp tests/drone/scality.config.php /var/www/owncloud/server/config
   - cd /var/www/owncloud/server
@@ -3185,13 +3064,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -3225,7 +3104,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -3242,7 +3121,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -3250,7 +3128,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuestsCeph-master-mysql5.5-php7.0
+name: apiGuestsCeph-master-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -3276,7 +3154,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -3287,7 +3165,7 @@ steps:
 
 - name: install-extra-apps
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - git clone https://github.com/owncloud/files_primary_s3.git /var/www/owncloud/testrunner/apps/files_primary_s3
   - cp -r /var/www/owncloud/testrunner/apps/files_primary_s3 /var/www/owncloud/server/apps/
@@ -3300,7 +3178,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -3319,9 +3197,9 @@ steps:
 
 - name: setup-ceph
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
-  - wait-for-it -t 60 ceph:80
+  - wait-for-it -t 120 ceph:80
   - cd /var/www/owncloud/server/apps/files_primary_s3
   - cp tests/drone/ceph.config.php /var/www/owncloud/server/config
   - cd /var/www/owncloud/server
@@ -3329,13 +3207,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -3373,7 +3251,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -3390,7 +3268,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -3398,7 +3275,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiGuestsCeph-latest-mysql5.5-php7.0
+name: apiGuestsCeph-latest-mysql5.5-php7.1
 
 platform:
   os: linux
@@ -3424,7 +3301,7 @@ steps:
 
 - name: install-testrunner
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - mkdir /tmp/testrunner
   - git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner
@@ -3435,7 +3312,7 @@ steps:
 
 - name: install-extra-apps
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - git clone https://github.com/owncloud/files_primary_s3.git /var/www/owncloud/testrunner/apps/files_primary_s3
   - cp -r /var/www/owncloud/testrunner/apps/files_primary_s3 /var/www/owncloud/server/apps/
@@ -3448,7 +3325,7 @@ steps:
 
 - name: setup-server-guests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - cd /var/www/owncloud/server
   - php occ a:l
@@ -3467,9 +3344,9 @@ steps:
 
 - name: setup-ceph
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
-  - wait-for-it -t 60 ceph:80
+  - wait-for-it -t 120 ceph:80
   - cd /var/www/owncloud/server/apps/files_primary_s3
   - cp tests/drone/ceph.config.php /var/www/owncloud/server/config
   - cd /var/www/owncloud/server
@@ -3477,13 +3354,13 @@ steps:
 
 - name: fix-permissions
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - chown -R www-data /var/www/owncloud/server
 
 - name: acceptance-tests
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   commands:
   - touch /var/www/owncloud/saved-settings.sh
   - . /var/www/owncloud/saved-settings.sh
@@ -3521,7 +3398,7 @@ services:
 
 - name: server
   pull: always
-  image: owncloudci/php:7.0
+  image: owncloudci/php:7.1
   command:
   - /usr/local/bin/apachectl
   - -e
@@ -3538,7 +3415,6 @@ trigger:
   - refs/heads/master
 
 depends_on:
-- coding-standard-php7.0
 - coding-standard-php7.1
 - coding-standard-php7.2
 - coding-standard-php7.3
@@ -3574,36 +3450,35 @@ trigger:
 
 depends_on:
 - javascript-tests
-- phpunit-php7.0-sqlite
-- phpunit-php7.0-mariadb10.2
-- phpunit-php7.0-mysql5.5
-- phpunit-php7.0-mysql5.7
-- phpunit-php7.0-postgres9.4
-- phpunit-php7.0-oracle
+- phpunit-php7.1-sqlite
 - phpunit-php7.1-mariadb10.2
+- phpunit-php7.1-mysql5.5
+- phpunit-php7.1-mysql5.7
+- phpunit-php7.1-postgres9.4
+- phpunit-php7.1-oracle
 - phpunit-php7.2-mariadb10.2
 - phpunit-php7.3-mariadb10.2
-- webUIGuest-master-chrome-mysql5.5-php7.0
-- webUIGuest-master-chrome-postgres9.4-php7.0
-- webUIGuest-master-chrome-oracle-php7.0
-- webUIGuest-master-firefox-mysql5.5-php7.0
-- webUIGuest-master-firefox-postgres9.4-php7.0
-- webUIGuest-master-firefox-oracle-php7.0
-- webUIGuest-latest-chrome-mysql5.5-php7.0
-- webUIGuest-latest-chrome-postgres9.4-php7.0
-- webUIGuest-latest-chrome-oracle-php7.0
-- webUIGuest-latest-firefox-mysql5.5-php7.0
-- webUIGuest-latest-firefox-postgres9.4-php7.0
-- webUIGuest-latest-firefox-oracle-php7.0
-- apiGuests-master-mysql5.5-php7.0
-- apiGuests-master-postgres9.4-php7.0
-- apiGuests-master-oracle-php7.0
-- apiGuests-latest-mysql5.5-php7.0
-- apiGuests-latest-postgres9.4-php7.0
-- apiGuests-latest-oracle-php7.0
-- apiGuestsScality-master-mysql5.5-php7.0
-- apiGuestsScality-latest-mysql5.5-php7.0
-- apiGuestsCeph-master-mysql5.5-php7.0
-- apiGuestsCeph-latest-mysql5.5-php7.0
+- webUIGuest-master-chrome-mysql5.5-php7.1
+- webUIGuest-master-chrome-postgres9.4-php7.1
+- webUIGuest-master-chrome-oracle-php7.1
+- webUIGuest-master-firefox-mysql5.5-php7.1
+- webUIGuest-master-firefox-postgres9.4-php7.1
+- webUIGuest-master-firefox-oracle-php7.1
+- webUIGuest-latest-chrome-mysql5.5-php7.1
+- webUIGuest-latest-chrome-postgres9.4-php7.1
+- webUIGuest-latest-chrome-oracle-php7.1
+- webUIGuest-latest-firefox-mysql5.5-php7.1
+- webUIGuest-latest-firefox-postgres9.4-php7.1
+- webUIGuest-latest-firefox-oracle-php7.1
+- apiGuests-master-mysql5.5-php7.1
+- apiGuests-master-postgres9.4-php7.1
+- apiGuests-master-oracle-php7.1
+- apiGuests-latest-mysql5.5-php7.1
+- apiGuests-latest-postgres9.4-php7.1
+- apiGuests-latest-oracle-php7.1
+- apiGuestsScality-master-mysql5.5-php7.1
+- apiGuestsScality-latest-mysql5.5-php7.1
+- apiGuestsCeph-master-mysql5.5-php7.1
+- apiGuestsCeph-latest-mysql5.5-php7.1
 
 ...
