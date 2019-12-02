@@ -13,7 +13,7 @@ OC.L10N.register(
     "No such guest user" : "Non existe o usuario convidado",
     "The token is invalid" : "A marca non é válida.",
     "Password cannot be empty" : "O ontrasinal non pode quedar baleiro.",
-    "Group name must not be empty." : "O nome de grupo non pode estar baleiro",
+    "Group name must not be empty." : "O nome de grupo non debe estar baleiro",
     "Saved" : "Gardado",
     "A username with that email already exists." : "Xa existe un usuario con ese correo.",
     "A guest user can not create other guest users." : "Un usuario convidado non pode crear outros usuarios convidados.",
