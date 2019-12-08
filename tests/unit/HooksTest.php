@@ -66,7 +66,7 @@ class HooksTest extends TestCase {
 	 */
 	private $hooks;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->logger = $this->createMock(ILogger::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->mail = $this->createMock(Mail::class);
