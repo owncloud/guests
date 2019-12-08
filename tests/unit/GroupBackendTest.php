@@ -53,7 +53,7 @@ class GroupBackendTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		$this->config = $this->createMock(IConfig::class);
 		$this->groupbackend = new GroupBackend(
 			$this->config,
