@@ -159,7 +159,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @When the user shares file :fileName with guest user with email :email using the webUI
+	 * @When the user shares file/folder :fileName with guest user with email :email using the webUI
 	 *
 	 * @param string $fileName
 	 * @param string $email
