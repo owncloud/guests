@@ -151,14 +151,25 @@ Feature: Guests
       And the user uploads file "new-lorem.txt" using the webUI
       Then file "new-lorem.txt" should be listed on the webUI
 
-    @mailhog
-    Scenario: Guest user tries to upload or create files inside the received share(read only permission)
-      Given user "user0" has been created with default attributes and skeleton files
-      And the administrator has created guest user "guest" with email "guest@example.com"
-      And user "user0" has shared folder "simple-folder" with user "guest@example.com"
-      When user "user0" updates the last share using the sharing API with
-        | permissions | read |
-      And guest user "guest" registers and sets password to "password" using the webUI
-      And user "guest@example.com" logs in using the webUI
-      And the user opens folder "simple-folder" using the webUI
-      Then the user should not have permission to upload or create files
+  @mailhog
+  Scenario: Guest user tries to upload or create files inside the received share(read only permission)
+    Given user "user0" has been created with default attributes and skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "user0" has shared folder "simple-folder" with user "guest@example.com"
+    When user "user0" updates the last share using the sharing API with
+      | permissions | read |
+    And guest user "guest" registers and sets password to "password" using the webUI
+    And user "guest@example.com" logs in using the webUI
+    And the user opens folder "simple-folder" using the webUI
+    Then the user should not have permission to upload or create files
+
+  @mailhog
+  Scenario: Create a regular user using the same email address of an existing guest user
+    Given the administrator has created guest user "guest" with email "guest@example.com"
+    And the administrator has logged in using the webUI
+    And the administrator has browsed to the users page
+    When the administrator creates a user with the name "regularUser" and the email "guest@example.com" without a password using the webUI
+    Then the administrator should be able to see the email of these users in the User Management page:
+      | username    | email             |
+      | regularUser | guest@example.com |
+    And the email address of user "regularUser" should be "guest@example.com"
