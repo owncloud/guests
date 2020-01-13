@@ -129,3 +129,36 @@ Feature: Guests
       | USER@example.com | USER@example.com | USER@example.com |
       | USER@example.com | USER@example.com | user@example.com |
       | user@example.com | USER@example.com | user@EXAMPLE.com |
+
+    @mailhog
+    Scenario: Guest user is not able to upload or create files
+      Given user "user0" has been created with default attributes and skeleton files
+      And the administrator has created guest user "guest" with email "guest@example.com"
+      And user "user0" has shared file "lorem.txt" with user "guest@example.com"
+      When guest user "guest" registers and sets password to "password" using the webUI
+      And user "guest@example.com" logs in using the webUI
+      Then the user should not have permission to upload or create files
+
+    @mailhog
+    Scenario: Guest user is able to upload or create files inside the received share(with change permission)
+      Given user "user0" has been created with default attributes and skeleton files
+      And user "user0" has logged in using the webUI
+      When the user shares folder "simple-folder" with guest user with email "guest@example.com" using the webUI
+      And the user logs out of the webUI
+      And guest user "guest@example.com" registers with email "guest@example.com" and sets password to "password" using the webUI
+      And user "guest@example.com" logs in using the webUI
+      And the user opens folder "simple-folder" using the webUI
+      And the user uploads file "new-lorem.txt" using the webUI
+      Then file "new-lorem.txt" should be listed on the webUI
+
+    @mailhog
+    Scenario: Guest user tries to upload or create files inside the received share(read only permission)
+      Given user "user0" has been created with default attributes and skeleton files
+      And the administrator has created guest user "guest" with email "guest@example.com"
+      And user "user0" has shared folder "simple-folder" with user "guest@example.com"
+      When user "user0" updates the last share using the sharing API with
+        | permissions | read |
+      And guest user "guest" registers and sets password to "password" using the webUI
+      And user "guest@example.com" logs in using the webUI
+      And the user opens folder "simple-folder" using the webUI
+      Then the user should not have permission to upload or create files
