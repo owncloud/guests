@@ -22,6 +22,7 @@
 
 namespace Page;
 
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Session;
 use Behat\Mink\Element\NodeElement;
 
@@ -42,11 +43,11 @@ class SetPasswordPage extends OwncloudPage {
 	/**
 	 *
 	 * @param string $newPassword
-	 * @param Session $session
 	 *
 	 * @return void
+	 * @throws ElementNotFoundException
 	 */
-	public function setThePassword($newPassword, Session $session) {
+	public function setThePassword($newPassword) {
 		$this->fillField($this->passwordInputId, $newPassword);
 		$submitButton = $this->findById($this->submitLoginId);
 		$this->assertElementNotNull(
@@ -61,6 +62,7 @@ class SetPasswordPage extends OwncloudPage {
 	 * @param string $newEmail
 	 *
 	 * @return void
+	 * @throws ElementNotFoundException
 	 */
 	public function setTheEmail($newEmail) {
 		$this->fillField($this->emailInputId, $newEmail);
