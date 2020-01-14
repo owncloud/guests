@@ -99,7 +99,7 @@ Feature: Guests
     When user "user0" uploads file "textfile.txt" from the guests test data folder asynchronously to "/tmp/textfile.txt" in 3 chunks using the WebDAV API
     Then the HTTP status code should be "202"
     And the oc job status values of last request for user "user0" should match these regular expressions
-      | status       | /^finished$/ |
+      | status | /^finished$/ |
     And the content of file "/tmp/textfile.txt" for user "user0" should be:
     """
     This is a testfile.

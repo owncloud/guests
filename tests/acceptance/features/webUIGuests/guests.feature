@@ -50,16 +50,16 @@ Feature: Guests
     And user "user0" has logged in using the webUI
     When the user shares file "testimage.jpg" with guest user with email "invalid@email.com()9876a" using the webUI
     Then dialog should be displayed on the webUI
-      | title | content               |
-      | Error | Invalid mail address  |
+      | title | content              |
+      | Error | Invalid mail address |
     And user "invalid@email.com()9876a" should not exist
 
   @mailhog @skipOnOcV10.2
   Scenario: User tries to create a guest user via email with an already used email
     Given these users have been created with skeleton files:
-      |    username    |    email        |
-      |     user0      |  user0@oc.com   |
-      |     user1      |  user1@oc.com   |
+      | username | email        |
+      | user0    | user0@oc.com |
+      | user1    | user1@oc.com |
     And user "user0" has logged in using the webUI
     And the user has opened the share dialog for file "lorem.txt"
     When the user types "user1@oc.com" in the share-with-field
@@ -73,8 +73,8 @@ Feature: Guests
     When the administrator deletes system config key "mail_smtpmode" using the occ command
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
     Then dialog should be displayed on the webUI
-      | title | content               |
-      | Error | Error while sharing   |
+      | title | content             |
+      | Error | Error while sharing |
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
@@ -98,8 +98,8 @@ Feature: Guests
     When the administrator adds system config key "mail_smtphost" with value "conkey" using the occ command
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
     Then dialog should be displayed on the webUI
-      | title | content               |
-      | Error | Error while sharing   |
+      | title | content             |
+      | Error | Error while sharing |
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
@@ -130,26 +130,26 @@ Feature: Guests
       | USER@example.com | USER@example.com | user@example.com |
       | user@example.com | USER@example.com | user@EXAMPLE.com |
 
-    @mailhog
-    Scenario: Guest user is not able to upload or create files
-      Given user "user0" has been created with default attributes and skeleton files
-      And the administrator has created guest user "guest" with email "guest@example.com"
-      And user "user0" has shared file "lorem.txt" with user "guest@example.com"
-      When guest user "guest" registers and sets password to "password" using the webUI
-      And user "guest@example.com" logs in using the webUI
-      Then the user should not have permission to upload or create files
+  @mailhog
+  Scenario: Guest user is not able to upload or create files
+    Given user "user0" has been created with default attributes and skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "user0" has shared file "lorem.txt" with user "guest@example.com"
+    When guest user "guest" registers and sets password to "password" using the webUI
+    And user "guest@example.com" logs in using the webUI
+    Then the user should not have permission to upload or create files
 
-    @mailhog
-    Scenario: Guest user is able to upload or create files inside the received share(with change permission)
-      Given user "user0" has been created with default attributes and skeleton files
-      And user "user0" has logged in using the webUI
-      When the user shares folder "simple-folder" with guest user with email "guest@example.com" using the webUI
-      And the user logs out of the webUI
-      And guest user "guest@example.com" registers with email "guest@example.com" and sets password to "password" using the webUI
-      And user "guest@example.com" logs in using the webUI
-      And the user opens folder "simple-folder" using the webUI
-      And the user uploads file "new-lorem.txt" using the webUI
-      Then file "new-lorem.txt" should be listed on the webUI
+  @mailhog
+  Scenario: Guest user is able to upload or create files inside the received share(with change permission)
+    Given user "user0" has been created with default attributes and skeleton files
+    And user "user0" has logged in using the webUI
+    When the user shares folder "simple-folder" with guest user with email "guest@example.com" using the webUI
+    And the user logs out of the webUI
+    And guest user "guest@example.com" registers with email "guest@example.com" and sets password to "password" using the webUI
+    And user "guest@example.com" logs in using the webUI
+    And the user opens folder "simple-folder" using the webUI
+    And the user uploads file "new-lorem.txt" using the webUI
+    Then file "new-lorem.txt" should be listed on the webUI
 
   @mailhog
   Scenario: Guest user tries to upload or create files inside the received share(read only permission)
