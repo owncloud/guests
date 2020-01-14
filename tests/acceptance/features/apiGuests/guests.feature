@@ -220,3 +220,11 @@ Feature: Guests
     And guest user "guest" registers
     When user "guest@example.com" has created guest user "guest2" with email "guest2@example.com"
     Then the HTTP status code should be "403"
+
+  @mailhog
+  Scenario: Create a regular user using the same email address of an existing guest user
+    Given the administrator has created guest user "guest" with email "guest@example.com"
+    When the administrator creates these users with skeleton files:
+      | username    | email             |
+      | regularUser | guest@example.com |
+    Then the email address of user "regularUser" should be "guest@example.com"
