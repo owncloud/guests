@@ -122,8 +122,9 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * @param string $password
 	 *
 	 * @return void
+	 * @throws Exception
 	 */
-	public function guestUserRegistersWithEmailAndSetsPasswordToUsingTheWebui($guestDisplayName, $guestEmail, $password) {
+	public function guestUserRegistersWithEmailAndSetsPasswordToUsingTheWebUI($guestDisplayName, $guestEmail, $password) {
 		$userName = $this->guestsContext->getCreatedGuests()[$guestDisplayName];
 		$fullRegisterUrl = $this->guestsContext->getRegistrationUrl($userName);
 		$session = $this->getSession();
@@ -132,7 +133,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 		$this->setPasswordPage->open();
 		$this->setPasswordPage->waitTillPageIsLoaded($session);
 		$this->setPasswordPage->setTheEmail($guestEmail);
-		$this->setPasswordPage->setThePassword($password, $session);
+		$this->setPasswordPage->setThePassword($password);
 		$this->featureContext->rememberUserPassword($userName, $password);
 	}
 
@@ -143,6 +144,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * @param string $password
 	 *
 	 * @return void
+	 * @throws Exception
 	 */
 	public function guestUserRegistersUsingWebUI($guestDisplayName, $password) {
 		$userName = $this->guestsContext->prepareUserNameAsFrontend(
@@ -154,7 +156,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 		$this->setPasswordPage->setPagePath($fullRegisterUrl);
 		$this->setPasswordPage->open();
 		$this->setPasswordPage->waitTillPageIsLoaded($session);
-		$this->setPasswordPage->setThePassword($password, $session);
+		$this->setPasswordPage->setThePassword($password);
 		$this->featureContext->rememberUserPassword($userName, $password);
 	}
 
@@ -166,7 +168,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 *
 	 * @return void
 	 */
-	public function theUserSharesFileWithGuestUserWithEmailUsingWebui($fileName, $email) {
+	public function theUserSharesFileWithGuestUserWithEmailUsingWebUI($fileName, $email) {
 		$this->filesPage->openSharingDialog($fileName, $this->getSession());
 		$sharingDialog = $this->filesPage->getSharingDialog();
 		$userAddDialog = \sprintf($this->userAddDialogBoxFramework, $email);
@@ -201,7 +203,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	public function assertWarningMessage($expectedMessage) {
 		foreach ($this->setPasswordPage->getWarningMessages() as $message) {
 			if ($message->getText() === $expectedMessage) {
-				return true;
+				return;
 			}
 		}
 		Assert::fail(

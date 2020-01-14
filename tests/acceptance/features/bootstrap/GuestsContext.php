@@ -156,6 +156,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @param string $destination
 	 *
 	 * @return void
+	 * @throws Exception
 	 */
 	public function userUploadsAFileToWithAllMechanisms(
 		$user, $source, $destination
@@ -402,7 +403,6 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			);
 		}
 
-		$headers = [];
 		$headers = ['Content-Type' => 'application/x-www-form-urlencoded'];
 		$body = [
 			'email' => $email,
