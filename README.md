@@ -1,4 +1,4 @@
-guests 
+guests
 =======
 
 [![Build Status](https://drone.owncloud.com/api/badges/owncloud/guests/status.svg?branch=master)](https://drone.owncloud.com/owncloud/guests)
@@ -9,4 +9,5 @@ to files which are shared with him.
 
 Furthermore, the administrator has to whitelist the applications that guests can use.
 By default settings, avatar, files_external, files_trashbin, files_versions, files_sharing, files_texteditor, activity, firstrunwizard, gallery, notifications, password_policy and oauth2 are allowed.
-Test
+
+I am just adding some text to run the drone CI.
