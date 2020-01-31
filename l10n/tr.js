@@ -10,7 +10,7 @@ OC.L10N.register(
     "Error loading activities" : "Etkinlikler yüklenirken hata oluştu",
     "Access to this resource is forbidden for guests." : "Bu kaynağa erişim misafirler için yasaktır.",
     "Invalid mail address" : "Geçersiz posta adresi",
-    "No such guest user" : "Böyle bir misafir yok",
+    "No such guest user" : "Böyle bir misafir kullanıcı yok",
     "The token is invalid" : "Belirteç geçersiz",
     "Password cannot be empty" : "Parola boş olamaz",
     "Group name must not be empty." : "Grup adı boş olmamalı",
