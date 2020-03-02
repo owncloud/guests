@@ -87,34 +87,6 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @return string|null
-	 */
-	public function getGuestGroupName() {
-		$configkeyList = $this->featureContext->getConfigKeyList('guests');
-		foreach ($configkeyList as $config) {
-			if ($config['configkey'] === 'group') {
-				return $config['value'];
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * @Given guest user :user has been created with email :email and password :password
-	 *
-	 * @param string $user
-	 * @param string $email
-	 * @param string $password
-	 *
-	 * @return void
-	 * @throws Exception
-	 */
-	public function guestUserHasBeenCreatedWithEmailAndPassword($user, $email, $password) {
-		$this->featureContext->createUser($user, $password, $user, $email);
-		$this->featureContext->addUserToGroup($user, $this->getGuestGroupName());
-	}
-
-	/**
 	 * @When guest user :user registers with email :guestEmail and sets password to :password using the webUI
 	 *
 	 * @param string $guestDisplayName
@@ -190,7 +162,11 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 		$sharingDialog = $this->filesPage->getSharingDialog();
 		$arrayList = $sharingDialog->getAutoCompleteItemsList();
 		$userAddDialog = \sprintf($this->userAddDialogBoxFramework, $user);
-		PHPUnit\Framework\Assert::assertNotContains($userAddDialog, $arrayList);
+		Assert::assertNotContains(
+			$userAddDialog,
+			$arrayList,
+			__METHOD__ . " user $user was displayed in the dropdown as a guest user when it should not be"
+		);
 	}
 
 	/**
@@ -207,7 +183,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 			}
 		}
 		Assert::fail(
-			"could not find message with the text '$expectedMessage'"
+			"could not find message with the text '$expectedMessage' on the set-password-page"
 		);
 	}
 

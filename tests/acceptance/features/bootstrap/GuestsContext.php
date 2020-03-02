@@ -130,8 +130,39 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When user :user uploads file :source from the guests test data folder to :destination using the WebDAV API
+	 * @param string $user
+	 * @param string $source
+	 * @param string $destination
+	 *
+	 * @return void
+	 */
+	public function userUploadsFileFromGuestsDataFolder(
+		$user, $source, $destination
+	) {
+		$source = $this->getRelativePathToTestDataFolder() . $source;
+		$this->featureContext->userUploadsAFileTo($user, $source, $destination);
+	}
+
+	/**
 	 * @Given user :user has uploaded file :source from the guests test data folder to :destination
+	 *
+	 * @param string $user
+	 * @param string $source
+	 * @param string $destination
+	 *
+	 * @return void
+	 */
+	public function userHasUploadedFileFromGuestsDataFolderTo(
+		$user, $source, $destination
+	) {
+		$this->userUploadsFileFromGuestsDataFolder(
+			$user, $source, $destination
+		);
+		$this->featureContext->theHTTPStatusCodeShouldBeSuccess();
+	}
+
+	/**
+	 * @When user :user uploads file :source from the guests test data folder to :destination using the WebDAV API
 	 *
 	 * @param string $user
 	 * @param string $source
@@ -142,8 +173,9 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	public function userUploadsFileFromGuestsDataFolderTo(
 		$user, $source, $destination
 	) {
-		$source = $this->getRelativePathToTestDataFolder() . $source;
-		$this->featureContext->userUploadsAFileTo($user, $source, $destination);
+		$this->userUploadsFileFromGuestsDataFolder(
+			$user, $source, $destination
+		);
 	}
 
 	/**
@@ -216,22 +248,17 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 	
 	/**
-	 * @When /^user "([^"]*)" (attempts to create|creates) guest user "([^"]*)" with email "([^"]*)" using the API$/
-	 * @Given /^user "([^"]*)" has (attempted to create|created) guest user "([^"]*)" with email "([^"]*)"$/
-	 *
 	 * @param string $user
-	 * @param string $attemptTo
 	 * @param string $guestDisplayName
 	 * @param string $guestEmail
+	 * @param bool $shouldExist
 	 *
 	 * @return void
 	 */
 	public function userCreatesAGuestUser(
-		$user, $attemptTo, $guestDisplayName, $guestEmail
+		$user, $guestDisplayName, $guestEmail, $shouldExist
 	) {
 		$user = $this->featureContext->getActualUsername($user);
-		$shouldHaveBeenCreated
-			= (($attemptTo == "creates") || ($attemptTo === "created"));
 		$fullUrl
 			= $this->featureContext->getBaseUrl() . '/index.php/apps/guests/users';
 		//Replicating frontend behaviour
@@ -251,6 +278,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		);
 
 		$this->featureContext->setResponse($response);
+
+		if ($shouldExist) {
+			$this->featureContext->theHTTPStatusCodeShouldBeSuccess();
+		}
+
 		$this->createdGuests[$guestDisplayName] = $guestEmail;
 
 		// Let core acceptance test functionality know the user that has been
@@ -260,13 +292,68 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->featureContext->getPasswordForUser($userName),
 			$guestDisplayName,
 			$guestEmail,
-			$shouldHaveBeenCreated
+			$shouldExist
+		);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" has created guest user "([^"]*)" with email "([^"]*)"$/
+	 *
+	 * @param string $user
+	 * @param string $guestDisplayName
+	 * @param string $guestEmail
+	 *
+	 * @return void
+	 */
+	public function userCreatesAGuestUserWithEmail(
+		$user, $guestDisplayName, $guestEmail
+	) {
+		$this->userCreatesAGuestUser(
+			$user, $guestDisplayName, $guestEmail, true
+		);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" (attempts to create|creates) guest user "([^"]*)" with email "([^"]*)" using the API$/
+	 *
+	 * @param string $user
+	 * @param string $attemptTo
+	 * @param string $guestDisplayName
+	 * @param string $guestEmail
+	 *
+	 * @return void
+	 */
+	public function userHasCreatedAGuestUserWithEmail(
+		$user, $attemptTo, $guestDisplayName, $guestEmail
+	) {
+		$shouldExist
+			= ($attemptTo == "creates");
+		$this->userCreatesAGuestUser(
+			$user, $guestDisplayName, $guestEmail, $shouldExist
+		);
+	}
+
+	/**
+	 * @Given /^the administrator has created guest user "([^"]*)" with email "([^"]*)"$/
+	 *
+	 * @param string $guestDisplayName
+	 * @param string $guestEmail
+	 *
+	 * @return void
+	 */
+	public function theAdministratorHasCreatedAGuestUser(
+		$guestDisplayName, $guestEmail
+	) {
+		$this->userCreatesAGuestUser(
+			$this->featureContext->getAdminUsername(),
+			$guestDisplayName,
+			$guestEmail,
+			true
 		);
 	}
 
 	/**
 	 * @When /^the administrator (attempts to create|creates) guest user "([^"]*)" with email "([^"]*)" using the API$/
-	 * @Given /^the administrator has (attempted to create|created) guest user "([^"]*)" with email "([^"]*)"$/
 	 *
 	 * @param string $attemptTo
 	 * @param string $guestDisplayName
@@ -277,11 +364,13 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	public function theAdministratorCreatesAGuestUser(
 		$attemptTo, $guestDisplayName, $guestEmail
 	) {
+		$shouldExist
+			= ($attemptTo == "creates");
 		$this->userCreatesAGuestUser(
 			$this->featureContext->getAdminUsername(),
-			$attemptTo,
 			$guestDisplayName,
-			$guestEmail
+			$guestEmail,
+			$shouldExist
 		);
 	}
 
@@ -365,18 +454,13 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When guest user :user registers
-	 * @When guest user :user registers and sets password to :password
-	 * @Given guest user :user has registered
-	 * @Given guest user :user has registered and set password to :password
-	 *
 	 * @param string $guestDisplayName
 	 * @param string $password
 	 *
 	 * @return void
 	 * @throws Exception
 	 */
-	public function guestUserRegisters($guestDisplayName, $password = null) {
+	public function registerGuestUser($guestDisplayName, $password = null) {
 		$oldCSRFSetting = $this->disableCSRFFromGuestsScenario();
 		$userName = $this->prepareUserNameAsFrontend(
 			$this->createdGuests[$guestDisplayName]
@@ -422,6 +506,35 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$this->featureContext->setResponse($response);
 		$this->featureContext->rememberUserPassword($userName, $password);
 		$this->setCSRFDotDisabledFromGuestsScenario($oldCSRFSetting);
+	}
+
+	/**
+	 * @Given guest user :user has registered
+	 * @Given guest user :user has registered and set password to :password
+	 *
+	 * @param string $guestDisplayName
+	 * @param string $password
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function guestUserHasRegistered($guestDisplayName, $password = null) {
+		$this->registerGuestUser($guestDisplayName, $password);
+		$this->featureContext->theHTTPStatusCodeShouldBeSuccess();
+	}
+
+	/**
+	 * @When guest user :user registers
+	 * @When guest user :user registers and sets password to :password
+	 *
+	 * @param string $guestDisplayName
+	 * @param string $password
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function guestUserRegisters($guestDisplayName, $password = null) {
+		$this->registerGuestUser($guestDisplayName, $password);
 	}
 
 	/**
