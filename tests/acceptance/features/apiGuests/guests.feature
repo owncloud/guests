@@ -19,7 +19,7 @@ Feature: Guests
     Then the HTTP status code should be "422"
     And user "guest" should not exist
 
-  Scenario: A guest user cannot upload files
+  Scenario: A guest user cannot upload files to their own storage
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     When user "guest@example.com" uploads overwriting file "textfile.txt" from the guests test data folder to "/myfile.txt" with all mechanisms using the WebDAV API
@@ -28,7 +28,7 @@ Feature: Guests
     And as "guest@example.com" file "/textfile.txt" should not exist
     And as "user0" file "/textfile.txt" should not exist
 
-  Scenario: A guest user cannot upload files (async upload)
+  Scenario: A guest user cannot upload files to their own storage (async upload)
     Given the administrator has enabled async operations
     And the administrator has created guest user "guest" with email "guest@example.com"
     When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder asynchronously to "/textfile.txt" in 3 chunks using the WebDAV API
@@ -37,7 +37,7 @@ Feature: Guests
     And as "user0" file "/textfile.txt" should not exist
 
   @mailhog
-  Scenario: A guest user can upload files
+  Scenario: A guest user can upload files to a folder shared with them
     Given user "user0" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
@@ -48,7 +48,7 @@ Feature: Guests
     Then the HTTP status code should be "201"
 
   @mailhog
-  Scenario: A guest user can upload chunked files
+  Scenario: A guest user can upload chunked files to a folder shared with them
     Given user "user0" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
@@ -64,7 +64,7 @@ Feature: Guests
     And as "user0" file "/tmp/myChunkedFile.txt" should exist
 
   @mailhog @issue-279
-  Scenario: A guest user can upload files
+  Scenario: A guest user can upload files to a folder shared with them
     Given user "user0" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
@@ -89,7 +89,7 @@ Feature: Guests
     """
 
   @mailhog
-  Scenario: A guest user can upload files (async upload)
+  Scenario: A guest user can upload files to a folder shared with them (async upload)
     Given the administrator has enabled async operations
     And user "user0" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -169,19 +169,6 @@ Feature: Guests
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
 
-  Scenario: Check that skeleton is properly set
-    Given user "user0" has been created with default attributes and skeleton files
-    Then user "user0" should see the following elements
-      | /FOLDER/           |
-      | /PARENT/           |
-      | /PARENT/parent.txt |
-      | /textfile0.txt     |
-      | /textfile1.txt     |
-      | /textfile2.txt     |
-      | /textfile3.txt     |
-      | /textfile4.txt     |
-      | /welcome.txt       |
-
   @mailhog
   Scenario: A created guest user can log in
     Given user "user0" has been created with default attributes and skeleton files
@@ -198,10 +185,10 @@ Feature: Guests
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "guest" should be a guest user
-    When the administrator creates guest user "guest" with email "guest@example.com" using the API
+    When the administrator attempts to create guest user "guest" with email "guest@example.com" using the API
     Then the HTTP status code should be "422"
 
-  Scenario: removing a user from a group
+  Scenario: removing a guest user from a group
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And group "guests_app" has been created
@@ -218,11 +205,11 @@ Feature: Guests
     And user "user0" has created folder "/tmp"
     And user "user0" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" registers
-    When user "guest@example.com" has created guest user "guest2" with email "guest2@example.com"
+    When user "guest@example.com" attempts to create guest user "guest2" with email "guest2@example.com" using the API
     Then the HTTP status code should be "403"
 
   @mailhog
-  Scenario: Create a regular user using the same email address of an existing guest user
+  Scenario: Create a regular user using the same email address as an existing guest user
     Given the administrator has created guest user "guest" with email "guest@example.com"
     When the administrator creates these users with skeleton files:
       | username    | email             |
