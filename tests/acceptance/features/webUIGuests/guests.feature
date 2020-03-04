@@ -83,15 +83,15 @@ Feature: Guests
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
-  @mailhog @issue-332 @skipOnOcV10.2 @skipOnFIREFOX
+  @mailhog @skipOnOcV10.2 @skipOnFIREFOX
   Scenario: Administrator changes the guest user's password in users menu
     Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
     And the user shares file "new-file.txt" with guest user with email "valid@email.com" using the webUI
     And the administrator has browsed to the users page
     When the administrator changes the password of user "valid@email.com" to "newpassword" using the webUI
-    #Then notifications should be displayed on the webUI with the text
-    #  | Password successfully changed |
+    Then notifications should be displayed on the webUI with the text
+      | Password successfully changed |
     When the administrator logs out of the webUI
     And the user logs in with username "valid@email.com" and password "newpassword" using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
