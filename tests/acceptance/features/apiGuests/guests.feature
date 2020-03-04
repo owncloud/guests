@@ -5,6 +5,7 @@ Feature: Guests
     Given using OCS API version "1"
     And using new dav path
 
+  @skipOnOcV10.3
   Scenario Outline: Creating a guest user works fine
     When the administrator creates guest user "<user>" with email "<email-address>" using the API
     Then the HTTP status code should be "201"
@@ -42,7 +43,7 @@ Feature: Guests
     And as "guest@example.com" file "/textfile.txt" should not exist
     And as "user0" file "/textfile.txt" should not exist
 
-  @mailhog
+  @mailhog @skipOnOcV10.3
   Scenario Outline: A guest user can upload files to a folder shared with them
     Given user "user0" has been created with default attributes and skeleton files
     And the administrator has created guest user "<user>" with email "<email-address>"

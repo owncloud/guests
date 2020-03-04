@@ -27,7 +27,7 @@ Feature: Guests
     Then the user should be redirected to a webUI page with the title "%productname%"
     And a warning should be displayed on the set-password-page saying "The token is invalid"
 
-  @mailhog @skipOnOcV10.2
+  @mailhog @skipOnOcV10.2 @skipOnOcV10.3
   Scenario Outline: User uses valid email to create a guest user
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
@@ -144,7 +144,7 @@ Feature: Guests
     And user "guest@example.com" logs in using the webUI
     Then the user should not have permission to upload or create files
 
-  @mailhog
+  @mailhog @skipOnOcV10.3
   Scenario Outline: Guest user is able to upload or create files inside the received share(with change permission)
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
