@@ -28,11 +28,16 @@ Feature: Guests
     And a warning should be displayed on the set-password-page saying "The token is invalid"
 
   @mailhog @skipOnOcV10.2
-  Scenario: User uses valid email to create a guest user
+  Scenario Outline: User uses valid email to create a guest user
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
-    When the user shares file "data.zip" with guest user with email "valid@email.com" using the webUI
-    Then user "valid@email.com" should exist
+    When the user shares file "data.zip" with guest user with email "<email-address>" using the webUI
+    Then user "<email-address>" should exist
+    Examples:
+      | email-address                  |
+      | valid@email.com                |
+      | John.Smith@email.com           |
+      | Betty_Anne+Bob-Burns@email.com |
 
   @mailhog
   Scenario: User uses some random string email to create a guest user
@@ -140,16 +145,22 @@ Feature: Guests
     Then the user should not have permission to upload or create files
 
   @mailhog
-  Scenario: Guest user is able to upload or create files inside the received share(with change permission)
+  Scenario Outline: Guest user is able to upload or create files inside the received share(with change permission)
     Given user "user0" has been created with default attributes and skeleton files
     And user "user0" has logged in using the webUI
-    When the user shares folder "simple-folder" with guest user with email "guest@example.com" using the webUI
+    When the user shares folder "simple-folder" with guest user with email "<email-address>" using the webUI
     And the user logs out of the webUI
-    And guest user "guest@example.com" registers with email "guest@example.com" and sets password to "password" using the webUI
-    And user "guest@example.com" logs in using the webUI
+    And guest user "<email-address>" registers with email "<email-address>" and sets password to "password" using the webUI
+    And user "<email-address>" logs in using the webUI
     And the user opens folder "simple-folder" using the webUI
     And the user uploads file "new-lorem.txt" using the webUI
     Then file "new-lorem.txt" should be listed on the webUI
+    And as "user0" file "/simple-folder/new-lorem.txt" should exist
+    Examples:
+      | email-address                  |
+      | guest@example.com              |
+      | John.Smith@email.com           |
+      | Betty_Anne+Bob-Burns@email.com |
 
   @mailhog
   Scenario: Guest user tries to upload or create files inside the received share(read only permission)
