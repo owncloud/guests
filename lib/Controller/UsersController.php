@@ -114,7 +114,7 @@ class UsersController extends Controller {
 	 */
 	public function create($email, $displayName) {
 		$errorMessages = [];
-		$email = \trim(\urldecode($email));
+		$email = \trim(\rawurldecode($email));
 		$username = \strtolower($email);
 
 		if (empty($email) || !$this->mailer->validateMailAddress($email)) {

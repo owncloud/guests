@@ -5,10 +5,17 @@ Feature: Guests
     Given using OCS API version "1"
     And using new dav path
 
-  Scenario: Creating a guest user works fine
-    When the administrator creates guest user "guest" with email "guest@example.com" using the API
+  @skipOnOcV10.3
+  Scenario Outline: Creating a guest user works fine
+    When the administrator creates guest user "<user>" with email "<email-address>" using the API
     Then the HTTP status code should be "201"
-    And user "guest" should be a guest user
+    And user "<user>" should be a guest user
+    And the email address of user "<email-address>" should be "<email-address>"
+    Examples:
+      | email-address                  | user                 |
+      | guest@example.com              | guest                |
+      | john.smith@email.com           | john.smith           |
+      | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
 
   Scenario: Cannot create a guest if a user with the same email address exists
     Given user "existing-user" has been created with default attributes and skeleton files
@@ -36,16 +43,22 @@ Feature: Guests
     And as "guest@example.com" file "/textfile.txt" should not exist
     And as "user0" file "/textfile.txt" should not exist
 
-  @mailhog
-  Scenario: A guest user can upload files to a folder shared with them
+  @mailhog @skipOnOcV10.3
+  Scenario Outline: A guest user can upload files to a folder shared with them
     Given user "user0" has been created with default attributes and skeleton files
-    And the administrator has created guest user "guest" with email "guest@example.com"
+    And the administrator has created guest user "<user>" with email "<email-address>"
     And the HTTP status code should be "201"
     And user "user0" has created folder "/tmp"
-    And user "user0" has shared folder "/tmp" with user "guest@example.com"
-    And guest user "guest" has registered
-    When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt" using the WebDAV API
+    And user "user0" has shared folder "/tmp" with user "<email-address>"
+    And guest user "<user>" has registered
+    When user "<email-address>" uploads file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt" using the WebDAV API
     Then the HTTP status code should be "201"
+    And as "user0" file "/tmp/textfile.txt" should exist
+    Examples:
+      | email-address                  | user                 |
+      | guest@example.com              | guest                |
+      | john.smith@email.com           | john.smith           |
+      | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
 
   @mailhog
   Scenario: A guest user can upload chunked files to a folder shared with them

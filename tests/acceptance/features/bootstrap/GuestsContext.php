@@ -24,6 +24,7 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use PHPUnit\Framework\Assert;
 use TestHelpers\EmailHelper;
 use TestHelpers\HttpRequestHelper;
 use TestHelpers\SetupHelper;
@@ -126,7 +127,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return string
 	 */
 	public function prepareUserNameAsFrontend($guestEmail) {
-		return \strtolower(\trim(\urldecode($guestEmail)));
+		return \str_replace('+', '%2B', \strtolower(\trim($guestEmail)));
 	}
 
 	/**
@@ -265,7 +266,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$userName = $this->prepareUserNameAsFrontend($guestEmail);
 		$fullUrl
 			= $fullUrl
-			. "?displayName=$guestDisplayName&email=$guestEmail&username=$userName";
+			. "?displayName=$guestDisplayName&email=$userName&username=$userName";
 
 		$headers = [];
 		$headers['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -382,6 +383,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function checkGuestUser($guestDisplayName) {
+		Assert::assertArrayHasKey(
+			$guestDisplayName,
+			$this->createdGuests,
+			__METHOD__ . " guest user '$guestDisplayName' has not been successfully created by this scenario"
+		);
 		$userName = $this->prepareUserNameAsFrontend(
 			$this->createdGuests[$guestDisplayName]
 		);
@@ -462,9 +468,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	public function registerGuestUser($guestDisplayName, $password = null) {
 		$oldCSRFSetting = $this->disableCSRFFromGuestsScenario();
-		$userName = $this->prepareUserNameAsFrontend(
-			$this->createdGuests[$guestDisplayName]
-		);
+		$userName = $this->createdGuests[$guestDisplayName];
 		$fullRegisterUrl = $this->getRegistrationUrl($userName);
 		$explodedFullRegisterUrl = \explode('/', $fullRegisterUrl);
 		$sizeOfExplodedFullRegisterUrl = \count($explodedFullRegisterUrl);
