@@ -119,7 +119,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * @throws Exception
 	 */
 	public function guestUserRegistersUsingWebUI($guestDisplayName, $password) {
-		$userName = $this->guestsContext->prepareUserNameAsFrontend(
+		$userName = $this->guestsContext->prepareUserName(
 			$this->guestsContext->getCreatedGuests()[$guestDisplayName]
 		);
 
