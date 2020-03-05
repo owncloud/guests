@@ -14,9 +14,8 @@ Feature: Guests
     Examples:
       | email-address                  | user                 |
       | guest@example.com              | guest                |
-      | john.smith@email.com           | john.smith           |
+      | john.smith@email.com           | John.Smith           |
       | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
-      | John.Smith@email.com           | John.Smith           |
 
   Scenario: Cannot create a guest if a user with the same email address exists
     Given user "existing-user" has been created with default attributes and skeleton files
@@ -58,7 +57,7 @@ Feature: Guests
     Examples:
       | email-address                  | user                 |
       | guest@example.com              | guest                |
-      | john.smith@email.com           | john.smith           |
+      | john.smith@email.com           | John.Smith           |
       | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
 
   @mailhog

@@ -126,8 +126,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @return string
 	 */
-	public function prepareUserName($guestEmail) {
-		return \str_replace('+', '%2B', \trim($guestEmail));
+	public function prepareUserNameAsFrontend($guestEmail) {
+		return \str_replace('+', '%2B', \strtolower(\trim($guestEmail)));
 	}
 
 	/**
@@ -229,7 +229,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$user, $source, $destination, $noOfChunks, $chunkingVersion, $async
 		);
 	}
-
+	
 	/**
 	 * @When /^user "([^"]*)" uploads file "([^"]*)" from the guests test data folder asynchronously to "([^"]*)" in (\d+) chunks using the WebDAV API$/
 	 *
@@ -247,7 +247,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$user, $source, $destination, $noOfChunks, "new", true
 		);
 	}
-
+	
 	/**
 	 * @param string $user
 	 * @param string $guestDisplayName
@@ -262,7 +262,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$user = $this->featureContext->getActualUsername($user);
 		$fullUrl
 			= $this->featureContext->getBaseUrl() . '/index.php/apps/guests/users';
-		$userName = $this->prepareUserName($guestEmail);
+		//Replicating frontend behaviour
+		$userName = $this->prepareUserNameAsFrontend($guestEmail);
 		$fullUrl
 			= $fullUrl
 			. "?displayName=$guestDisplayName&email=$userName&username=$userName";
@@ -387,7 +388,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->createdGuests,
 			__METHOD__ . " guest user '$guestDisplayName' has not been successfully created by this scenario"
 		);
-		$userName = $this->prepareUserName(
+		$userName = $this->prepareUserNameAsFrontend(
 			$this->createdGuests[$guestDisplayName]
 		);
 		$this->featureContext->userShouldBelongToGroup($userName, 'guest_app');
@@ -402,7 +403,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @throws Exception
 	 */
 	public function deleteGuestUser($guestDisplayName) {
-		$userName = $this->prepareUserName(
+		$userName = $this->prepareUserNameAsFrontend(
 			$this->createdGuests[$guestDisplayName]
 		);
 		$this->featureContext->deleteUser($userName);
@@ -496,7 +497,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			'token' => $token,
 			'password' => $password
 		];
-
+		
 		$response = HttpRequestHelper::sendRequest(
 			$registerUrl,
 			'POST',
