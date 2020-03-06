@@ -569,7 +569,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @throws Exception
 	 */
 	public function userHasSharedFolderWithGuestUser($sharer, $filePath, $guestUser, $permissions = null) {
-		$guestUser = $this->prepareUserNameAsFrontend($guestUser);
+		$guestUser = \urldecode($this->prepareUserNameAsFrontend($guestUser));
 		$this->featureContext->shareFileWithUserUsingTheSharingApi(
 			$sharer, $filePath, $guestUser, $permissions, true
 		);
