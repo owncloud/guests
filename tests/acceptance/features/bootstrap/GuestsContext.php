@@ -229,7 +229,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$user, $source, $destination, $noOfChunks, $chunkingVersion, $async
 		);
 	}
-	
+
 	/**
 	 * @When /^user "([^"]*)" uploads file "([^"]*)" from the guests test data folder asynchronously to "([^"]*)" in (\d+) chunks using the WebDAV API$/
 	 *
@@ -247,7 +247,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$user, $source, $destination, $noOfChunks, "new", true
 		);
 	}
-	
+
 	/**
 	 * @param string $user
 	 * @param string $guestDisplayName
@@ -264,10 +264,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			= $this->featureContext->getBaseUrl() . '/index.php/apps/guests/users';
 		//Replicating frontend behaviour
 		$userName = $this->prepareUserNameAsFrontend($guestEmail);
-		$fullUrl
-			= $fullUrl
-			. "?displayName=$guestDisplayName&email=$userName&username=$userName";
-
+		$body = [
+			'displayName' => $guestDisplayName,
+			'userName' => $userName,
+			'email' => $guestEmail
+		];
 		$headers = [];
 		$headers['Content-Type'] = 'application/x-www-form-urlencoded';
 		$response = HttpRequestHelper::sendRequest(
@@ -275,7 +276,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			'PUT',
 			$user,
 			$this->featureContext->getPasswordForUser($user),
-			$headers
+			$headers,
+			$body
 		);
 
 		$this->featureContext->setResponse($response);
@@ -475,7 +477,6 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 
 		// The email address is the 2nd-last part of the URL
 		$email = $explodedFullRegisterUrl[$sizeOfExplodedFullRegisterUrl - 2];
-
 		// The token is the last part of the URL
 		$token = $explodedFullRegisterUrl[$sizeOfExplodedFullRegisterUrl - 1];
 		$registerUrl = \implode(
@@ -497,7 +498,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			'token' => $token,
 			'password' => $password
 		];
-		
+
 		$response = HttpRequestHelper::sendRequest(
 			$registerUrl,
 			'POST',
@@ -554,5 +555,28 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		// Get all the contexts you need in this context
 		$this->featureContext = $environment->getContext('FeatureContext');
 		$this->emailContext = $environment->getContext('EmailContext');
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" has shared (?:file|folder|entry) "([^"]*)" with guest user "([^"]*)"(?: with permissions (\d+))?$/
+	 *
+	 * @param string $sharer
+	 * @param string $filePath
+	 * @param string $guestUser
+	 * @param string|null $permissions
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function userHasSharedFolderWithGuestUser($sharer, $filePath, $guestUser, $permissions = null) {
+		$guestUser = \urldecode($this->prepareUserNameAsFrontend($guestUser));
+		$this->featureContext->shareFileWithUserUsingTheSharingApi(
+			$sharer, $filePath, $guestUser, $permissions, true
+		);
+		// this is expected to fail if a file is shared with create and delete permissions, which is not possible
+		Assert::assertTrue(
+			$this->featureContext->isUserOrGroupInSharedData($guestUser, "user", $permissions),
+			"User $sharer failed to share $filePath with user $guestUser"
+		);
 	}
 }
