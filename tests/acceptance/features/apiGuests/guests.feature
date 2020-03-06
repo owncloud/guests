@@ -14,7 +14,7 @@ Feature: Guests
     Examples:
       | email-address                  | user                 |
       | guest@example.com              | guest                |
-      | john.smith@email.com           | John.Smith           |
+      | John.Smith@email.com           | John.Smith           |
       | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
 
   Scenario: Cannot create a guest if a user with the same email address exists
@@ -49,7 +49,7 @@ Feature: Guests
     And the administrator has created guest user "<user>" with email "<email-address>"
     And the HTTP status code should be "201"
     And user "user0" has created folder "/tmp"
-    And user "user0" has shared folder "/tmp" with user "<email-address>"
+    And user "user0" has shared folder "/tmp" with guest user "<email-address>"
     And guest user "<user>" has registered
     When user "<email-address>" uploads file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt" using the WebDAV API
     Then the HTTP status code should be "201"
@@ -57,7 +57,7 @@ Feature: Guests
     Examples:
       | email-address                  | user                 |
       | guest@example.com              | guest                |
-      | john.smith@email.com           | John.Smith           |
+      | John.Smith@email.com           | John.Smith           |
       | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
 
   @mailhog
