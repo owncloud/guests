@@ -19,14 +19,14 @@ Furthermore guests are fully auditable with the [ownCloud Auditing application](
 - Video: [ownCloud X Insights: Guest Users](https://www.youtube.com/watch?v=L42PBHgqKVI)
 	</description>
 	<namespace>Guests</namespace>
-	<version>0.8.2</version>
+	<version>0.8.3</version>
 	<documentation>
     		<user>https://doc.owncloud.com/server/latest/user_manual/files/webgui/sharing.html?highlight=guest#sharing-files-with-guest-users</user>
     	</documentation>
 	<licence>GPLv2</licence>
 	<author>ownCloud GmbH</author>
 	<dependencies>
-		<owncloud min-version="10.3" max-version="10" />
+		<owncloud min-version="10.4" max-version="10" />
 	</dependencies>
 	<category>collaboration</category>
 	<types>
