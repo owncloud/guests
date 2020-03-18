@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - Set core min-version to 10.4 - [#402](https://github.com/owncloud/guests/issues/402)
-- Bump libraries [#403](https://github.com/owncloud/guests/issues/403)
+- Bump libraries - [#403](https://github.com/owncloud/guests/issues/403)
 
 ## [0.8.2] - 2019-08-14
 
