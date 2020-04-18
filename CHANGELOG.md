@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [0.8.3] - 2020-03-17
+## [Unreleased]
+
+## [0.9.0] - 2020-03-17
 
 ### Fixed
 
@@ -14,7 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - Set core min-version to 10.4 - [#402](https://github.com/owncloud/guests/issues/402)
-- Bump libraries [#403](https://github.com/owncloud/guests/issues/403)
+- Bump libraries - [#403](https://github.com/owncloud/guests/issues/403)
 
 ## [0.8.2] - 2019-08-14
 
@@ -167,7 +169,8 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
-[0.8.3]: https://github.com/owncloud/guests/compare/v0.8.2...v0.8.3
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.9.0...master
+[0.9.0]: https://github.com/owncloud/guests/compare/v0.8.2...v0.9.0
 [0.8.2]: https://github.com/owncloud/guests/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/owncloud/guests/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/owncloud/guests/compare/v0.7.0...v0.8.0
