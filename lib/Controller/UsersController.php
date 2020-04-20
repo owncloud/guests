@@ -163,8 +163,9 @@ class UsersController extends Controller {
 		}
 
 		$event = new GenericEvent();
-		/** @phan-suppress-next-line PhanTypeMismatchArgument */
-		$this->eventDispatcher->dispatch('OCP\User::createPassword', $event);
+
+		$this->eventDispatcher->dispatch($event, 'OCP\User::createPassword');
+
 		if ($event->hasArgument('password')) {
 			$password = $event->getArgument('password');
 		} else {
