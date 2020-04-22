@@ -49,6 +49,9 @@ config = {
 			'databases': [
 				'mysql:5.5', 'postgres:9.4', 'oracle'
 			],
+			'phpVersions': [
+				'7.4',
+			],
 			'emailNeeded': True
 		},
 		'api': {
@@ -57,6 +60,9 @@ config = {
 			],
 			'databases': [
 				'mysql:5.5', 'postgres:9.4', 'oracle'
+			],
+			'phpVersions': [
+				'7.4',
 			],
 			'emailNeeded': True
 		},
@@ -67,6 +73,9 @@ config = {
 			'databases': [
 				'mysql:5.5',
 			],
+			'phpVersions': [
+				'7.4',
+			],
 			'emailNeeded': True,
 			'scalityS3': True,
 		},
@@ -76,6 +85,9 @@ config = {
 			},
 			'databases': [
 				'mysql:5.5',
+			],
+			'phpVersions': [
+				'7.4',
 			],
 			'emailNeeded': True,
 			'cephS3': True,
@@ -1212,7 +1224,7 @@ def installCore(version, db, useBundledApp):
 		'image': 'owncloudci/core',
 		'pull': 'always',
 		'settings': {
-			'version': version,
+			'git_reference': 'php7.4-20200310',
 			'core_path': '/var/www/owncloud/server',
 			'db_type': dbType,
 			'db_name': database,
