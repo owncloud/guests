@@ -23,7 +23,6 @@
 namespace OCA\Guests\Controller;
 
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
@@ -34,7 +33,6 @@ use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Mail\IMailer;
 use OCP\Security\ISecureRandom;
-use OCP\Util;
 
 class RegisterController extends Controller {
 	/**

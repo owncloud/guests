@@ -111,6 +111,7 @@ class UsersController extends Controller {
 	 * @param string $displayName
 	 *
 	 * @return DataResponse
+	 * @throws \OCP\PreConditionNotMetException
 	 */
 	public function create($email, $displayName) {
 		$errorMessages = [];
@@ -162,6 +163,7 @@ class UsersController extends Controller {
 		}
 
 		$event = new GenericEvent();
+		/** @phan-suppress-next-line PhanTypeMismatchArgument */
 		$this->eventDispatcher->dispatch('OCP\User::createPassword', $event);
 		if ($event->hasArgument('password')) {
 			$password = $event->getArgument('password');
@@ -198,7 +200,7 @@ class UsersController extends Controller {
 			$username,
 			'guests',
 			'created',
-			\time()
+			\strval(\time())
 		);
 
 		$this->config->setUserValue(
