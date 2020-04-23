@@ -55,6 +55,10 @@ class Mail {
 
 	/** @var  IURLGenerator */
 	private $urlGenerator;
+	/**
+	 * @var IUserManager
+	 */
+	private $userManager;
 
 	public function __construct(
 		ILogger $logger,
