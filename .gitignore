@@ -16,3 +16,4 @@ vendor-bin/**/composer.lock
 # Tests - auto-generated files
 tests/output
 tests/acceptance/output*
+.phpunit.result.cache
