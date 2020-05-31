@@ -7,10 +7,10 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user sets its own password
-    Given user "user0" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
-    And user "user0" has created folder "/tmp"
-    And user "user0" has shared folder "/tmp" with user "guest@example.com"
+    And user "Alice" has created folder "/tmp"
+    And user "Alice" has shared folder "/tmp" with user "guest@example.com"
     When guest user "guest" registers and sets password to "password" using the webUI
     And user "guest@example.com" logs in using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
@@ -18,10 +18,10 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user uses the link twice
-    Given user "user0" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
-    And user "user0" has created folder "/tmp"
-    And user "user0" has shared folder "/tmp" with user "guest@example.com"
+    And user "Alice" has created folder "/tmp"
+    And user "Alice" has shared folder "/tmp" with user "guest@example.com"
     And guest user "guest" has registered
     When guest user "guest" registers and sets password to "secondpassword" using the webUI
     Then the user should be redirected to a webUI page with the title "%productname%"
@@ -29,8 +29,8 @@ Feature: Guests
 
   @mailhog @skipOnOcV10.2 @skipOnOcV10.3
   Scenario Outline: User uses valid email to create a guest user
-    Given user "user0" has been created with default attributes and skeleton files
-    And user "user0" has logged in using the webUI
+    Given user "Alice" has been created with default attributes and skeleton files
+    And user "Alice" has logged in using the webUI
     When the user shares file "data.zip" with guest user with email "<email-address>" using the webUI
     Then user "<email-address>" should exist
     Examples:
@@ -41,8 +41,8 @@ Feature: Guests
 
   @mailhog
   Scenario: User uses some random string email to create a guest user
-    Given user "user0" has been created with default attributes and skeleton files
-    And user "user0" has logged in using the webUI
+    Given user "Alice" has been created with default attributes and skeleton files
+    And user "Alice" has logged in using the webUI
     And the user has opened the share dialog for folder "lorem.txt"
     When the user types "somestring" in the share-with-field
     Then a tooltip with the text "No users or groups found for somestring" should be shown near the share-with-field on the webUI
@@ -51,8 +51,8 @@ Feature: Guests
 
   @mailhog @skipOnOcV10.2
   Scenario: User uses invalid email to create a guest user
-    Given user "user0" has been created with default attributes and skeleton files
-    And user "user0" has logged in using the webUI
+    Given user "Alice" has been created with default attributes and skeleton files
+    And user "Alice" has logged in using the webUI
     When the user shares file "testimage.jpg" with guest user with email "invalid@email.com()9876a" using the webUI
     Then dialog should be displayed on the webUI
       | title | content              |
@@ -63,18 +63,18 @@ Feature: Guests
   Scenario: User tries to create a guest user via email with an already used email
     Given these users have been created with skeleton files:
       | username | email        |
-      | user0    | user0@oc.com |
-      | user1    | user1@oc.com |
-    And user "user0" has logged in using the webUI
+      | Alice    | Alice@oc.com |
+      | Brian    | Brian@oc.com |
+    And user "Alice" has logged in using the webUI
     And the user has opened the share dialog for file "lorem.txt"
-    When the user types "user1@oc.com" in the share-with-field
-    Then user "user1" should be listed in the autocomplete list on the webUI
-    And user "user1@oc.com" should not be displayed in dropdown as guest user
+    When the user types "Brian@oc.com" in the share-with-field
+    Then user "Brian" should be listed in the autocomplete list on the webUI
+    And user "Brian@oc.com" should not be displayed in dropdown as guest user
 
   @mailhog @issue-329 @skipOnOcV10.2
   Scenario: User tries to create a guest user when a server email mode is not set
-    Given user "user1" has been created with default attributes and skeleton files
-    And user "user1" has logged in using the webUI
+    Given user "Brian" has been created with default attributes and skeleton files
+    And user "Brian" has logged in using the webUI
     When the administrator deletes system config key "mail_smtpmode" using the occ command
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
     Then dialog should be displayed on the webUI
@@ -98,8 +98,8 @@ Feature: Guests
 
   @mailhog @issue-329 @skipOnOcV10.2
   Scenario: User tries to create a guest user when a server email is invalid
-    Given user "user1" has been created with default attributes and skeleton files
-    And user "user1" has logged in using the webUI
+    Given user "Brian" has been created with default attributes and skeleton files
+    And user "Brian" has logged in using the webUI
     When the administrator adds system config key "mail_smtphost" with value "conkey" using the occ command
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
     Then dialog should be displayed on the webUI
@@ -119,8 +119,8 @@ Feature: Guests
 
   @mailhog @skipOnOcV10.2
   Scenario Outline: User creates a guest user with email that contains capital letters
-    Given user "user0" has been created with default attributes and skeleton files
-    And user "user0" has logged in using the webUI
+    Given user "Alice" has been created with default attributes and skeleton files
+    And user "Alice" has logged in using the webUI
     When the user shares file "data.zip" with guest user with email "<share-email>" using the webUI
     And the user logs out of the webUI
     And guest user "<share-email>" registers with email "<register-email>" and sets password to "password" using the webUI
@@ -137,17 +137,17 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user is not able to upload or create files
-    Given user "user0" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
-    And user "user0" has shared file "lorem.txt" with user "guest@example.com"
+    And user "Alice" has shared file "lorem.txt" with user "guest@example.com"
     When guest user "guest" registers and sets password to "password" using the webUI
     And user "guest@example.com" logs in using the webUI
     Then the user should not have permission to upload or create files
 
   @mailhog @skipOnOcV10.3
   Scenario Outline: Guest user is able to upload or create files inside the received share(with change permission)
-    Given user "user0" has been created with default attributes and skeleton files
-    And user "user0" has logged in using the webUI
+    Given user "Alice" has been created with default attributes and skeleton files
+    And user "Alice" has logged in using the webUI
     When the user shares folder "simple-folder" with guest user with email "<email-address>" using the webUI
     And the user logs out of the webUI
     And guest user "<email-address>" registers with email "<email-address>" and sets password to "password" using the webUI
@@ -155,7 +155,7 @@ Feature: Guests
     And the user opens folder "simple-folder" using the webUI
     And the user uploads file "new-lorem.txt" using the webUI
     Then file "new-lorem.txt" should be listed on the webUI
-    And as "user0" file "/simple-folder/new-lorem.txt" should exist
+    And as "Alice" file "/simple-folder/new-lorem.txt" should exist
     Examples:
       | email-address                  |
       | guest@example.com              |
@@ -164,10 +164,10 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user tries to upload or create files inside the received share(read only permission)
-    Given user "user0" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
-    And user "user0" has shared folder "simple-folder" with user "guest@example.com"
-    When user "user0" updates the last share using the sharing API with
+    And user "Alice" has shared folder "simple-folder" with user "guest@example.com"
+    When user "Alice" updates the last share using the sharing API with
       | permissions | read |
     And guest user "guest" registers and sets password to "password" using the webUI
     And user "guest@example.com" logs in using the webUI
