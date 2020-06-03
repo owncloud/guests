@@ -181,6 +181,6 @@ Feature: Guests
     And the administrator has browsed to the users page
     When the administrator creates a user with the name "regularUser" and the email "guest@example.com" without a password using the webUI
     Then the administrator should be able to see the email of these users in the User Management page:
-      | username    | email             |
-      | regularUser | guest@example.com |
+      | username    |
+      | regularUser |
     And the email address of user "regularUser" should be "guest@example.com"
