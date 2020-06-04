@@ -83,8 +83,8 @@ class Mail {
 	 * a password set, yet.
 	 *
 	 * @param Share\IShare $share
-	 * @param $uid
-	 * @param $token
+	 * @param string $uid
+	 * @param string $token
 	 *
 	 * @throws \Exception
 	 */

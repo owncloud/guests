@@ -11,6 +11,8 @@ config = {
 
 	'codestyle': True,
 
+	'phpstan': True,
+
 	'javascript': True,
 
 	'phan': True,

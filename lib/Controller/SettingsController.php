@@ -84,13 +84,12 @@ class SettingsController extends Controller {
 	/**
 	 * AJAX handler for setting the config
 	 *
-	 * @param $conditions string[]
-	 * @param $group string
-	 * @param $useWhitelist bool
-	 * @param $whitelist string[]
+	 * @param string $group
+	 * @param string $useWhitelist
+	 * @param string[] $whitelist
 	 * @return DataResponse
 	 */
-	public function setConfig($conditions, $group, $useWhitelist, $whitelist) {
+	public function setConfig($group, $useWhitelist, $whitelist) {
 		if (empty($group)) {
 			return new DataResponse([
 				'status' => 'error',
