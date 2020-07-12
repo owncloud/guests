@@ -13,6 +13,7 @@
     "Group name must not be empty." : "Gruppenavnet kan ikke være tomt. ",
     "Saved" : "Lagret",
     "A username with that email already exists." : "Det eksisterer allerede en bruker med den e-postadressen. ",
+    "A guest user can not create other guest users." : "Gjestebruker kan ikke opprette andre gjestebrukere",
     "User successfully created" : "Bruker oppdattet",
     "%s shared »%s« with you" : "%s delte »%s« med deg",
     "%s via %s" : "%s via %s",
