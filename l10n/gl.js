@@ -11,7 +11,7 @@ OC.L10N.register(
     "Access to this resource is forbidden for guests." : "Os convidados non teñen permitido acceder a este recurso.",
     "Invalid mail address" : "Enderezo de correo incorrecto",
     "No such guest user" : "Non existe o usuario convidado",
-    "The token is invalid" : "A marca non é válida.",
+    "The token is invalid" : "O testemuño non é válido.",
     "Password cannot be empty" : "O ontrasinal non pode quedar baleiro.",
     "Group name must not be empty." : "O nome de grupo non debe estar baleiro",
     "Saved" : "Gardado",
