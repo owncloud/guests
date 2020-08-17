@@ -6,7 +6,7 @@ config = {
 	},
 
 	'branches': [
-		'master'
+		'waitForAjaxCall'
 	],
 
 	'codestyle': True,
@@ -43,15 +43,6 @@ config = {
 			'browsers': [
 				'chrome',
 				'firefox'
-			],
-			'databases': [
-				'mysql:5.5', 'postgres:9.4', 'oracle'
-			],
-			'emailNeeded': True
-		},
-		'api': {
-			'suites': [
-				'apiGuests'
 			],
 			'databases': [
 				'mysql:5.5', 'postgres:9.4', 'oracle'
@@ -1232,7 +1223,7 @@ def installTestrunner(phpVersion, useBundledApp):
 		'pull': 'always',
 		'commands': [
 			'mkdir /tmp/testrunner',
-			'git clone -b master --depth=1 https://github.com/owncloud/core.git /tmp/testrunner',
+			'git clone -b waitForAjaxCall --depth=1 https://github.com/owncloud/core.git /tmp/testrunner',
 			'rsync -aIX /tmp/testrunner /var/www/owncloud',
 		] + ([
 			'cp -r /var/www/owncloud/testrunner/apps/%s /var/www/owncloud/server/apps/' % config['app']
