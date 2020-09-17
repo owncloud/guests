@@ -32,6 +32,8 @@ default:
         - FeatureContext: *common_feature_context_params
 
   extensions:
-      jarnaiz\JUnitFormatter\JUnitFormatterExtension:
-          filename: report.xml
-          outputDir: '%paths.base%/../output/'
+    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
+      filename: report.xml
+      outputDir: '%paths.base%/../output/'
+
+    Cjm\Behat\StepThroughExtension: ~
