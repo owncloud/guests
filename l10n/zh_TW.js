@@ -10,6 +10,7 @@ OC.L10N.register(
     "Error loading activities" : "載入活動時發生錯誤",
     "Access to this resource is forbidden for guests." : "禁止來賓訪問此資源。",
     "Invalid mail address" : "無效的 email 地址",
+    "Group name must not be empty." : "群組名稱不能為空。",
     "Saved" : "已儲存",
     "A guest user can not create other guest users." : "訪客使用者不能建立其他訪客用戶。",
     "User successfully created" : "使用者創建成功",
