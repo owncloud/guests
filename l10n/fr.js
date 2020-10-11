@@ -15,6 +15,7 @@ OC.L10N.register(
     "Group name must not be empty." : "Le nom de groupe ne peut être vide",
     "Saved" : "Enregistré",
     "A username with that email already exists." : "Un nom d'utilisateur avec cette adresse mail existe déja.",
+    "A guest user can not create other guest users." : "Un utilisateur invité ne peut pas créer d'autres utilisateurs invités. ",
     "User successfully created" : "Utilisateur créé avec succès",
     "%s shared »%s« with you" : "%s a partagé «%s» avec vous",
     "%s via %s" : "%s via %s",
