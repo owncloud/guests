@@ -30,7 +30,7 @@ OC.L10N.register(
     "Hey there,<br><br>\n         \n         just letting you know that %s shared <strong>%s</strong> with you.<br><br>\n         Activate your guest account at %s by <a href=\"%s\">setting a password</a>.<br><br>\n         Then <a href=\"%s\">view it!</a><br><br>You can login using the email address <strong>\"%s\"</strong> .<br><br>" : "Boas,<br><br>\n         \n         só para facerlle saber que %s compartiu <strong>%s</strong> con vostede.<br><br>\n         Active a súa conta de convidado en %s <a href=\"%s\">estabelecendo un contrasinal</a>.<br><br>\n         Entón <a href=\"%s\">véxao!</a><br><br>Pode acceder empregando o enderezo de correo <strong>«%s»</strong> .<br><br>",
     "Guest users are grouped under a virtual group in the user manager" : "Os usuarios convidados agrúpanse baixo un grupo virtual no xestor de usuarios",
     "Group name" : "Nome do grupo",
-    "Limit guest access to an app whitelist" : "Limitar o acceso dos convidados a unha lista branca de aplicacións",
-    "Reset whitelist" : "Restabelecer a lista branca"
+    "Limit guest access to an app whitelist" : "Limitar o acceso dos convidados a unha lista de autorización de aplicacións",
+    "Reset whitelist" : "Restabelecer a lista de autorización"
 },
 "nplurals=2; plural=(n != 1);");
