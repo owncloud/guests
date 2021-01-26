@@ -20,3 +20,6 @@ tests/acceptance/output*
 
 # SonarCloud scanner
 .scannerwork
+
+# Generated from .drone.star
+.drone.yml
