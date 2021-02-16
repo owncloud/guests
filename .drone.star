@@ -45,7 +45,7 @@ config = {
 				'firefox'
 			],
 			'databases': [
-				'mysql:5.5', 'postgres:9.4', 'oracle'
+				'mysql:8.0', 'postgres:9.4', 'oracle'
 			],
 			'emailNeeded': True
 		},
@@ -54,7 +54,7 @@ config = {
 				'apiGuests'
 			],
 			'databases': [
-				'mysql:5.5', 'postgres:9.4', 'oracle'
+				'mysql:8.0', 'postgres:9.4', 'oracle'
 			],
 			'emailNeeded': True
 		},
@@ -63,7 +63,7 @@ config = {
 				'apiGuests': 'apiGuestsScality',
 			},
 			'databases': [
-				'mysql:5.5',
+				'mysql:8.0',
 			],
 			'emailNeeded': True,
 			'scalityS3': True,
@@ -73,7 +73,7 @@ config = {
 				'apiGuests': 'apiGuestsCeph',
 			},
 			'databases': [
-				'mysql:5.5',
+				'mysql:8.0',
 			],
 			'emailNeeded': True,
 			'cephS3': True,
