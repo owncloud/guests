@@ -7,7 +7,7 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user sets its own password
-    Given user "Alice" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has created folder "/tmp"
     And user "Alice" has shared folder "/tmp" with user "guest@example.com"
@@ -18,7 +18,7 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user uses the link twice
-    Given user "Alice" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has created folder "/tmp"
     And user "Alice" has shared folder "/tmp" with user "guest@example.com"
@@ -29,7 +29,7 @@ Feature: Guests
 
   @mailhog @skipOnOcV10.2 @skipOnOcV10.3
   Scenario Outline: User uses valid email to create a guest user
-    Given user "Alice" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and large skeleton files
     And user "Alice" has logged in using the webUI
     When the user shares file "data.zip" with guest user with email "<email-address>" using the webUI
     Then user "<email-address>" should exist
@@ -41,7 +41,7 @@ Feature: Guests
 
   @mailhog
   Scenario: User uses some random string email to create a guest user
-    Given user "Alice" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and large skeleton files
     And user "Alice" has logged in using the webUI
     And the user has opened the share dialog for folder "lorem.txt"
     When the user types "somestring" in the share-with-field
@@ -51,7 +51,7 @@ Feature: Guests
 
   @mailhog @skipOnOcV10.2
   Scenario: User uses invalid email to create a guest user
-    Given user "Alice" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and large skeleton files
     And user "Alice" has logged in using the webUI
     When the user shares file "testimage.jpg" with guest user with email "invalid@email.com()9876a" using the webUI
     Then dialog should be displayed on the webUI
@@ -61,7 +61,7 @@ Feature: Guests
 
   @mailhog @skipOnOcV10.2
   Scenario: User tries to create a guest user via email with an already used email
-    Given these users have been created with skeleton files:
+    Given these users have been created with large skeleton files:
       | username | email        |
       | Alice    | Alice@oc.com |
       | Brian    | Brian@oc.com |
@@ -73,7 +73,7 @@ Feature: Guests
 
   @mailhog @issue-329 @skipOnOcV10.2
   Scenario: User tries to create a guest user when a server email mode is not set
-    Given user "Brian" has been created with default attributes and skeleton files
+    Given user "Brian" has been created with default attributes and large skeleton files
     And user "Brian" has logged in using the webUI
     When the administrator deletes system config key "mail_smtpmode" using the occ command
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
@@ -98,7 +98,7 @@ Feature: Guests
 
   @mailhog @issue-329 @skipOnOcV10.2
   Scenario: User tries to create a guest user when a server email is invalid
-    Given user "Brian" has been created with default attributes and skeleton files
+    Given user "Brian" has been created with default attributes and large skeleton files
     And user "Brian" has logged in using the webUI
     When the administrator adds system config key "mail_smtphost" with value "conkey" using the occ command
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
@@ -119,7 +119,7 @@ Feature: Guests
 
   @mailhog @skipOnOcV10.2
   Scenario Outline: User creates a guest user with email that contains capital letters
-    Given user "Alice" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and large skeleton files
     And user "Alice" has logged in using the webUI
     When the user shares file "data.zip" with guest user with email "<share-email>" using the webUI
     And the user logs out of the webUI
@@ -137,7 +137,7 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user is not able to upload or create files
-    Given user "Alice" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and large skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has shared file "lorem.txt" with user "guest@example.com"
     When guest user "guest" registers and sets password to "password" using the webUI
@@ -146,7 +146,7 @@ Feature: Guests
 
   @mailhog @skipOnOcV10.3
   Scenario Outline: Guest user is able to upload or create files inside the received share(with change permission)
-    Given user "Alice" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and large skeleton files
     And user "Alice" has logged in using the webUI
     When the user shares folder "simple-folder" with guest user with email "<email-address>" using the webUI
     And the user logs out of the webUI
@@ -164,7 +164,7 @@ Feature: Guests
 
   @mailhog
   Scenario: Guest user tries to upload or create files inside the received share(read only permission)
-    Given user "Alice" has been created with default attributes and skeleton files
+    Given user "Alice" has been created with default attributes and large skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has shared folder "simple-folder" with user "guest@example.com"
     When user "Alice" updates the last share using the sharing API with
