@@ -117,6 +117,7 @@ class Application extends App {
 				'OCA\Files::loadAdditionalScripts',
 				function () {
 					\OCP\Util::addScript(self::APP_NAME, 'guestshare');
+					\OCP\Util::addStyle(self::APP_NAME, 'guests');
 				}
 			);
 			$this->registerPostShareHook();
