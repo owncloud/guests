@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [0.9.1] - 2021-04-14
+
+### Changed 
+
+- Whitelist files_lifecycle app - [#243](https://github.com/owncloud/files_lifecycle/issues/243#issuecomment-675951947)
+- Check whether we should also add windows_network_drive - [#4074](https://github.com/owncloud/enterprise/issues/4074#issuecomment-686296482)
+
 
 ## [0.9.0] - 2020-03-17
 
