@@ -16,7 +16,7 @@
     "A username with that email already exists." : "Nazwa użytkownika z tym e-mailem już istnieje.",
     "A guest user can not create other guest users." : "Użytkownik gościa nie może tworzyć innych użytkowników gościa.",
     "User successfully created" : "Stworzono nowego uytkownika",
-    "%s shared »%s« with you" : "%s Współdzielone »%s« z tobą",
+    "%s shared »%s« with you" : "%s udostępnił Ci plik/folder »%s« ",
     "%s via %s" : "%s przez %s",
     "Couldn't send reset email. Please contact your administrator." : "Nie mogę wysłać maila resetującego. Skontaktuj się z administratorem.",
     "Email" : "Email",
