@@ -140,6 +140,7 @@ class Mail {
 
 			$this->mailer->send($message);
 		} catch (\Exception $e) {
+			$this->logger->error("Failed to send reset email: " . $e->getMessage(), ['app' => 'guests']);
 			throw new \Exception($this->l10n->t(
 				'Couldn\'t send reset email. Please contact your administrator.'
 			));
