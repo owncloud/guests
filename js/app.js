@@ -39,6 +39,10 @@
 		if (OCA.Guests.updateNavigation) {
 			OCA.Guests.updateNavigation();
 		}
+
+		$('#body-login form').on('submit', function(e) {
+			$(this).find('button[type="submit"]').addClass('icon-loading-small');
+		});
 	});
 
 })();
