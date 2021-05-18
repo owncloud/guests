@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased] - XXXX-XX-XX
 
+### Changed
 
+- adapt new login form design - [#446](https://github.com/owncloud/guests/pull/446)
 
 ## [0.9.2] - 2021-07-29
 
@@ -20,7 +22,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Whitelist files_lifecycle app - [#243](https://github.com/owncloud/files_lifecycle/issues/243#issuecomment-675951947)
 - Check whether we should also add windows_network_drive - [#4074](https://github.com/owncloud/enterprise/issues/4074#issuecomment-686296482)
-
 
 ## [0.9.0] - 2020-03-17
 
