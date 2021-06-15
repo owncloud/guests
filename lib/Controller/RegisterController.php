@@ -157,7 +157,10 @@ class RegisterController extends Controller {
 			$this->urlGenerator->linkToRouteAbsolute('guests.register.register');
 
 		return new TemplateResponse(
-			$this->appName, 'form.password', $parameters, 'guest'
+			$this->appName,
+			'form.password',
+			$parameters,
+			'guest'
 		);
 	}
 
@@ -209,7 +212,10 @@ class RegisterController extends Controller {
 
 		if (!empty($parameters['messages'])) {
 			return new TemplateResponse(
-				$this->appName, 'form.password', $parameters, 'guest'
+				$this->appName,
+				'form.password',
+				$parameters,
+				'guest'
 			);
 		}
 
@@ -223,7 +229,10 @@ class RegisterController extends Controller {
 			$parameters['postAction'] =
 				$this->urlGenerator->linkToRouteAbsolute('guests.register.register');
 			return new TemplateResponse(
-				$this->appName, 'form.password', $parameters, 'guest'
+				$this->appName,
+				'form.password',
+				$parameters,
+				'guest'
 			);
 		}
 

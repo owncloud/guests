@@ -34,7 +34,7 @@ use OCP\IConfig;
  * @package OCA\Guests
  */
 class GroupBackend implements GroupInterface {
-	const DEFAULT_NAME = 'guest_app';
+	public const DEFAULT_NAME = 'guest_app';
 
 	/**
 	 * @var array
