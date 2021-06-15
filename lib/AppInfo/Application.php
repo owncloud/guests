@@ -33,7 +33,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @package OCA\Guests\AppInfo
  */
 class Application extends App {
-	const APP_NAME = 'guests';
+	public const APP_NAME = 'guests';
 
 	/**
 	 * Application constructor

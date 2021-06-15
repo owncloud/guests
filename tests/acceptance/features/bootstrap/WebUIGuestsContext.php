@@ -145,7 +145,9 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 		$sharingDialog = $this->filesPage->getSharingDialog();
 		$userAddDialog = \sprintf($this->userAddDialogBoxFramework, $email);
 		$sharingDialog->shareWithUserOrGroup(
-			$email, $userAddDialog, $this->getSession()
+			$email,
+			$userAddDialog,
+			$this->getSession()
 		);
 		$this->featureContext->addUserToCreatedUsersList($email, null);
 		$this->guestsContext->addToCreatedGuestsList($email, $email);

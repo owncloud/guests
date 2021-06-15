@@ -138,7 +138,9 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userUploadsFileFromGuestsDataFolder(
-		$user, $source, $destination
+		$user,
+		$source,
+		$destination
 	) {
 		$source = $this->getRelativePathToTestDataFolder() . $source;
 		$this->featureContext->userUploadsAFileTo($user, $source, $destination);
@@ -154,10 +156,14 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userHasUploadedFileFromGuestsDataFolderTo(
-		$user, $source, $destination
+		$user,
+		$source,
+		$destination
 	) {
 		$this->userUploadsFileFromGuestsDataFolder(
-			$user, $source, $destination
+			$user,
+			$source,
+			$destination
 		);
 		$this->featureContext->theHTTPStatusCodeShouldBeSuccess();
 	}
@@ -172,10 +178,14 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userUploadsFileFromGuestsDataFolderTo(
-		$user, $source, $destination
+		$user,
+		$source,
+		$destination
 	) {
 		$this->userUploadsFileFromGuestsDataFolder(
-			$user, $source, $destination
+			$user,
+			$source,
+			$destination
 		);
 	}
 
@@ -192,14 +202,18 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @throws Exception
 	 */
 	public function userUploadsAFileToWithAllMechanisms(
-		$user, $source, $destination
+		$user,
+		$source,
+		$destination
 	) {
 		$source = $this->getRelativePathToTestDataFolder() . $source;
 		$uploadResponses = UploadHelper::uploadWithAllMechanisms(
 			$this->featureContext->getBaseUrl(),
 			$this->featureContext->getActualUsername($user),
-			$this->featureContext->getUserPassword($user), $source,
-			$destination, true
+			$this->featureContext->getUserPassword($user),
+			$source,
+			$destination,
+			true
 		);
 		$this->featureContext->setUploadResponses($uploadResponses);
 	}
@@ -226,7 +240,12 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	) {
 		$source = $this->getRelativePathToTestDataFolder() . $source;
 		$this->featureContext->userUploadsAFileToWithChunks(
-			$user, $source, $destination, $noOfChunks, $chunkingVersion, $async
+			$user,
+			$source,
+			$destination,
+			$noOfChunks,
+			$chunkingVersion,
+			$async
 		);
 	}
 
@@ -241,10 +260,18 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userUploadsAFileAsyncToWithChunks(
-		$user, $source, $destination, $noOfChunks = 2
+		$user,
+		$source,
+		$destination,
+		$noOfChunks = 2
 	) {
 		$this->userUploadsAFileToWithChunks(
-			$user, $source, $destination, $noOfChunks, "new", true
+			$user,
+			$source,
+			$destination,
+			$noOfChunks,
+			"new",
+			true
 		);
 	}
 
@@ -257,7 +284,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userCreatesAGuestUser(
-		$user, $guestDisplayName, $guestEmail, $shouldExist
+		$user,
+		$guestDisplayName,
+		$guestEmail,
+		$shouldExist
 	) {
 		$user = $this->featureContext->getActualUsername($user);
 		$fullUrl
@@ -309,10 +339,15 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userCreatesAGuestUserWithEmail(
-		$user, $guestDisplayName, $guestEmail
+		$user,
+		$guestDisplayName,
+		$guestEmail
 	) {
 		$this->userCreatesAGuestUser(
-			$user, $guestDisplayName, $guestEmail, true
+			$user,
+			$guestDisplayName,
+			$guestEmail,
+			true
 		);
 	}
 
@@ -327,12 +362,18 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userHasCreatedAGuestUserWithEmail(
-		$user, $attemptTo, $guestDisplayName, $guestEmail
+		$user,
+		$attemptTo,
+		$guestDisplayName,
+		$guestEmail
 	) {
 		$shouldExist
 			= ($attemptTo == "creates");
 		$this->userCreatesAGuestUser(
-			$user, $guestDisplayName, $guestEmail, $shouldExist
+			$user,
+			$guestDisplayName,
+			$guestEmail,
+			$shouldExist
 		);
 	}
 
@@ -345,7 +386,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function theAdministratorHasCreatedAGuestUser(
-		$guestDisplayName, $guestEmail
+		$guestDisplayName,
+		$guestEmail
 	) {
 		$this->userCreatesAGuestUser(
 			$this->featureContext->getAdminUsername(),
@@ -365,7 +407,9 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function theAdministratorCreatesAGuestUser(
-		$attemptTo, $guestDisplayName, $guestEmail
+		$attemptTo,
+		$guestDisplayName,
+		$guestEmail
 	) {
 		$shouldExist
 			= ($attemptTo == "creates");
@@ -571,7 +615,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	public function userHasSharedFolderWithGuestUser($sharer, $filePath, $guestUser, $permissions = null) {
 		$guestUser = \urldecode($this->prepareUserNameAsFrontend($guestUser));
 		$this->featureContext->shareFileWithUserUsingTheSharingApi(
-			$sharer, $filePath, $guestUser, $permissions, true
+			$sharer,
+			$filePath,
+			$guestUser,
+			$permissions,
+			true
 		);
 		// this is expected to fail if a file is shared with create and delete permissions, which is not possible
 		Assert::assertTrue(

@@ -148,7 +148,10 @@ class UsersController extends Controller {
 
 		$uid = $this->currentUser->getUser()->getUID();
 		$isGuest = (bool) $this->config->getUserValue(
-			$uid, 'owncloud', 'isGuest', false
+			$uid,
+			'owncloud',
+			'isGuest',
+			false
 		);
 
 		if ($isGuest) {

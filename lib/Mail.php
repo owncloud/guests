@@ -113,11 +113,18 @@ class Mail {
 		}
 
 		$link = $this->urlGenerator->linkToRouteAbsolute(
-			'files.viewcontroller.showFile', ['fileId' => $share->getNode()->getId()]
+			'files.viewcontroller.showFile',
+			['fileId' => $share->getNode()->getId()]
 		);
 
 		list($htmlBody, $textBody) = $this->createMailBody(
-			$filename, $link, $registerLink, $this->defaults->getName(), $senderDisplayName, $expiration, $shareWithEmail
+			$filename,
+			$link,
+			$registerLink,
+			$this->defaults->getName(),
+			$senderDisplayName,
+			$expiration,
+			$shareWithEmail
 		);
 
 		try {

@@ -39,7 +39,7 @@ use Test\TestCase;
  * @package OCA\Guests\Tests\Unit
  */
 class HooksTest extends TestCase {
-	const GUEST_UID = 'me@example.org';
+	public const GUEST_UID = 'me@example.org';
 
 	/**
 	 * @var ILogger | \PHPUnit\Framework\MockObject\MockObject
@@ -72,7 +72,10 @@ class HooksTest extends TestCase {
 		$this->mail = $this->createMock(Mail::class);
 		$this->config = $this->createMock(IConfig::class);
 		$this->hooks = new Hooks(
-			$this->logger, $this->userSession, $this->mail, $this->config
+			$this->logger,
+			$this->userSession,
+			$this->mail,
+			$this->config
 		);
 	}
 
