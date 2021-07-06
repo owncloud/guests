@@ -216,6 +216,9 @@ class UsersController extends Controller {
 
 		return new DataResponse(
 			[
+				'userid' => $user->getUID(),
+				'displayname' => $user->getDisplayName(),
+				'email' => $user->getEMailAddress(),
 				'message' => (string)$this->l10n->t(
 					'User successfully created'
 				)

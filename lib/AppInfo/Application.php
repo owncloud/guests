@@ -22,6 +22,7 @@
 
 namespace OCA\Guests\AppInfo;
 
+use OCA\Guests\Capabilities;
 use OCA\Guests\Hooks;
 use OCA\Guests\Mail;
 use OCP\AppFramework\App;
@@ -68,6 +69,10 @@ class Application extends App {
 				);
 			}
 		);
+		$container->registerService('Capabilities', function () {
+			return new Capabilities();
+		});
+		$container->registerCapability('Capabilities');
 	}
 
 	/**
