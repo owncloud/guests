@@ -29,7 +29,6 @@ use OCP\Capabilities\ICapability;
  * @package OCA\PasswordPolicy
  */
 class Capabilities implements ICapability {
-
 	public function getCapabilities() {
 		return [
 			'guests_v1' =>
