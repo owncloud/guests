@@ -101,11 +101,15 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	private function setCSRFDotDisabledFromGuestsScenario($setting) {
 		$oldCSRFSetting = SetupHelper::runOcc(
-			['config:system:get', 'csrf.disabled']
+			['config:system:get', 'csrf.disabled'],
+			$this->featureContext->getStepLineRef()
 		)['stdOut'];
 
 		if ($setting === "") {
-			SetupHelper::runOcc(['config:system:delete', 'csrf.disabled']);
+			SetupHelper::runOcc(
+				['config:system:delete', 'csrf.disabled'],
+				$this->featureContext->getStepLineRef()
+			);
 		} elseif ($setting !== null) {
 			SetupHelper::runOcc(
 				[
@@ -115,7 +119,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 					'boolean',
 					'--value',
 					$setting
-				]
+				],
+				$this->featureContext->getStepLineRef()
 			);
 		}
 		return \trim($oldCSRFSetting);
@@ -213,6 +218,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->featureContext->getUserPassword($user),
 			$source,
 			$destination,
+			$this->featureContext->getStepLineRef(),
 			true
 		);
 		$this->featureContext->setUploadResponses($uploadResponses);
@@ -303,6 +309,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$headers['Content-Type'] = 'application/x-www-form-urlencoded';
 		$response = HttpRequestHelper::sendRequest(
 			$fullUrl,
+			$this->featureContext->getStepLineRef(),
 			'PUT',
 			$user,
 			$this->featureContext->getPasswordForUser($user),
@@ -500,7 +507,8 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	public function getRegistrationUrl($address) {
 		$lastEmailBody = EmailHelper::getBodyOfLastEmail(
 			$this->emailContext->getLocalMailhogUrl(),
-			$address
+			$address,
+			$this->featureContext->getStepLineRef()
 		);
 		return $this->extractRegisterUrl($lastEmailBody);
 	}
@@ -545,6 +553,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 
 		$response = HttpRequestHelper::sendRequest(
 			$registerUrl,
+			$this->featureContext->getStepLineRef(),
 			'POST',
 			null,
 			null,
