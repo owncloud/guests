@@ -2,9 +2,6 @@ SHELL := /bin/bash
 
 
 COMPOSER_BIN := $(shell command -v composer 2> /dev/null)
-ifndef COMPOSER_BIN
-    $(error composer is not available on your system, please install composer)
-endif
 
 YARN := $(shell command -v yarn 2> /dev/null)
 NODE_PREFIX=$(shell pwd)
