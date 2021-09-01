@@ -21,32 +21,34 @@
  */
 ?>
 <div>
-<form action="<?php p($_['postAction']); ?>" name="register" method="post">
-	<fieldset>
+	<form action="<?php p($_['postAction']); ?>" name="register" method="post">
 		<?php foreach($_['messages'] as $message): ?>
 			<div class="warning">
 				<?php p($message); ?><br>
 			</div>
 		<?php endforeach; ?>
-		<p class="grouptop<?php if (!empty($_['invalidpassword'])) { ?> shake<?php } ?>">
+		<div class="grouptop<?php if (!empty($_['invalidpassword'])) { ?> shake<?php } ?>">
+			<label for="email"><?php p($l->t('Email')); ?></label>
 			<input type="text" name="email" id="email"
-				placeholder="<?php p($l->t('Email')); ?>"
-				value="<?php p($_['email']); ?>"
-				autocomplete="off" autocapitalize="off" autocorrect="off" required>
-			<label for="email" class="infield"><?php p($l->t('Email')); ?></label>
-		</p>
+					value="<?php p($_['email']); ?>"
+					autocomplete="off" autocapitalize="off" autocorrect="off" required>
+				
+		</div>
 
-		<p class="groupbottom<?php if (!empty($_['invalidpassword'])) { ?> shake<?php } ?>">
-			<input type="password" name="password" id="password" value=""
-				placeholder="<?php p($l->t('Password')); ?>"
+		<div class="groupbottom<?php if (!empty($_['invalidpassword'])) { ?> shake<?php } ?>">
+		<label for="password"><?php p($l->t('Password')); ?></label>
+		<input type="password" name="password" id="password" value=""
 				autocomplete="off" autocapitalize="off" autocorrect="off" required autofocus>
-			<label for="password" class="infield"><?php p($l->t('Password')); ?></label>
-		</p>
-		<div class="buttons">
-			<input type="submit" id="submit" value="<?php p($l->t('Set password')); ?>"/>
+			
+		</div>
+		<div class="submit-wrap">
+			<button type="submit" id="submit" class="login-button">
+				<span><?php p($l->t('Set password')); ?></span>
+				<div class="loading-spinner"><div></div><div></div><div></div><div></div></div>
+			</button>
+
 			<input type="hidden" name="token" value="<?php p($_['token']) ?>">
 			<input type="hidden" name="requesttoken" value="<?php p($_['requesttoken']) ?>">
 		</div>
-	</fieldset>
-</form>
+	</form>
 </div>
