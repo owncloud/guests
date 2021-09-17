@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased] - XXXX-XX-XX
 
+## [0.9.3] - 2021-08-09
+
 ### Changed
 
 - adapt new login form design - [#446](https://github.com/owncloud/guests/pull/446)
@@ -186,7 +188,8 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
-[Unreleased]: https://github.com/owncloud/guests/compare/v0.9.2...master
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.9.3...master
+[0.9.3]: https://github.com/owncloud/guests/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/owncloud/guests/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/owncloud/guests/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/owncloud/guests/compare/v0.8.2...v0.9.0
