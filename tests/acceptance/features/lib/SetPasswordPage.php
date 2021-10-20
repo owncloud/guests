@@ -47,7 +47,7 @@ class SetPasswordPage extends OwncloudPage {
 	 * @return void
 	 * @throws ElementNotFoundException
 	 */
-	public function setThePassword($newPassword) {
+	public function setThePassword(string $newPassword): void {
 		$this->fillField($this->passwordInputId, $newPassword);
 		$submitButton = $this->findById($this->submitLoginId);
 		$this->assertElementNotNull(
@@ -64,14 +64,14 @@ class SetPasswordPage extends OwncloudPage {
 	 * @return void
 	 * @throws ElementNotFoundException
 	 */
-	public function setTheEmail($newEmail) {
+	public function setTheEmail(string $newEmail): void {
 		$this->fillField($this->emailInputId, $newEmail);
 	}
 	/**
 	 *
 	 * @return NodeElement[]
 	 */
-	public function getWarningMessages() {
+	public function getWarningMessages(): array {
 		return $this->findAll("xpath", $this->warningMessagesXpath);
 	}
 
@@ -87,8 +87,8 @@ class SetPasswordPage extends OwncloudPage {
 	 */
 	public function waitTillPageIsLoaded(
 		Session $session,
-		$timeout_msec = STANDARD_UI_WAIT_TIMEOUT_MILLISEC
-	) {
+		int $timeout_msec = STANDARD_UI_WAIT_TIMEOUT_MILLISEC
+	): void {
 		$currentTime = \microtime(true);
 		$end = $currentTime + ($timeout_msec / 1000);
 		while ($currentTime <= $end) {

@@ -96,7 +96,11 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function guestUserRegistersWithEmailAndSetsPasswordToUsingTheWebUI($guestDisplayName, $guestEmail, $password) {
+	public function guestUserRegistersWithEmailAndSetsPasswordToUsingTheWebUI(
+		string $guestDisplayName,
+		string $guestEmail,
+		string $password
+	): void {
 		$userName = $this->guestsContext->getCreatedGuests()[$guestDisplayName];
 		$fullRegisterUrl = $this->guestsContext->getRegistrationUrl($userName);
 		$session = $this->getSession();
@@ -118,7 +122,10 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function guestUserRegistersUsingWebUI($guestDisplayName, $password) {
+	public function guestUserRegistersUsingWebUI(
+		string $guestDisplayName,
+		string $password
+	): void {
 		$userName = $this->guestsContext->prepareUserNameAsFrontend(
 			$this->guestsContext->getCreatedGuests()[$guestDisplayName]
 		);
@@ -140,7 +147,10 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 *
 	 * @return void
 	 */
-	public function theUserSharesFileWithGuestUserWithEmailUsingWebUI($fileName, $email) {
+	public function theUserSharesFileWithGuestUserWithEmailUsingWebUI(
+		string $fileName,
+		string $email
+	): void {
 		$this->filesPage->openSharingDialog($fileName, $this->getSession());
 		$sharingDialog = $this->filesPage->getSharingDialog();
 		$userAddDialog = \sprintf($this->userAddDialogBoxFramework, $email);
@@ -160,7 +170,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 *
 	 * @return void
 	 */
-	public function userShouldNotBeDisplayedInTheDropdownAsGuestUser($user) {
+	public function userShouldNotBeDisplayedInTheDropdownAsGuestUser(string $user): void {
 		$sharingDialog = $this->filesPage->getSharingDialog();
 		$arrayList = $sharingDialog->getAutoCompleteItemsList();
 		$userAddDialog = \sprintf($this->userAddDialogBoxFramework, $user);
@@ -178,7 +188,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 *
 	 * @return void
 	 */
-	public function assertWarningMessage($expectedMessage) {
+	public function assertWarningMessage(string $expectedMessage): void {
 		foreach ($this->setPasswordPage->getWarningMessages() as $message) {
 			if ($message->getText() === $expectedMessage) {
 				return;
@@ -199,7 +209,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 *
 	 * @return void
 	 */
-	public function before(BeforeScenarioScope $scope) {
+	public function before(BeforeScenarioScope $scope): void {
 		// Get the environment
 		$environment = $scope->getEnvironment();
 		// Get all the contexts you need in this context

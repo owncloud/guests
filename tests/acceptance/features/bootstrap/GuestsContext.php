@@ -58,7 +58,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @return string
 	 */
-	private function getRelativePathToTestDataFolder() {
+	private function getRelativePathToTestDataFolder(): string {
 		$relativePath
 			= $this->featureContext->getPathFromCoreToAppAcceptanceTests(__DIR__);
 		return "$relativePath/data/";
@@ -67,7 +67,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @return array
 	 */
-	public function getCreatedGuests() {
+	public function getCreatedGuests(): array {
 		return $this->createdGuests;
 	}
 
@@ -78,16 +78,20 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @return void
 	 */
-	public function addToCreatedGuestsList($guestDisplayName, $guestEmail) {
+	public function addToCreatedGuestsList(
+		string $guestDisplayName,
+		string $guestEmail
+	): void {
 		$this->createdGuests[$guestDisplayName] = $guestEmail;
 	}
+
 	/**
 	 * disable CSRF
 	 *
 	 * @throws Exception
 	 * @return string the previous setting of csrf.disabled
 	 */
-	private function disableCSRFFromGuestsScenario() {
+	private function disableCSRFFromGuestsScenario(): string {
 		return $this->setCSRFDotDisabledFromGuestsScenario('true');
 	}
 
@@ -99,7 +103,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @throws Exception
 	 * @return string the previous setting of csrf.disabled
 	 */
-	private function setCSRFDotDisabledFromGuestsScenario($setting) {
+	private function setCSRFDotDisabledFromGuestsScenario(string $setting): string {
 		$oldCSRFSetting = SetupHelper::runOcc(
 			['config:system:get', 'csrf.disabled'],
 			$this->featureContext->getStepLineRef()
@@ -131,7 +135,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @return string
 	 */
-	public function prepareUserNameAsFrontend($guestEmail) {
+	public function prepareUserNameAsFrontend(string $guestEmail): string {
 		return \str_replace('+', '%2B', \strtolower(\trim($guestEmail)));
 	}
 
@@ -143,10 +147,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userUploadsFileFromGuestsDataFolder(
-		$user,
-		$source,
-		$destination
-	) {
+		string $user,
+		string $source,
+		string $destination
+	): void {
 		$source = $this->getRelativePathToTestDataFolder() . $source;
 		$this->featureContext->userUploadsAFileTo($user, $source, $destination);
 	}
@@ -161,10 +165,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userHasUploadedFileFromGuestsDataFolderTo(
-		$user,
-		$source,
-		$destination
-	) {
+		string $user,
+		string $source,
+		string $destination
+	): void {
 		$this->userUploadsFileFromGuestsDataFolder(
 			$user,
 			$source,
@@ -183,10 +187,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userUploadsFileFromGuestsDataFolderTo(
-		$user,
-		$source,
-		$destination
-	) {
+		string $user,
+		string $source,
+		string $destination
+	): void {
 		$this->userUploadsFileFromGuestsDataFolder(
 			$user,
 			$source,
@@ -207,10 +211,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @throws Exception
 	 */
 	public function userUploadsAFileToWithAllMechanisms(
-		$user,
-		$source,
-		$destination
-	) {
+		string $user,
+		string $source,
+		string $destination
+	): void {
 		$source = $this->getRelativePathToTestDataFolder() . $source;
 		$uploadResponses = UploadHelper::uploadWithAllMechanisms(
 			$this->featureContext->getBaseUrl(),
@@ -237,13 +241,13 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userUploadsAFileToWithChunks(
-		$user,
-		$source,
-		$destination,
-		$noOfChunks = 2,
-		$chunkingVersion = null,
-		$async = false
-	) {
+		string $user,
+		string $source,
+		string $destination,
+		int $noOfChunks = 2,
+		?string $chunkingVersion = null,
+		bool $async = false
+	): void {
 		$source = $this->getRelativePathToTestDataFolder() . $source;
 		$this->featureContext->userUploadsAFileToWithChunks(
 			$user,
@@ -266,11 +270,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userUploadsAFileAsyncToWithChunks(
-		$user,
-		$source,
-		$destination,
-		$noOfChunks = 2
-	) {
+		string $user,
+		string $source,
+		string $destination,
+		int $noOfChunks = 2
+	): void {
 		$this->userUploadsAFileToWithChunks(
 			$user,
 			$source,
@@ -290,11 +294,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userCreatesAGuestUser(
-		$user,
-		$guestDisplayName,
-		$guestEmail,
-		$shouldExist
-	) {
+		string $user,
+		string $guestDisplayName,
+		string $guestEmail,
+		bool $shouldExist
+	): void {
 		$user = $this->featureContext->getActualUsername($user);
 		$fullUrl
 			= $this->featureContext->getBaseUrl() . '/index.php/apps/guests/users';
@@ -346,10 +350,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userCreatesAGuestUserWithEmail(
-		$user,
-		$guestDisplayName,
-		$guestEmail
-	) {
+		string $user,
+		string $guestDisplayName,
+		string $guestEmail
+	): void {
 		$this->userCreatesAGuestUser(
 			$user,
 			$guestDisplayName,
@@ -369,11 +373,11 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function userHasCreatedAGuestUserWithEmail(
-		$user,
-		$attemptTo,
-		$guestDisplayName,
-		$guestEmail
-	) {
+		string $user,
+		string $attemptTo,
+		string $guestDisplayName,
+		string $guestEmail
+	): void {
 		$shouldExist
 			= ($attemptTo == "creates");
 		$this->userCreatesAGuestUser(
@@ -393,9 +397,9 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function theAdministratorHasCreatedAGuestUser(
-		$guestDisplayName,
-		$guestEmail
-	) {
+		string $guestDisplayName,
+		string $guestEmail
+	): void {
 		$this->userCreatesAGuestUser(
 			$this->featureContext->getAdminUsername(),
 			$guestDisplayName,
@@ -414,10 +418,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 */
 	public function theAdministratorCreatesAGuestUser(
-		$attemptTo,
-		$guestDisplayName,
-		$guestEmail
-	) {
+		string $attemptTo,
+		string $guestDisplayName,
+		string $guestEmail
+	): void {
 		$shouldExist
 			= ($attemptTo == "creates");
 		$this->userCreatesAGuestUser(
@@ -435,7 +439,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @return void
 	 */
-	public function checkGuestUser($guestDisplayName) {
+	public function checkGuestUser(string $guestDisplayName): void {
 		Assert::assertArrayHasKey(
 			$guestDisplayName,
 			$this->createdGuests,
@@ -455,7 +459,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function deleteGuestUser($guestDisplayName) {
+	public function deleteGuestUser(string $guestDisplayName): void {
 		$userName = $this->prepareUserNameAsFrontend(
 			$this->createdGuests[$guestDisplayName]
 		);
@@ -471,7 +475,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @return string URL for the guest to register
 	 */
-	public function extractRegisterUrl($emailBody) {
+	public function extractRegisterUrl(string $emailBody): string {
 		// The character sequence "=\r\n" encodes soft line breaks in the plain
 		// text email. Remove these so that we get the full strings that we are
 		// searching for without them being "randomly" split by the soft line
@@ -504,7 +508,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return string
 	 * @throws Exception
 	 */
-	public function getRegistrationUrl($address) {
+	public function getRegistrationUrl(string $address): string {
 		$lastEmailBody = EmailHelper::getBodyOfLastEmail(
 			$this->emailContext->getLocalMailhogUrl(),
 			$address,
@@ -520,7 +524,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function registerGuestUser($guestDisplayName, $password = null) {
+	public function registerGuestUser(
+		string $guestDisplayName,
+		?string $password = null
+	): void {
 		$oldCSRFSetting = $this->disableCSRFFromGuestsScenario();
 		$userName = $this->createdGuests[$guestDisplayName];
 		$fullRegisterUrl = $this->getRegistrationUrl($userName);
@@ -576,7 +583,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function guestUserHasRegistered($guestDisplayName, $password = null) {
+	public function guestUserHasRegistered(
+		string $guestDisplayName,
+		?string $password = null
+	): void {
 		$this->registerGuestUser($guestDisplayName, $password);
 		$this->featureContext->theHTTPStatusCodeShouldBeSuccess();
 	}
@@ -591,7 +601,10 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function guestUserRegisters($guestDisplayName, $password = null) {
+	public function guestUserRegisters(
+		string $guestDisplayName,
+		?string $password = null
+	): void {
 		$this->registerGuestUser($guestDisplayName, $password);
 	}
 
@@ -602,7 +615,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @return void
 	 */
-	public function setUpScenario(BeforeScenarioScope $scope) {
+	public function setUpScenario(BeforeScenarioScope $scope): void {
 		// Get the environment
 		$environment = $scope->getEnvironment();
 		// Get all the contexts you need in this context
@@ -621,7 +634,12 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function userHasSharedFolderWithGuestUser($sharer, $filePath, $guestUser, $permissions = null) {
+	public function userHasSharedFolderWithGuestUser(
+		string $sharer,
+		string $filePath,
+		string $guestUser,
+		?string $permissions = null
+	): void {
 		$guestUser = \urldecode($this->prepareUserNameAsFrontend($guestUser));
 		$this->featureContext->shareFileWithUserUsingTheSharingApi(
 			$sharer,
