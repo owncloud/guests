@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Sergio Bertolin <sbertolin@solidgear.es>
  * @author Thomas Heinisch <t.heinisch@bw-tech.de>
