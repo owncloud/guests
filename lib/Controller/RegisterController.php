@@ -146,7 +146,7 @@ class RegisterController extends Controller {
 
 		if (empty($checkToken)) {
 			$errorMessages['token'] = (string)$this->l10n->t(
-				'The token is invalid'
+				'Invite has expired'
 			);
 		}
 

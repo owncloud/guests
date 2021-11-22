@@ -25,7 +25,7 @@ Feature: Guests
     And guest user "guest" has registered
     When guest user "guest" registers and sets password to "secondpassword" using the webUI
     Then the user should be redirected to a webUI page with the title "%productname%"
-    And a warning should be displayed on the set-password-page saying "The token is invalid"
+    And a warning should be displayed on the set-password-page saying "Invite has expired"
 
   @mailhog @skipOnOcV10.2 @skipOnOcV10.3
   Scenario Outline: User uses valid email to create a guest user
