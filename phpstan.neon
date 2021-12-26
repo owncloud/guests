@@ -2,8 +2,17 @@ parameters:
   inferPrivatePropertyTypeFromConstructor: true
   bootstrapFiles:
     - %currentWorkingDirectory%/../../lib/base.php
-  excludes_analyse:
+  excludePaths:
     - %currentWorkingDirectory%/appinfo/Migrations/*.php
     - %currentWorkingDirectory%/appinfo/routes.php
   ignoreErrors:
     - '#Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required.#'
+    -
+      message: '#Property OCA\\Guests\\Controller\\RegisterController::\$groupManager is never read, only written.#'
+      path: lib/Controller/RegisterController.php
+    -
+      message: '#Property OCA\\Guests\\Controller\\RegisterController::\$secureRandom is never read, only written.#'
+      path: lib/Controller/RegisterController.php
+    -
+      message: '#Property OCA\\Guests\\Controller\\SettingsController::\$userId is never read, only written.#'
+      path: lib/Controller/SettingsController.php
