@@ -6,6 +6,7 @@ OC.L10N.register(
     "Reset" : "Réinitialiser",
     "Error while sharing" : "Erreur lors du partage",
     "Error" : "Erreur",
+    "Add {unknown}" : "Ajouter {unknown}",
     "Error loading activities" : "Erreur au chargement de l'activité",
     "Access to this resource is forbidden for guests." : "L'accès à cet élément n'est pas autorisé pour les invités.",
     "Invalid mail address" : "Adresse e-mail non valide",
