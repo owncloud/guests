@@ -79,11 +79,42 @@
 		},
 	};
 
+	var GuestShareConfig = {
+
+		load: function () {
+			return new Promise(function (resolve, reject) {
+				$.ajax({
+					type: "get",
+					url: OC.generateUrl('/apps/guests/shareconfig'),
+					success: function(data) {
+						resolve(data);
+					},
+					error: function(xhr, status) {
+						reject(Error(status));
+					}
+				});
+			});
+		}
+	}
+
 	OCA.Guests.GuestShare = GuestShare;
 
 	OCA.Guests.initGuestSharePlugin = function() {
 		OC.Plugins.register('OC.Share.ShareDialogView', {
 			attach: function (obj) {
+
+				// fetch guest share config, it is ok to get this async because
+				// if filtering wont be applied in frontend due to e.g. error it might
+				// be handled in the backend or entry not shown (depening on setting)
+				var guestShareConfig = null;
+				GuestShareConfig.load().then(
+					function (config) {
+						guestShareConfig = config;
+					}, 
+					function (error) {
+						console.error(error);
+					}
+				);
 
 				// Override ShareDialogView
 				var oldHandler = obj.autocompleteHandler;
@@ -129,6 +160,14 @@
 									return false;
 								})) {
 									provideGuestEntry = true;
+								}
+							}
+
+							if (guestShareConfig && guestShareConfig.blockdomains) {
+								for (i = 0 ; i < guestShareConfig.blockdomains.length; i++) {
+									if (searchTerm.endsWith('@' + guestShareConfig.blockdomains[i])) {
+										provideGuestEntry = false;
+									}
 								}
 							}
 
