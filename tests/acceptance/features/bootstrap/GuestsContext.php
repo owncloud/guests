@@ -24,6 +24,7 @@
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use GuzzleHttp\Exception\GuzzleException;
 use PHPUnit\Framework\Assert;
 use TestHelpers\EmailHelper;
 use TestHelpers\HttpRequestHelper;
@@ -292,6 +293,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @param bool $shouldExist
 	 *
 	 * @return void
+	 * @throws JsonException|GuzzleException
 	 */
 	public function userCreatesAGuestUser(
 		string $user,
@@ -336,6 +338,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->featureContext->getPasswordForUser($userName),
 			$guestDisplayName,
 			$guestEmail,
+			null,
 			$shouldExist
 		);
 	}

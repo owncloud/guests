@@ -146,6 +146,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * @param string $email
 	 *
 	 * @return void
+	 * @throws JsonException
 	 */
 	public function theUserSharesFileWithGuestUserWithEmailUsingWebUI(
 		string $fileName,
