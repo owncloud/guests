@@ -166,7 +166,7 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @Then user :user should not be displayed in dropdown as guest user
+	 * @Then user :user should not be displayed in the dropdown as a guest user
 	 *
 	 * @param string $user
 	 *

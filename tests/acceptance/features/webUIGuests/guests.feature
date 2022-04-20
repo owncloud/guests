@@ -41,13 +41,36 @@ Feature: Guests
 
   @mailhog
   Scenario: User uses some random string email to create a guest user
-    Given user "Alice" has been created with default attributes and large skeleton files
+    Given user "Alice" has been created with default attributes and small skeleton files
     And user "Alice" has logged in using the webUI
-    And the user has opened the share dialog for folder "lorem.txt"
+    And the user has opened the share dialog for file "textfile0.txt"
     When the user types "somestring" in the share-with-field
     Then a tooltip with the text "No users or groups found for somestring" should be shown near the share-with-field on the webUI
-    And user "somestring" should not be displayed in dropdown as guest user
+    And user "somestring" should not be displayed in the dropdown as a guest user
     And user "somestring" should not exist
+
+  @mailhog @skipOnOcV10.8 @skipOnOcV10.9.0 @skipOnOcV10.9.1
+  Scenario Outline: User cannot use an email of a blocked domain to create a guest user
+    Given the administrator has added config key "blockdomains" with value "<block-domains>" in app "guests"
+    And user "Alice" has been created with default attributes and small skeleton files
+    And user "Alice" has logged in using the webUI
+    And the user has opened the share dialog for file "textfile0.txt"
+    When the user types "someone@gmail.com" in the share-with-field
+    Then user "someone@gmail.com" should not be displayed in the dropdown as a guest user
+    Examples:
+      | block-domains                    |
+      | gmail.com                        |
+      | test.com,gmail.com               |
+      | gmail.com,somewhere.org          |
+      | test.com,gmail.com,somewhere.org |
+
+  @mailhog @skipOnOcV10.8 @skipOnOcV10.9.0 @skipOnOcV10.9.1
+  Scenario: User can use an email of a not-blocked domain to create a guest user
+    Given the administrator has added config key "blockdomains" with value "test.com,gmail.com" in app "guests"
+    And user "Alice" has been created with default attributes and small skeleton files
+    And user "Alice" has logged in using the webUI
+    When the user shares file "textfile0.txt" with guest user with email "valid@email.com" using the webUI
+    Then user "valid@email.com" should exist
 
   @mailhog @skipOnOcV10.2
   Scenario: User uses invalid email to create a guest user
@@ -69,7 +92,7 @@ Feature: Guests
     And the user has opened the share dialog for file "lorem.txt"
     When the user types "Brian@oc.com" in the share-with-field
     Then user "Brian" should be listed in the autocomplete list on the webUI
-    And user "Brian@oc.com" should not be displayed in dropdown as guest user
+    And user "Brian@oc.com" should not be displayed in the dropdown as a guest user
 
   @mailhog @issue-329 @skipOnOcV10.2
   Scenario: User tries to create a guest user when a server email mode is not set
