@@ -81,10 +81,10 @@
 
 	var GuestShareConfig = {
 
-		load: function () {
+		promise: function () {
 			return new Promise(function (resolve, reject) {
 				$.ajax({
-					type: "get",
+					type: "GET",
 					url: OC.generateUrl('/apps/guests/shareconfig'),
 					success: function(data) {
 						resolve(data);
@@ -102,12 +102,10 @@
 	OCA.Guests.initGuestSharePlugin = function() {
 		OC.Plugins.register('OC.Share.ShareDialogView', {
 			attach: function (obj) {
-
-				// fetch guest share config, it is ok to get this async because
-				// if filtering wont be applied in frontend due to e.g. error it might
-				// be handled in the backend or entry not shown (depening on setting)
+				// fetch guest share config async in order not to
+				// block sharing on error.
 				var guestShareConfig = null;
-				GuestShareConfig.load().then(
+				GuestShareConfig.promise().then(
 					function (config) {
 						guestShareConfig = config;
 					}, 
@@ -169,6 +167,11 @@
 										provideGuestEntry = false;
 									}
 								}
+							} else {
+								// if share config not ready or invalid config 
+								// do not provide entry
+								console.error("failed adding guest entry on guest share config error");
+								provideGuestEntry = false;
 							}
 
 							if (provideGuestEntry) {
