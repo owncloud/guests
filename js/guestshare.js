@@ -79,40 +79,11 @@
 		},
 	};
 
-	var GuestShareConfig = {
-
-		promise: function () {
-			return new Promise(function (resolve, reject) {
-				$.ajax({
-					type: "GET",
-					url: OC.generateUrl('/apps/guests/shareconfig'),
-					success: function(data) {
-						resolve(data);
-					},
-					error: function(xhr, status) {
-						reject(Error(status));
-					}
-				});
-			});
-		}
-	}
-
 	OCA.Guests.GuestShare = GuestShare;
 
 	OCA.Guests.initGuestSharePlugin = function() {
 		OC.Plugins.register('OC.Share.ShareDialogView', {
 			attach: function (obj) {
-				// fetch guest share config async in order not to
-				// block sharing on error.
-				var guestShareConfig = null;
-				GuestShareConfig.promise().then(
-					function (config) {
-						guestShareConfig = config;
-					}, 
-					function (error) {
-						console.error(error);
-					}
-				);
 
 				// Override ShareDialogView
 				var oldHandler = obj.autocompleteHandler;
@@ -161,17 +132,12 @@
 								}
 							}
 
-							if (guestShareConfig && guestShareConfig.blockdomains) {
-								for (i = 0 ; i < guestShareConfig.blockdomains.length; i++) {
-									if (searchTerm.endsWith('@' + guestShareConfig.blockdomains[i])) {
+							if (oc_appconfig.guests && oc_appconfig.guests.blockdomains) {
+								for (i = 0 ; i < oc_appconfig.guests.blockdomains.length; i++) {
+									if (searchTerm.endsWith('@' + oc_appconfig.guests.blockdomains[i])) {
 										provideGuestEntry = false;
 									}
 								}
-							} else {
-								// if share config not ready or invalid config 
-								// do not provide entry
-								console.error("failed adding guest entry on guest share config error");
-								provideGuestEntry = false;
 							}
 
 							if (provideGuestEntry) {

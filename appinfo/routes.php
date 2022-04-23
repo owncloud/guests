@@ -55,11 +55,6 @@ return [
 			'verb' => 'POST',
 		],
 		[
-			'name' => 'settings#getShareConfig',
-			'url' => '/shareconfig',
-			'verb' => 'GET',
-		],
-		[
 			'name' => 'users#create',
 			'url' => '/users',
 			'verb' => 'PUT'

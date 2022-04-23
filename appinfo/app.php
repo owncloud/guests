@@ -23,9 +23,14 @@
  *
  */
 
-$app = new \OCA\Guests\AppInfo\Application();
+use \OCA\Guests\AppInfo\Application;
+use \OCA\Guests\Hooks;
+use \OCP\Util;
+
+$app = new Application();
 $groupBackend = $app->registerBackend();
 $app->registerListeners($groupBackend);
 
 // this will initialize the
-\OCP\Util::addScript('guests', 'app');
+Util::addScript('guests', 'app');
+Util::connectHook('\OCP\Config', 'js', Hooks::class, 'extendJsConfig');

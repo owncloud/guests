@@ -137,4 +137,12 @@ class Hooks {
 			);
 		}
 	}
+
+	public static function extendJsConfig(array &$array): void {
+		$blockDomains = \OC::$server->getConfig()->getAppValue('guests', 'blockdomains');
+
+		$array['array']['oc_appconfig']['guests'] = [
+			'blockdomains' => \explode(',', $blockDomains),
+		];
+	}
 }

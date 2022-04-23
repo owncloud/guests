@@ -142,17 +142,4 @@ class SettingsController extends Controller {
 			'whitelist' => \explode(',', AppWhitelist::DEFAULT_WHITELIST),
 		]);
 	}
-
-	/**
-	 * AJAX handler for getting share blocked domains
-	 *
-	 * @NoAdminRequired
-	 * @return DataResponse with blocked domains
-	 */
-	public function getShareConfig() {
-		$blockDomains = $this->config->getAppValue('guests', 'blockdomains');
-		return new DataResponse([
-			'blockdomains' => \explode(',', $blockDomains),
-		]);
-	}
 }
