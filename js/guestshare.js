@@ -132,6 +132,14 @@
 								}
 							}
 
+							if (oc_appconfig.guests && oc_appconfig.guests.blockdomains) {
+								for (i = 0 ; i < oc_appconfig.guests.blockdomains.length; i++) {
+									if (searchTerm.endsWith('@' + oc_appconfig.guests.blockdomains[i])) {
+										provideGuestEntry = false;
+									}
+								}
+							}
+
 							if (provideGuestEntry) {
 								result.push({
 									label: t('core', 'Add {unknown}', {unknown: searchTerm}),
