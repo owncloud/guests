@@ -30,6 +30,7 @@
 		var $section = $('#guests');
 		var $guestsByGroup = $section.find('#guestsByGroup');
 		var $guestGroup = $section.find('#guestGroup');
+		var $guestSharingBlockDomains = $section.find('#guestSharingBlockDomains');
 		var $guestUseWhitelist = $section.find('#guestUseWhitelist');
 		var $guestWhitelist = $section.find('#guestWhitelist');
 		var $resetWhitelist = $section.find('#guestResetWhitelist');
@@ -64,6 +65,9 @@
 						$guestWhitelist.val(config.whitelist.join());
 					} else {
 						$guestWhitelist.val('');
+					}
+					if (config.shareBlockDomains) {
+						$guestSharingBlockDomains.val(config.shareBlockDomains);
 					}
 				},
 				'json'
@@ -116,6 +120,11 @@
 			});
 			saveConfig();			
 		}
+		
+		var saveShareBlockDomains = function () {
+			config.shareBlockDomains = $guestSharingBlockDomains.val().trim();
+			saveConfig();			
+		}
 
 		// listen to ui changes
 		$guestsByGroup.on('change', function () {
@@ -149,6 +158,10 @@
 		
 		$guestWhitelist.on('change', function () {
 			saveWhitelist();
+		});
+		
+		$guestSharingBlockDomains.on('change', function () {
+			saveShareBlockDomains();
 		});
 		
 		$guestWhitelist.keypress(function (e) {
