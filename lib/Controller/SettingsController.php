@@ -78,6 +78,7 @@ class SettingsController extends Controller {
 		return new DataResponse([
 			'group' => $this->config->getAppValue('guests', 'group', \OCA\Guests\GroupBackend::DEFAULT_NAME),
 			'useWhitelist' => $useWhitelist,
+			'shareBlockDomains' => \OC::$server->getConfig()->getAppValue('guests', 'blockdomains'),
 			'whitelist' => $whitelist,
 		]);
 	}
@@ -87,9 +88,10 @@ class SettingsController extends Controller {
 	 * @param string $group
 	 * @param string $useWhitelist
 	 * @param string[] $whitelist
+	 * @param string $shareBlockDomains
 	 * @return DataResponse
 	 */
-	public function setConfig($group, $useWhitelist, $whitelist) {
+	public function setConfig($group, $useWhitelist, $whitelist, $shareBlockDomains) {
 		if (empty($group)) {
 			return new DataResponse([
 				'status' => 'error',
@@ -107,6 +109,7 @@ class SettingsController extends Controller {
 		$this->config->setAppValue('guests', 'group', $group);
 		$this->config->setAppValue('guests', 'usewhitelist', $useWhitelist);
 		$this->config->setAppValue('guests', 'whitelist', $newWhitelist);
+		$this->config->setAppValue('guests', 'blockdomains', $shareBlockDomains);
 
 		return new DataResponse([
 			'status' => 'success',
