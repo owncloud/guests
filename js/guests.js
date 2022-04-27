@@ -122,6 +122,8 @@
 		}
 		
 		var saveShareBlockDomains = function () {
+			// FIXME: do validations here to make sure valid input is passed
+			//        and valid domains
 			config.shareBlockDomains = $guestSharingBlockDomains.val().trim();
 			saveConfig();			
 		}
