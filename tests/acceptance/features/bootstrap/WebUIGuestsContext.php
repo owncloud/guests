@@ -86,11 +86,11 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * WebUIGuestsContext constructor.
 	 *
 	 * @param SetPasswordPage $setPasswordPage
-	 * @param GuestsPage $guestsPage
 	 * @param FilesPage $filesPage
+	 * @param GuestsPage $guestsPage
 	 *
 	 */
-	public function __construct(SetPasswordPage $setPasswordPage, GuestsPage $guestsPage, FilesPage $filesPage) {
+	public function __construct(SetPasswordPage $setPasswordPage, FilesPage $filesPage, GuestsPage $guestsPage) {
 		$this->setPasswordPage = $setPasswordPage;
 		$this->filesPage = $filesPage;
 		$this->guestsPage = $guestsPage;
@@ -222,13 +222,13 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @Then the blocked domains from sharing with guests should set to :blockedDomains on the webUI
+	 * @Then the blocked domains from sharing with guests input should have value :blockedDomains on the webUI
 	 *
 	 * @param string $blockedDomains
 	 *
 	 * @return void
 	 */
-	public function blockedDomainsFromSharingWithGuestsShouldBeSetTo(string $blockedDomains):void {
+	public function blockedDomainsFromSharingWithGuestsInputShouldHaveValue(string $blockedDomains):void {
 		$blockedDomainsFromSharingWithGuests = $this->guestsPage->getBlockedDomainsFromSharingWithGuests();
 		Assert::assertEquals(
 			$blockedDomains,
@@ -237,6 +237,17 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 			. " The blocked domains from sharing with guests was expected to be set to '$blockedDomains', "
 			. "but was actually set to '$blockedDomainsFromSharingWithGuests'"
 		);
+	}
+
+	/**
+	 * @When the administrator sets the value of blocked domains sharing from guests input to :blockedDomains using webUI
+	 *
+	 * @param string $blockedDomains
+	 *
+	 * @return void
+	 */
+	public function adminSetsValueOfBlockedDomainsSharingFromGuestsInputTo(string $blockedDomains):void {
+		$this->guestsPage->setBlockedDomainsFromSharingWithGuests($blockedDomains);
 	}
 
 	/**

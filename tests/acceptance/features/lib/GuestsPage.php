@@ -2,8 +2,8 @@
 /**
  * ownCloud
  *
- * @author Artur Neumann <artur@jankaritech.com>
- * @copyright Copyright (c) 2017 Artur Neumann artur@jankaritech.com
+ * @author Sagar Gurung <sagar@jankaritech.com>
+ * @copyright Copyright (c) 2017 Sagar Gurung sagar@jankaritech.com
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License,
@@ -50,5 +50,23 @@ class GuestsPage extends OwncloudPage {
 			" id $this->guestsSharingBlockDomainsInputFieldId could not find input field for blocked domains from sharing with guests"
 		);
 		return $blockedDomainsSharingWithGuests->getValue();
+	}
+
+	/**
+	 * Set the blocked domains from sharing with guests
+	 *
+	 * @param string $blockedDomains
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function setBlockedDomainsFromSharingWithGuests(string $blockedDomains): void {
+		$blockedDomainsSharingWithGuests = $this->findById($this->guestsSharingBlockDomainsInputFieldId);
+		$this->assertElementNotNull(
+			$blockedDomainsSharingWithGuests,
+			__METHOD__ .
+			" id $this->guestsSharingBlockDomainsInputFieldId could not find input field for blocked domains from sharing with guests"
+		);
+		$this->fillField($this->guestsSharingBlockDomainsInputFieldId, $blockedDomains);
 	}
 }
