@@ -207,3 +207,10 @@ Feature: Guests
       | username    |
       | regularUser |
     And the email address of user "regularUser" should be "guest@example.com"
+
+  Scenario: check blocked domains set from command line for guests in webUI
+    Given the administrator has invoked occ command "config:app:set guests blockdomains --value='something.com,qwerty.org,some.gov,some.au'"
+    And user admin has logged in using the webUI
+    When the administrator browses to the guests admin settings page
+    Then the blocked domains from sharing with guests should set to "something.com,qwerty.org,some.gov,some.au" on the webUI
+

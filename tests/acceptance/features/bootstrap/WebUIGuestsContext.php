@@ -24,6 +24,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Page\SetPasswordPage;
+use Page\GuestsPage;
 use PHPUnit\Framework\Assert;
 use Page\FilesPage;
 
@@ -55,6 +56,12 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 *
 	 * @var EmailContext
 	 */
+	/**
+	 *
+	 * @var GuestsPage
+	 */
+	private $guestsPage;
+
 	private $emailContext;
 
 	/**
@@ -79,11 +86,14 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 	 * WebUIGuestsContext constructor.
 	 *
 	 * @param SetPasswordPage $setPasswordPage
+	 * @param GuestsPage $guestsPage
 	 * @param FilesPage $filesPage
+	 *
 	 */
-	public function __construct(SetPasswordPage $setPasswordPage, FilesPage $filesPage) {
+	public function __construct(SetPasswordPage $setPasswordPage, GuestsPage $guestsPage, FilesPage $filesPage) {
 		$this->setPasswordPage = $setPasswordPage;
 		$this->filesPage = $filesPage;
+		$this->guestsPage = $guestsPage;
 	}
 
 	/**
@@ -198,6 +208,34 @@ class WebUIGuestsContext extends RawMinkContext implements Context {
 		}
 		Assert::fail(
 			"could not find message with the text '$expectedMessage' on the set-password-page"
+		);
+	}
+
+	/**
+	 * @When the administrator/user browses to the guests admin settings page
+	 * @Given the administrator/user has browsed to the guests admin settings page
+	 *
+	 * @return void
+	 */
+	public function theUserBrowsesToTheGuestsAdminSettingsPage(): void {
+		$this->guestsPage->open();
+	}
+
+	/**
+	 * @Then the blocked domains from sharing with guests should set to :blockedDomains on the webUI
+	 *
+	 * @param string $blockedDomains
+	 *
+	 * @return void
+	 */
+	public function blockedDomainsFromSharingWithGuestsShouldBeSetTo(string $blockedDomains):void {
+		$blockedDomainsFromSharingWithGuests = $this->guestsPage->getBlockedDomainsFromSharingWithGuests();
+		Assert::assertEquals(
+			$blockedDomains,
+			$blockedDomainsFromSharingWithGuests,
+			__METHOD__
+			. " The blocked domains from sharing with guests was expected to be set to '$blockedDomains', "
+			. "but was actually set to '$blockedDomainsFromSharingWithGuests'"
 		);
 	}
 
