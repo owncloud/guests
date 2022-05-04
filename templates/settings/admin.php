@@ -31,8 +31,8 @@ script('guests', 'guests');
 		<label for="guestGroup"><?php p($l->t('Group name'));?>
 		</label><input type="text" id="guestGroup" value="" /><br/>
 		<br/>
-		<label for="guestSharingBlockDomains"><?php p($l->t('Blocked domains from sharing with guests'));?></label>
-		<input type="text" id="guestSharingBlockDomains" value="" style="width:99%;"/><br/>
+		<label for="guestSharingBlockDomains"><?php p($l->t('Domain blocklist for guest user invitation'));?></label>
+		<input type="text" id="guestSharingBlockDomains" value="" placeholder="example1.com,example2.com,example3.com" style="width:99%;"/><br/>
 		<br/>
 		<input type="checkbox" id="guestUseWhitelist" value="useWhitelist"/><label for="guestUseWhitelist"><?php p($l->t('Limit guest access to an app whitelist'));?></label><br/>
 		<input type="text" id="guestWhitelist" value="" style="display:none; width:99%;"/><br/>
