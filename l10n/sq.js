@@ -30,6 +30,8 @@ OC.L10N.register(
     "Hey there,<br><br>\n         \n         just letting you know that %s shared <strong>%s</strong> with you.<br><br>\n         Activate your guest account at %s by <a href=\"%s\">setting a password</a>.<br><br>\n         Then <a href=\"%s\">view it!</a><br><br>You can login using the email address <strong>\"%s\"</strong> .<br><br>" : "Njatjeta,<br><br>\n         \n         sa për t’ju bërë të ditur që %s ndau me ju <strong>%s</strong>.<br><br>\n         Aktivizoni llogarinë tuaj prej vizitori te %s <a href=\"%s\">duke caktuar një fjalëkalim</a>.<br><br>\n         Mandej <a href=\"%s\">shiheni!</a><br><br>Mund të hyni me adresën email <strong>\"%s\"</strong> .<br><br>",
     "Guest users are grouped under a virtual group in the user manager" : "Përdoruesit vizitorë grupohen nën një grup virtual te përgjegjësi i përdoruesve",
     "Group name" : "Emër grupi",
+    "Domain blocklist for guest user invitation" : "Listë bllokimesh përkatësish për ftesa përdoruesish mysafir",
+    "The following domains will not be accepted when users try to invite guests." : "S’do të pranohen përkatësitë vijuese, kur përdoruesit provojnë të ftojnë mysafirë.",
     "Limit guest access to an app whitelist" : "Kufizoni hyrje përdoruesish vizitorë sipas një liste aplikacionesh të lejuar",
     "Reset whitelist" : "Zeroni listë të lejuarish"
 },
