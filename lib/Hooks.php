@@ -138,7 +138,14 @@ class Hooks {
 		}
 	}
 
-	public static function extendJsConfig(array &$array): void {
+	/**
+	 * Function used to extend global JS config emited with
+	 * OC_Hook::emit('\OCP\Config', 'js', ['array' => &$array]) and available
+	 * in JS as oc_appconfig.guests
+	 *
+	 * @param array $array holding $array['array'] key with a reference value to config
+	 */
+	public static function extendJsConfig($array): void {
 		$blockDomains = \OC::$server->getConfig()->getAppValue('guests', 'blockdomains');
 
 		$array['array']['oc_appconfig']['guests'] = [
