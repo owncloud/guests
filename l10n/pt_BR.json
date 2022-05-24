@@ -30,5 +30,5 @@
     "Group name" : "Nome do grupo",
     "Limit guest access to an app whitelist" : "Limitar o acesso de convidados da lista de permissão de uma aplicação",
     "Reset whitelist" : "Limpar lista de permissão"
-},"pluralForm" :"nplurals=2; plural=(n > 1);"
+},"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

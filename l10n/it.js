@@ -32,4 +32,4 @@ OC.L10N.register(
     "Limit guest access to an app whitelist" : "Limita l'accesso degli Ospiti ad una lista di App autorizzate",
     "Reset whitelist" : "Resetta la whitelist"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
