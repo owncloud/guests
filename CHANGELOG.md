@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased] - XXXX-XX-XX
+## [0.10.0] - 2022-06-01
+
+- Add twofactor_totp to default whitelist [#479]((https://github.com/owncloud/guests/pull/479)
+- Add backend and javascript handling for domain block while sharing [#489](https://github.com/owncloud/guests/pull/489)
+- Allow setting share block domains in admin panel [#495](https://github.com/owncloud/guests/pull/495) [#501](https://github.com/owncloud/guests/pull/501)
 
 ## [0.9.3] - 2021-08-09
 
@@ -188,7 +192,8 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
-[Unreleased]: https://github.com/owncloud/guests/compare/v0.9.3...master
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.10.0...master
+[0.10.0]: https://github.com/owncloud/guests/compare/v0.9.3...v0.10.0
 [0.9.3]: https://github.com/owncloud/guests/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/owncloud/guests/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/owncloud/guests/compare/v0.9.0...v0.9.1
