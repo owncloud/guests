@@ -30,6 +30,8 @@ OC.L10N.register(
     "Hey there,<br><br>\n         \n         just letting you know that %s shared <strong>%s</strong> with you.<br><br>\n         Activate your guest account at %s by <a href=\"%s\">setting a password</a>.<br><br>\n         Then <a href=\"%s\">view it!</a><br><br>You can login using the email address <strong>\"%s\"</strong> .<br><br>" : "Olá!<br><br>\n         \n         Apenas informando que %s compartilhou <strong>%s</strong> com você.<br><br>\n         Ative a sua conta de convidado em %s <a href=\"%s\">utilizando uma senha</a>.<br><br>\n         Então <a href=\"%s\">veja isto!</a><br><br>Você poderá entrar utilizando seu endereço de e-mail <strong>\"%s\"</strong> .<br><br>",
     "Guest users are grouped under a virtual group in the user manager" : "Usuários convidados são agrupados em um grupo virtual no gerenciador de usuários",
     "Group name" : "Nome do grupo",
+    "Domain blocklist for guest user invitation" : "Lista de bloqueio de domínio para convite de usuário convidado",
+    "The following domains will not be accepted when users try to invite guests." : "Os domínios a seguir não serão aceitos quando os usuários tentarem convidar convidados.",
     "Limit guest access to an app whitelist" : "Limitar o acesso de convidados da lista de permissão de uma aplicação",
     "Reset whitelist" : "Limpar lista de permissão"
 },
