@@ -49,7 +49,7 @@
 			$.ajax(xhrObject).done(function (xhr) {
 				var properties = {
 					shareType: 0,
-					shareWith: self.email.toLowerCase(),
+					shareWith: email.toLowerCase(),
 					permissions: OC.PERMISSION_CREATE | OC.PERMISSION_UPDATE
 						| OC.PERMISSION_READ | OC.PERMISSION_DELETE
 				};
@@ -86,10 +86,57 @@
 			attach: function (obj) {
 
 				// Override ShareDialogView
+				var batchCall = obj._getUsersForBatchAction;
+				obj._getUsersForBatchAction = function(search, response) {
+					var users = Array.from(new Set(search.split(this.batchActionSeparator)));
+					var existingShares = this.model.get('shares')
+
+					return batchCall.call(this, search).then(function(foundUsers) {
+						// add potential guests to the suggestions
+						for (var i = 0; i < users.length; i++) {
+							var newGuest = true;
+							if (OC.validateEmail(users[i])) {
+								// don't add new users that have been added by core already
+								for (var j = 0; j < foundUsers.length; j++) {
+									if (foundUsers[j].shareWith === users[i]) {
+										newGuest = false;
+										break;
+									}
+								}
+
+								// don't add existing shares
+								for (j= 0; j <  existingShares.length; j++) {
+									if (existingShares[j].share_type === OC.Share.SHARE_TYPE_USER
+										&& users[i] === existingShares[j].share_with) {
+										newGuest = false;
+										break;
+									}
+								}
+
+								if (newGuest) {
+									foundUsers.push({
+										shareType: OC.Share.SHARE_TYPE_GUEST,
+										shareWith: users[i]
+									});
+								}
+							}
+						}
+
+						return new Promise(function(resolve, reject) {
+							resolve(foundUsers);
+						})
+					})
+				}
+
 				var oldHandler = obj.autocompleteHandler;
 				obj.autocompleteHandler = function(search, response) {
 
 					return oldHandler.call(obj, search, function(result, xhrResult) {
+						// no xhrResult means batch action, hence no need to fetch stuff anymore
+						if (!xhrResult) {
+							return response(result, xhrResult);
+						}
+
 						var searchTerm = search.term.trim();
 
 						// Add potential guests to the suggestions
@@ -163,23 +210,27 @@
 
 					$this.attr('disabled', true).val(s.item.label);
 					$loading.removeClass('hidden').addClass('inlineblock');
+					var shares = s.item.batch || [s.item.value];
 
-					if (s.item.value.shareType === OC.Share.SHARE_TYPE_GUEST) {
-						if (!GuestShare.addGuest(obj.model, s.item.value.shareWith)) {
-							$this.val('').attr('disabled', false);
-							$loading.addClass('hidden').removeClass('inlineblock');
-						}
-					} else {
-						obj.model.addShare(s.item.value, {
-							success: function () {
+					for (var i = 0; i < shares.length; i++) {
+						var share = shares[i];
+						if (share.shareType === OC.Share.SHARE_TYPE_GUEST) {
+							if (!GuestShare.addGuest(obj.model, share.shareWith)) {
 								$this.val('').attr('disabled', false);
 								$loading.addClass('hidden').removeClass('inlineblock');
-							}, error: function (obj, msg) {
-								OC.Notification.showTemporary(msg);
-								$this.attr('disabled', false).autocomplete('search', $this.val());
-								$loading.addClass('hidden').removeClass('inlineblock');
 							}
-						});
+						} else {
+							obj.model.addShare(share, {
+								success: function () {
+									$this.val('').attr('disabled', false);
+									$loading.addClass('hidden').removeClass('inlineblock');
+								}, error: function (obj, msg) {
+									OC.Notification.showTemporary(msg);
+									$this.attr('disabled', false).autocomplete('search', $this.val());
+									$loading.addClass('hidden').removeClass('inlineblock');
+								}
+							});
+						}
 					}
 				};
 			}
