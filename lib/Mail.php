@@ -154,12 +154,63 @@ class Mail {
 		}
 	}
 
+	public function sendGuestPlainInviteMail($shareWith, $uid, $token) {
+		$shareWithEmail = $this->userManager->get($shareWith)->getEMailAddress();
+		$replyTo = $this->userManager->get($uid)->getEMailAddress();
+		$senderDisplayName = $this->userSession->getUser()->getDisplayName();
+
+		$registerLink = $this->urlGenerator->linkToRouteAbsolute(
+			'guests.register.showPasswordForm',
+			['email' => $shareWithEmail, 'token' => $token]
+		);
+
+		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
+
+		$subject = (string)$this->l10n->t('%s invited you', [$senderDisplayName]);
+
+		list($htmlBody, $textBody) = $this->createMailBody(
+			null,
+			null,
+			$registerLink,
+			$this->defaults->getName(),
+			$senderDisplayName,
+			null,
+			$shareWithEmail
+		);
+
+		try {
+			$message = $this->mailer->createMessage();
+			$message->setTo([$shareWithEmail => $shareWith]);
+			$message->setSubject($subject);
+			$message->setHtmlBody($htmlBody);
+			$message->setPlainBody($textBody);
+			$message->setFrom([
+				Util::getDefaultEmailAddress('sharing-noreply') =>
+					(string)$this->l10n->t('%s via %s', [
+						$senderDisplayName,
+						$this->defaults->getName()
+					]),
+			]);
+
+			if ($replyTo !== null) {
+				$message->setReplyTo([$replyTo]);
+			}
+
+			$this->mailer->send($message);
+		} catch (\Exception $e) {
+			$this->logger->error("Failed to send reset email: " . $e->getMessage(), ['app' => 'guests']);
+			throw new \Exception($this->l10n->t(
+				'Couldn\'t send reset email. Please contact your administrator.'
+			));
+		}
+	}
+
 	/**
 	 * create mail body for plain text and html mail
 	 *
-	 * @param string $filename the shared file
-	 * @param string $link link to the shared file
-	 * @param int $expiration expiration date (timestamp)
+	 * @param ?string $filename the shared file
+	 * @param ?string $link link to the shared file
+	 * @param ?int $expiration expiration date (timestamp)
 	 * @param string $guestEmail
 	 * @return array an array of the html mail body and the plain text mail body
 	 */
