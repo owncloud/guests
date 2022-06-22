@@ -89,16 +89,16 @@
 				var batchCall = obj._getUsersForBatchAction;
 				obj._getUsersForBatchAction = function(search, response) {
 					var users = Array.from(new Set(search.split(this.batchActionSeparator)));
-					var existingShares = this.model.get('shares')
+					var existingShares = this.model.get('shares');
 
-					return batchCall.call(this, search).then(function(foundUsers) {
+					return batchCall.call(this, search).then(function(res) {
 						// add potential guests to the suggestions
 						for (var i = 0; i < users.length; i++) {
 							var newGuest = true;
 							if (OC.validateEmail(users[i])) {
 								// don't add new users that have been added by core already
-								for (var j = 0; j < foundUsers.length; j++) {
-									if (foundUsers[j].shareWith === users[i]) {
+								for (var j = 0; j < res.found.length; j++) {
+									if (res.found[j].shareWith === users[i]) {
 										newGuest = false;
 										break;
 									}
@@ -114,19 +114,28 @@
 								}
 
 								if (newGuest) {
-									foundUsers.push({
+									res.found.push({
 										shareType: OC.Share.SHARE_TYPE_GUEST,
 										shareWith: users[i]
 									});
+
+									var index = res.notFound.indexOf(users[i]);
+									if (index !== -1) {
+										res.notFound.splice(index, 1);
+									}
 								}
 							}
 						}
 
 						return new Promise(function(resolve, reject) {
-							resolve(foundUsers);
+							resolve(res);
 						})
 					})
-				}
+				};
+
+				obj._getBatchActionLabel = function() {
+					return t('guests', 'Add multiple users and guests');
+				};
 
 				var oldHandler = obj.autocompleteHandler;
 				obj.autocompleteHandler = function(search, response) {
@@ -210,6 +219,11 @@
 
 					$this.attr('disabled', true).val(s.item.label);
 					$loading.removeClass('hidden').addClass('inlineblock');
+
+					if (s.item.failedBatch && s.item.failedBatch.length) {
+						obj._showFailedBatchSharees(s.item.failedBatch);
+					}
+
 					var shares = s.item.batch || [s.item.value];
 
 					for (var i = 0; i < shares.length; i++) {
