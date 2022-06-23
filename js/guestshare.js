@@ -84,6 +84,7 @@
 	OCA.Guests.initGuestSharePlugin = function() {
 		OC.Plugins.register('OC.Share.ShareDialogView', {
 			attach: function (obj) {
+				var self = this;
 
 				// Override ShareDialogView
 				var batchCall = obj._getUsersForBatchAction;
@@ -111,6 +112,11 @@
 										newGuest = false;
 										break;
 									}
+								}
+
+								// filter out blacklisted domains
+								if (self._domainIsBlacklisted(users[i])) {
+									newGuest = false;
 								}
 
 								if (newGuest) {
@@ -188,12 +194,8 @@
 								}
 							}
 
-							if (oc_appconfig.guests && oc_appconfig.guests.blockdomains) {
-								for (i = 0 ; i < oc_appconfig.guests.blockdomains.length; i++) {
-									if (searchTerm.endsWith('@' + oc_appconfig.guests.blockdomains[i])) {
-										provideGuestEntry = false;
-									}
-								}
+							if (self._domainIsBlacklisted(searchTerm)) {
+								provideGuestEntry = false;
 							}
 
 							if (provideGuestEntry) {
@@ -247,6 +249,18 @@
 						}
 					}
 				};
+			},
+
+			_domainIsBlacklisted: function(email) {
+				if (oc_appconfig.guests && oc_appconfig.guests.blockdomains) {
+					for (i = 0 ; i < oc_appconfig.guests.blockdomains.length; i++) {
+						if (email.endsWith('@' + oc_appconfig.guests.blockdomains[i])) {
+							return true;
+						}
+					}
+				}
+
+				return false;
 			}
 		});
 	};
