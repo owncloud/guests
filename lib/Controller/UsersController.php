@@ -123,6 +123,11 @@ class UsersController extends Controller {
 				'Invalid mail address'
 			);
 		}
+		if ($this->isDomainBlocked($email)) {
+			$errorMessages['email'] = (string)$this->l10n->t(
+				'Domain is blocked.'
+			);
+		}
 
 		if ($this->userManager->userExists($username)) {
 			$errorMessages['email'] = (string)$this->l10n->t(
@@ -225,5 +230,19 @@ class UsersController extends Controller {
 			],
 			Http::STATUS_CREATED
 		);
+	}
+
+	public function isDomainBlocked(string $email): bool {
+		# disable to add users from blocked domains
+		$blockedDomains = \OC::$server->getConfig()->getAppValue('guests', 'blockdomains');
+		$blockedDomains = explode(',', $blockedDomains);
+		foreach ($blockedDomains as $blockedDomain) {
+			$blockedDomain = trim($blockedDomain);
+			$length = \strlen($blockedDomain);
+			if ($length && \substr($email, -$length) === $blockedDomain) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
