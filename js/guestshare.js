@@ -95,11 +95,12 @@
 					return batchCall.call(this, search).then(function(res) {
 						// add potential guests to the suggestions
 						for (var i = 0; i < users.length; i++) {
+							var user = users[i].trim();
 							var newGuest = true;
-							if (OC.validateEmail(users[i])) {
+							if (OC.validateEmail(user)) {
 								// don't add new users that have been added by core already
 								for (var j = 0; j < res.found.length; j++) {
-									if (res.found[j].shareWith === users[i]) {
+									if (res.found[j].shareWith === user) {
 										newGuest = false;
 										break;
 									}
@@ -108,24 +109,24 @@
 								// don't add existing shares
 								for (j= 0; j <  existingShares.length; j++) {
 									if (existingShares[j].share_type === OC.Share.SHARE_TYPE_USER
-										&& users[i] === existingShares[j].share_with) {
+										&& user === existingShares[j].share_with) {
 										newGuest = false;
 										break;
 									}
 								}
 
 								// filter out blacklisted domains
-								if (self._domainIsBlacklisted(users[i])) {
+								if (self._domainIsBlacklisted(user)) {
 									newGuest = false;
 								}
 
 								if (newGuest) {
 									res.found.push({
 										shareType: OC.Share.SHARE_TYPE_GUEST,
-										shareWith: users[i]
+										shareWith: user
 									});
 
-									var index = res.notFound.indexOf(users[i]);
+									var index = res.notFound.indexOf(user);
 									if (index !== -1) {
 										res.notFound.splice(index, 1);
 									}
