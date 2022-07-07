@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [0.10.0] - 2022-06-01
+## [0.10.0] - 2022-07-06
 
-- Add twofactor_totp to default whitelist [#479](https://github.com/owncloud/guests/pull/479)
-- Add backend and javascript handling for domain block while sharing [#489](https://github.com/owncloud/guests/pull/489)
-- Allow setting share block domains in admin panel [#495](https://github.com/owncloud/guests/pull/495) [#501](https://github.com/owncloud/guests/pull/501)
+### Changed
+
+- [#507](https://github.com/owncloud/guests/pull/507) - Feat: Allow to send guest invites without shares
+- [#446](https://github.com/owncloud/guests/pull/446) - Changes to comply with new login form design
+- [#479](https://github.com/owncloud/guests/pull/479) - Add twofactor_totp to default whitelist 
+- [#489](https://github.com/owncloud/guests/pull/489) - Add backend and javascript handling for domain block while sharing
+- [#495](https://github.com/owncloud/guests/pull/495) - Allow setting share block domains in admin panel
+- [#501](https://github.com/owncloud/guests/pull/501) - Improve block domains admin setting
+
 
 ## [0.9.3] - 2021-08-09
 
