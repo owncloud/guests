@@ -35,14 +35,25 @@
 <td width="20px">&nbsp;</td>
 <td style="font-weight:normal; font-size:0.8em; line-height:1.2em; font-family:verdana,'arial',sans;">
 <?php
-print_unescaped($l->t(
+if ($_['filename']) {
+	print_unescaped($l->t(
 		'Hey there,<br><br>
          
          just letting you know that %s shared <strong>%s</strong> with you.<br><br>
          Activate your guest account at %s by <a href="%s">setting a password</a>.<br><br>
          Then <a href="%s">view it!</a><br><br>You can login using the email address <strong>"%s"</strong> .<br><br>',
 		[$_['user_displayname'], $_['filename'], $_['cloud_name'], $_['password_link'], $_['link'], $_['guestEmail']]
-));
+	));
+} else {
+	print_unescaped($l->t(
+		'Hey there,<br><br>
+         
+         just letting you know that %s shared files with you.<br><br>
+         Activate your guest account at %s by <a href="%s">setting a password</a>.<br><br>
+         <br><br>You can login using the email address <strong>"%s"</strong> .<br><br>',
+		[$_['user_displayname'], $_['cloud_name'], $_['password_link'], $_['guestEmail']]
+	));
+}
 
 if ( isset($_['expiration']) ) {
 	p($l->t("The share will expire on %s.", array($_['expiration'])));
