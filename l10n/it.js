@@ -6,6 +6,7 @@ OC.L10N.register(
     "Reset" : "Ripristina",
     "Error while sharing" : "Errore durante la condivisione",
     "Error" : "Errore",
+    "Add {unknown}" : "Aggiungi {unknown}",
     "Error loading activities" : "Errore durante il caricamento delle attività",
     "Access to this resource is forbidden for guests." : "L'accesso a questa risorsa è proibito per gli Ospiti",
     "Invalid mail address" : "Indirizzo email non valido",
@@ -32,6 +33,7 @@ OC.L10N.register(
     "Hey there,<br><br>\n         \n         just letting you know that %s shared files with you.<br><br>\n         Activate your guest account at %s by <a href=\"%s\">setting a password</a>.<br><br>\n         <br><br>You can login using the email address <strong>\"%s\"</strong> .<br><br>" : "Ehilà,<br><br>\n\nti facciamo sapere che %s ha condiviso dei files con te.<br><br>\nAttiva il tuo account ospite a %s <a href=\"%s\">impostando una password</a>.<br><br>\n<br><br>Puoi accedere utilizzando l'indirizzo email <strong>\"%s\"</strong> .<br><br>",
     "Guest users are grouped under a virtual group in the user manager" : "Gli utenti Ospiti sono raggruppati in un gruppo virtuale nella gestione utenti",
     "Group name" : "Nome gruppo",
+    "Domain blocklist for guest user invitation" : "Lista di domini bloccati per l'invito di utenti ospiti",
     "The following domains will not be accepted when users try to invite guests." : "I seguenti domini non saranno accettati quando gli utenti provano a invitare degli ospiti.",
     "Limit guest access to an app whitelist" : "Limita l'accesso degli Ospiti ad una lista di App autorizzate",
     "Reset whitelist" : "Resetta la whitelist"
