@@ -49,7 +49,7 @@
 			$.ajax(xhrObject).done(function (xhr) {
 				var properties = {
 					shareType: 0,
-					shareWith: self.email.toLowerCase(),
+					shareWith: email.toLowerCase(),
 					permissions: OC.PERMISSION_CREATE | OC.PERMISSION_UPDATE
 						| OC.PERMISSION_READ | OC.PERMISSION_DELETE
 				};
@@ -84,12 +84,75 @@
 	OCA.Guests.initGuestSharePlugin = function() {
 		OC.Plugins.register('OC.Share.ShareDialogView', {
 			attach: function (obj) {
+				var self = this;
 
 				// Override ShareDialogView
+				var batchCall = obj._getUsersForBatchAction;
+				obj._getUsersForBatchAction = function(search, response) {
+					var users = Array.from(new Set(search.split(this.batchActionSeparator)));
+					var existingShares = this.model.get('shares');
+
+					return batchCall.call(this, search).then(function(res) {
+						// add potential guests to the suggestions
+						for (var i = 0; i < users.length; i++) {
+							var user = users[i].trim();
+							var newGuest = true;
+							if (OC.validateEmail(user)) {
+								// don't add new users that have been added by core already
+								for (var j = 0; j < res.found.length; j++) {
+									if (res.found[j].shareWith === user) {
+										newGuest = false;
+										break;
+									}
+								}
+
+								// don't add existing shares
+								for (j= 0; j <  existingShares.length; j++) {
+									if (existingShares[j].share_type === OC.Share.SHARE_TYPE_USER
+										&& user === existingShares[j].share_with) {
+										newGuest = false;
+										break;
+									}
+								}
+
+								// filter out blacklisted domains
+								if (self._domainIsBlacklisted(user)) {
+									newGuest = false;
+								}
+
+								if (newGuest) {
+									res.found.push({
+										shareType: OC.Share.SHARE_TYPE_GUEST,
+										shareWith: user
+									});
+
+									var index = res.notFound.indexOf(user);
+									if (index !== -1) {
+										res.notFound.splice(index, 1);
+									}
+								}
+							}
+						}
+
+						return new Promise(function(resolve, reject) {
+							resolve(res);
+						})
+					})
+				};
+
+				obj._getBatchActionLabel = function() {
+					return t('guests', 'Add multiple users and guests');
+				};
+
 				var oldHandler = obj.autocompleteHandler;
 				obj.autocompleteHandler = function(search, response) {
 
 					return oldHandler.call(obj, search, function(result, xhrResult) {
+						// no xhrResult means batch action, hence no need to fetch stuff anymore
+						if (!xhrResult) {
+							return response(result, xhrResult);
+						}
+
 						var searchTerm = search.term.trim();
 
 						// Add potential guests to the suggestions
@@ -132,12 +195,8 @@
 								}
 							}
 
-							if (oc_appconfig.guests && oc_appconfig.guests.blockdomains) {
-								for (i = 0 ; i < oc_appconfig.guests.blockdomains.length; i++) {
-									if (searchTerm.endsWith('@' + oc_appconfig.guests.blockdomains[i])) {
-										provideGuestEntry = false;
-									}
-								}
+							if (self._domainIsBlacklisted(searchTerm)) {
+								provideGuestEntry = false;
 							}
 
 							if (provideGuestEntry) {
@@ -164,24 +223,45 @@
 					$this.attr('disabled', true).val(s.item.label);
 					$loading.removeClass('hidden').addClass('inlineblock');
 
-					if (s.item.value.shareType === OC.Share.SHARE_TYPE_GUEST) {
-						if (!GuestShare.addGuest(obj.model, s.item.value.shareWith)) {
-							$this.val('').attr('disabled', false);
-							$loading.addClass('hidden').removeClass('inlineblock');
-						}
-					} else {
-						obj.model.addShare(s.item.value, {
-							success: function () {
+					if (s.item.failedBatch && s.item.failedBatch.length) {
+						obj._showFailedBatchSharees(s.item.failedBatch);
+					}
+
+					var shares = s.item.batch || [s.item.value];
+
+					for (var i = 0; i < shares.length; i++) {
+						var share = shares[i];
+						if (share.shareType === OC.Share.SHARE_TYPE_GUEST) {
+							if (!GuestShare.addGuest(obj.model, share.shareWith)) {
 								$this.val('').attr('disabled', false);
 								$loading.addClass('hidden').removeClass('inlineblock');
-							}, error: function (obj, msg) {
-								OC.Notification.showTemporary(msg);
-								$this.attr('disabled', false).autocomplete('search', $this.val());
-								$loading.addClass('hidden').removeClass('inlineblock');
 							}
-						});
+						} else {
+							obj.model.addShare(share, {
+								success: function () {
+									$this.val('').attr('disabled', false);
+									$loading.addClass('hidden').removeClass('inlineblock');
+								}, error: function (obj, msg) {
+									OC.Notification.showTemporary(msg);
+									$this.attr('disabled', false).autocomplete('search', $this.val());
+									$loading.addClass('hidden').removeClass('inlineblock');
+								}
+							});
+						}
 					}
 				};
+			},
+
+			_domainIsBlacklisted: function(email) {
+				if (oc_appconfig.guests && oc_appconfig.guests.blockdomains) {
+					for (i = 0 ; i < oc_appconfig.guests.blockdomains.length; i++) {
+						if (email.endsWith('@' + oc_appconfig.guests.blockdomains[i])) {
+							return true;
+						}
+					}
+				}
+
+				return false;
 			}
 		});
 	};
