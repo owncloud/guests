@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased] - XXXX-XX-XX
+## [0.11.0] - 2022-07-18
+
+### Changed
+
+- [#506](https://github.com/owncloud/guests/pull/506) - Add batch action to allow sharing with multiple guests at once
 
 ## [0.10.0] - 2022-07-06
 
@@ -200,7 +204,8 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
-[Unreleased]: https://github.com/owncloud/guests/compare/v0.10.0...master
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.11.0...master
+[0.11.0]: https://github.com/owncloud/guests/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/owncloud/guests/compare/v0.9.3...v0.10.0
 [0.9.3]: https://github.com/owncloud/guests/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/owncloud/guests/compare/v0.9.1...v0.9.2
