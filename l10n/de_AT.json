@@ -1,17 +1,15 @@
-OC.L10N.register(
-    "guests",
-    {
+{ "translations": {
     "Loading…" : "Lade…",
     "Loaded" : "Geladen",
     "Reset" : "Zurücksetzen",
     "Error while sharing" : "Fehler beim Teilen",
     "Error" : "Fehler",
     "Add multiple users and guests" : "Mehrere Benutzer und Gäste hinzufügen",
-    "Add {unknown}" : "{unknown} hinzufügen",
+    "Add {unknown}" : "{unbekannt} hinzufügen",
     "Error loading activities" : "Fehler beim Laden der Aktivitäten",
     "Access to this resource is forbidden for guests." : "Der Zugriff auf diese Ressource ist für Gastnutzer untersagt. ",
     "Invalid mail address" : "Ungültige E-Mail-Adresse",
-    "No such guest user" : "Kein derartiger Nutzer",
+    "No such guest user" : "Kein derartiger Gast Benutzer",
     "The token is invalid" : "Der Token ist ungültig",
     "Password cannot be empty" : "Das Passwort darf nicht leer sein",
     "Group name must not be empty." : "Der Gruppenname muss angegeben werden.",
@@ -25,7 +23,7 @@ OC.L10N.register(
     "Couldn't send reset email. Please contact your administrator." : "Die E-Mail zum Zurücksetzen konnte nicht versendet werden. Bitte kontaktiere Deinen Administrator.",
     "%s invited you" : "%s hat Dich eingeladen",
     "Email" : "E-Mail",
-    "Password" : "Kennwort",
+    "Password" : "Passwort",
     "Set password" : "Passwort setzen",
     "Hey there,\n\njust letting you know that %s shared %s with you.\n\nActivate your guest account at %s by setting a password: %s\n\nThen view it: %s\n\nYou can login using the email address \"%s\".\n\n" : "Hallo,\n\n%s hat gerade %s mit dir geteilt.\n\nAktiviere dein Gastkonto %s indem du ein Passwort vergibst: %s\n\nSieh es dir danach an: %s\n\nDu kannst dich mit deiner E-Mail Adresse einloggen \"%s\".\n\n",
     "The share will expire on %s." : "Die Freigabe wird am %s ablaufen.",
@@ -38,5 +36,5 @@ OC.L10N.register(
     "The following domains will not be accepted when users try to invite guests." : "Folgende Domains werden für Gast Einladungen nicht akzeptiert.",
     "Limit guest access to an app whitelist" : "Gastzugriff auf eine App-Whitelist beschränken",
     "Reset whitelist" : "Whitelist zurücksetzen"
-},
-"nplurals=2; plural=(n != 1);");
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
