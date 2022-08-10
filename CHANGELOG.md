@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased] xxxx-xx-xx
+
 ## [0.11.0] - 2022-07-18
 
 ### Changed
 
 - [#506](https://github.com/owncloud/guests/pull/506) - Add batch action to allow sharing with multiple guests at once
-
+- Translations updated
 ## [0.10.0] - 2022-07-06
 
 ### Changed
