@@ -105,22 +105,24 @@ class Application extends App {
 		$appWhiteList = AppWhitelist::getWhitelist();
 
 		/**
-		 * Add whitelistedAppsForGuests attribute if it is not present. There is a
+		 * Add whitelistedAppsForGuests attribute only if it is not present. There is a
 		 * case where the whitelistedAppsForGuests could be changed by the admin.
 		 * Under such circumstance, if the whiteListedApp is present in
 		 * userAppAttributes array we have to update it.
 		 */
-		if (!isset($userAppAttributes['whitelistedAppsForGuests']) ||
-			$userAppAttributes['whitelistedAppsForGuests'] !== $appWhiteList) {
-			if ($attributesEvent->setAttributes('whitelistedAppsForGuests', $appWhiteList)) {
-				$server->getLogger()->debug(
-					"Add new user attributes key 'whitelistedAppsForGuests' has value '" . \implode(',', $appWhiteList) . "' for guest user " . $user->getUID()
-				);
-			} else {
-				$server->getLogger()->debug(
-					"The attributes key 'whitelistedAppsForGuests' already exists for guest user " . $user->getUID()
-				);
-			}
+		if (isset($userAppAttributes['whitelistedAppsForGuests']) &&
+			$userAppAttributes['whitelistedAppsForGuests'] === $appWhiteList) {
+			return;
+		}
+
+		if ($attributesEvent->setAttributes('whitelistedAppsForGuests', $appWhiteList)) {
+			$server->getLogger()->debug(
+				"Add new user attributes key 'whitelistedAppsForGuests' has value '" . \implode(',', $appWhiteList) . "' for guest user " . $user->getUID()
+			);
+		} else {
+			$server->getLogger()->debug(
+				"The attributes key 'whitelistedAppsForGuests' already exists for guest user " . $user->getUID()
+			);
 		}
 	}
 
