@@ -99,22 +99,27 @@ class Application extends App {
 	private function addUserAppAttributes(IServerContainer $server, UserExtendedAttributesEvent $attributesEvent, $userAppAttributes) {
 		$user = $attributesEvent->getUser();
 		$isGuestUser = $server->getConfig()->getUserValue($user->getUID(), 'owncloud', 'isGuest', '0');
-		if ($isGuestUser !== '0') {
-			$appWhiteList = AppWhitelist::getWhitelist();
+		if ($isGuestUser === '0') {
+			return;
+		}
+		$appWhiteList = AppWhitelist::getWhitelist();
 
-			/**
-			 * Add whitelistedAppsForGuests attribute if it is not present. There is a
-			 * case where the whitelistedAppsForGuests could be changed by the admin.
-			 * Under such circumstance, if the whiteListedApp is present in
-			 * userAppAttributes array we have to update it.
-			 */
-			if (!isset($userAppAttributes['whitelistedAppsForGuests']) ||
-				$userAppAttributes['whitelistedAppsForGuests'] !== $appWhiteList) {
-				if ($attributesEvent->setAttributes('whitelistedAppsForGuests', $appWhiteList)) {
-					$server->getLogger()->debug("Add new user attributes key = whiteListedApps and value = " . \implode(',', $appWhiteList) . " for guest user " . $user->getUID());
-				} else {
-					$server->getLogger()->debug("The attributes key = whiteListedApps already exist for guest user " . $user->getUID());
-				}
+		/**
+		 * Add whitelistedAppsForGuests attribute if it is not present. There is a
+		 * case where the whitelistedAppsForGuests could be changed by the admin.
+		 * Under such circumstance, if the whiteListedApp is present in
+		 * userAppAttributes array we have to update it.
+		 */
+		if (!isset($userAppAttributes['whitelistedAppsForGuests']) ||
+			$userAppAttributes['whitelistedAppsForGuests'] !== $appWhiteList) {
+			if ($attributesEvent->setAttributes('whitelistedAppsForGuests', $appWhiteList)) {
+				$server->getLogger()->debug(
+					"Add new user attributes key 'whitelistedAppsForGuests' has value '" . \implode(',', $appWhiteList) . "' for guest user " . $user->getUID()
+				);
+			} else {
+				$server->getLogger()->debug(
+					"The attributes key 'whitelistedAppsForGuests' already exists for guest user " . $user->getUID()
+				);
 			}
 		}
 	}
