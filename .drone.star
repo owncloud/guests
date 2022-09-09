@@ -106,7 +106,6 @@ config = {
         "acceptance": {
             "servers": [
                 "daily-master-qa",
-                "latest",
             ],
         },
     },
