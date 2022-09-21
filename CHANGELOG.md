@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased] xxxx-xx-xx
+## [Unreleased] - xxxx-xx-xx
+
+## [0.12.0] - 2022-09-12
+
+### Changed
+
+- [#518](https://github.com/owncloud/guests/pull/518) - Provide extended attributes when the event is emitted
+- This release rquires core 10.11.0 or later.
 
 ## [0.11.0] - 2022-07-18
 
