@@ -242,7 +242,7 @@ class UsersController extends Controller {
 			if (\count($emailDomain) !== 2) {
 				return false;
 			}
-			if (\strtolower($emailDomain) === \strtolower($blockedDomain)) {
+			if (\strtolower($emailDomain[1]) === \strtolower($blockedDomain)) {
 				return true;
 			}
 		}
