@@ -17,6 +17,7 @@ Feature: Guests
       | John.Smith@email.com           | John.Smith           |
       | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
 
+
   Scenario: Cannot create a guest if a user with the same email address exists
     Given user "existing-user" has been created with default attributes and small skeleton files
     And the administrator sends HTTP method "PUT" to OCS API endpoint "/cloud/users/existing-user" with body
@@ -26,6 +27,7 @@ Feature: Guests
     Then the HTTP status code should be "422"
     And user "guest" should not exist
 
+
   Scenario: A guest user cannot upload files to their own storage
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
@@ -34,6 +36,7 @@ Feature: Guests
     And the HTTP reason phrase of all upload responses should be "Unauthorized"
     And as "guest@example.com" file "/textfile.txt" should not exist
     And as "Alice" file "/textfile.txt" should not exist
+
 
   Scenario: A guest user cannot upload files to their own storage (async upload)
     Given the administrator has enabled async operations
@@ -91,13 +94,13 @@ Feature: Guests
     And the content of file "/tmp/myfile.txt" for user "Alice" should be:
     """
     This is a testfile.
-    
+
     Cheers.
     """
     And the content of file "/tmp/myfile.txt" for user "guest@example.com" should be:
     """
     This is a testfile.
-    
+
     Cheers.
     """
 
@@ -116,13 +119,13 @@ Feature: Guests
     And the content of file "/tmp/textfile.txt" for user "Alice" should be:
     """
     This is a testfile.
-    
+
     Cheers.
     """
     And the content of file "/tmp/textfile.txt" for user "guest@example.com" should be:
     """
     This is a testfile.
-    
+
     Cheers.
     """
 
@@ -194,12 +197,14 @@ Feature: Guests
     And user "guest@example.com" should see the following elements
       | /textfile1.txt |
 
+
   Scenario: Trying to create a guest user that already exists
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "guest" should be a guest user
     When the administrator attempts to create guest user "guest" with email "guest@example.com" using the API
     Then the HTTP status code should be "422"
+
 
   Scenario: removing a guest user from a group
     Given the administrator has created guest user "guest" with email "guest@example.com"
