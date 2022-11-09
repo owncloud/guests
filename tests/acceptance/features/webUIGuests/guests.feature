@@ -69,8 +69,8 @@ Feature: Guests
     Given the administrator has added config key "blockdomains" with value "test.com,gmail.com" in app "guests"
     And user "Alice" has been created with default attributes and small skeleton files
     And user "Alice" has logged in using the webUI
-    When the user shares file "textfile0.txt" with guest user with email "valid@email.com" using the webUI
-    Then user "valid@email.com" should exist
+    When the user shares file "textfile0.txt" with guest user with email "valid@notgmail.com" using the webUI
+    Then user "valid@notgmail.com" should exist
 
   @mailhog @skipOnOcV10.2
   Scenario: User uses invalid email to create a guest user
