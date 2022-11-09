@@ -65,7 +65,7 @@ Feature: Guests
       | test.com,gmail.com,somewhere.org |
 
   @mailhog @skipOnOcV10.8 @skipOnOcV10.9.0 @skipOnOcV10.9.1
-  Scenario: User can use an email of a not-blocked domain to create a guest user
+  Scenario: User can use an email of a not-blocked domain to create a guest user even if blocked domain is substring of email domain
     Given the administrator has added config key "blockdomains" with value "test.com,gmail.com" in app "guests"
     And user "Alice" has been created with default attributes and small skeleton files
     And user "Alice" has logged in using the webUI
