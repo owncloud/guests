@@ -46,7 +46,7 @@ Feature: Guests
     And as "guest@example.com" file "/textfile.txt" should not exist
     And as "Alice" file "/textfile.txt" should not exist
 
-  @mailhog @skipOnOcV10.3
+  @email @skipOnOcV10.3
   Scenario Outline: A guest user can upload files to a folder shared with them
     Given user "Alice" has been created with default attributes and small skeleton files
     And the administrator has created guest user "<user>" with email "<email-address>"
@@ -63,7 +63,7 @@ Feature: Guests
       | John.Smith@email.com           | John.Smith           |
       | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
 
-  @mailhog
+  @email
   Scenario: A guest user can upload chunked files to a folder shared with them
     Given user "Alice" has been created with default attributes and small skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -79,7 +79,7 @@ Feature: Guests
     Then as "guest@example.com" file "/tmp/myChunkedFile.txt" should exist
     And as "Alice" file "/tmp/myChunkedFile.txt" should exist
 
-  @mailhog @issue-279
+  @email @issue-279
   Scenario: A guest user can upload files to a folder shared with them
     Given user "Alice" has been created with default attributes and small skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -104,7 +104,7 @@ Feature: Guests
     Cheers.
     """
 
-  @mailhog
+  @email
   Scenario: A guest user can upload files to a folder shared with them (async upload)
     Given the administrator has enabled async operations
     And user "Alice" has been created with default attributes and small skeleton files
@@ -129,7 +129,7 @@ Feature: Guests
     Cheers.
     """
 
-  @mailhog
+  @email
   Scenario: A guest user can cancel a chunked upload
     Given user "Alice" has been created with default attributes and small skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -145,7 +145,7 @@ Feature: Guests
     Then the HTTP status code should be "204"
     And as "Alice" file "/tmp/myChunkedFile.txt" should not exist
 
-  @mailhog
+  @email
   Scenario: A guest user can upload a file and can reshare it
     Given these users have been created with default attributes and small skeleton files:
       | username |
@@ -162,7 +162,7 @@ Feature: Guests
     Then the OCS status code should be "100"
     And the HTTP status code should be "200"
 
-  @mailhog
+  @email
   Scenario: A guest user cannot reshare files
     Given these users have been created with default attributes and small skeleton files:
       | username |
@@ -185,7 +185,7 @@ Feature: Guests
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
 
-  @mailhog
+  @email
   Scenario: A created guest user can log in
     Given user "Alice" has been created with default attributes and small skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -216,7 +216,7 @@ Feature: Guests
     Then the OCS status code should be "100"
     And user "guest@example.com" should not belong to group "guests_app"
 
-  @mailhog
+  @email
   Scenario: A guest user can not create new guest users
     Given user "Alice" has been created with default attributes and small skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -226,7 +226,7 @@ Feature: Guests
     When user "guest@example.com" attempts to create guest user "guest2" with email "guest2@example.com" using the API
     Then the HTTP status code should be "403"
 
-  @mailhog
+  @email
   Scenario: Create a regular user using the same email address as an existing guest user
     Given the administrator has created guest user "guest" with email "guest@example.com"
     When the administrator creates these users with skeleton files:
