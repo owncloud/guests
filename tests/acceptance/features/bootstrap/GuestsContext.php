@@ -403,6 +403,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		string $guestDisplayName,
 		string $guestEmail
 	): void {
+		$this->featureContext->pushEmailRecipientAsMailBox($guestEmail);
 		$this->userCreatesAGuestUser(
 			$this->featureContext->getAdminUsername(),
 			$guestDisplayName,
