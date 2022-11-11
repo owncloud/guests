@@ -513,7 +513,6 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	public function getRegistrationUrl(string $address): string {
 		$lastEmailBody = EmailHelper::getBodyOfLastEmail(
-			$this->emailContext->getLocalMailhogUrl(),
 			$address,
 			$this->featureContext->getStepLineRef()
 		);
