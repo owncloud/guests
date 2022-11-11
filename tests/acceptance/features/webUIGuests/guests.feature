@@ -5,7 +5,7 @@ Feature: Guests
     Given using OCS API version "1"
     And using new dav path
 
-  @mailhog
+  @email
   Scenario: Guest user sets its own password
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -16,7 +16,7 @@ Feature: Guests
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
     And folder "tmp" should be listed on the webUI
 
-  @mailhog
+  @email
   Scenario: Guest user uses the link twice
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -27,7 +27,7 @@ Feature: Guests
     Then the user should be redirected to a webUI page with the title "%productname%"
     And a warning should be displayed on the set-password-page saying "The token is invalid"
 
-  @mailhog @skipOnOcV10.2 @skipOnOcV10.3
+  @email @skipOnOcV10.2 @skipOnOcV10.3
   Scenario Outline: User uses valid email to create a guest user
     Given user "Alice" has been created with default attributes and large skeleton files
     And user "Alice" has logged in using the webUI
@@ -39,7 +39,7 @@ Feature: Guests
       | John.Smith@email.com           |
       | Betty_Anne+Bob-Burns@email.com |
 
-  @mailhog
+  @email
   Scenario: User uses some random string email to create a guest user
     Given user "Alice" has been created with default attributes and small skeleton files
     And user "Alice" has logged in using the webUI
@@ -49,7 +49,7 @@ Feature: Guests
     And user "somestring" should not be displayed in the dropdown as a guest user
     And user "somestring" should not exist
 
-  @mailhog @skipOnOcV10.8 @skipOnOcV10.9.0 @skipOnOcV10.9.1
+  @email @skipOnOcV10.8 @skipOnOcV10.9.0 @skipOnOcV10.9.1
   Scenario Outline: User cannot use an email of a blocked domain to create a guest user
     Given the administrator has added config key "blockdomains" with value "<block-domains>" in app "guests"
     And user "Alice" has been created with default attributes and small skeleton files
@@ -64,7 +64,7 @@ Feature: Guests
       | gmail.com,somewhere.org          |
       | test.com,gmail.com,somewhere.org |
 
-  @mailhog @skipOnOcV10.8 @skipOnOcV10.9.0 @skipOnOcV10.9.1
+  @email @skipOnOcV10.8 @skipOnOcV10.9.0 @skipOnOcV10.9.1
   Scenario: User can use an email of a not-blocked domain to create a guest user
     Given the administrator has added config key "blockdomains" with value "test.com,gmail.com" in app "guests"
     And user "Alice" has been created with default attributes and small skeleton files
@@ -72,7 +72,7 @@ Feature: Guests
     When the user shares file "textfile0.txt" with guest user with email "valid@email.com" using the webUI
     Then user "valid@email.com" should exist
 
-  @mailhog @skipOnOcV10.2
+  @email @skipOnOcV10.2
   Scenario: User uses invalid email to create a guest user
     Given user "Alice" has been created with default attributes and large skeleton files
     And user "Alice" has logged in using the webUI
@@ -82,7 +82,7 @@ Feature: Guests
       | Error | Invalid mail address |
     And user "invalid@email.com()9876a" should not exist
 
-  @mailhog @skipOnOcV10.2
+  @email @skipOnOcV10.2
   Scenario: User tries to create a guest user via email with an already used email
     Given these users have been created with large skeleton files:
       | username | email        |
@@ -94,7 +94,7 @@ Feature: Guests
     Then user "Brian" should be listed in the autocomplete list on the webUI
     And user "Brian@oc.com" should not be displayed in the dropdown as a guest user
 
-  @mailhog @issue-329 @skipOnOcV10.2
+  @email @issue-329 @skipOnOcV10.2
   Scenario: User tries to create a guest user when a server email mode is not set
     Given user "Brian" has been created with default attributes and large skeleton files
     And user "Brian" has logged in using the webUI
@@ -106,7 +106,7 @@ Feature: Guests
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
-  @mailhog @skipOnOcV10.2 @skipOnFIREFOX
+  @email @skipOnOcV10.2 @skipOnFIREFOX
   Scenario: Administrator changes the guest user's password in users menu
     Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
@@ -119,7 +119,7 @@ Feature: Guests
     And the user logs in with username "valid@email.com" and password "newpassword" using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
 
-  @mailhog @issue-329 @skipOnOcV10.2
+  @email @issue-329 @skipOnOcV10.2
   Scenario: User tries to create a guest user when a server email is invalid
     Given user "Brian" has been created with default attributes and large skeleton files
     And user "Brian" has logged in using the webUI
@@ -131,7 +131,7 @@ Feature: Guests
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
-  @mailhog @skipOnOcV10.2
+  @email @skipOnOcV10.2
   Scenario: Administrator deletes a guest user in user's menu
     Given user "admin" has uploaded file with content "new content" to "new-file.txt"
     And the administrator has logged in using the webUI
@@ -140,7 +140,7 @@ Feature: Guests
     When the administrator deletes user "valid@email.com" using the webUI and confirms the deletion using the webUI
     Then user "valid@email.com" should not exist
 
-  @mailhog @skipOnOcV10.2
+  @email @skipOnOcV10.2
   Scenario Outline: User creates a guest user with email that contains capital letters
     Given user "Alice" has been created with default attributes and large skeleton files
     And user "Alice" has logged in using the webUI
@@ -158,7 +158,7 @@ Feature: Guests
       | USER@example.com | USER@example.com | user@example.com |
       | user@example.com | USER@example.com | user@EXAMPLE.com |
 
-  @mailhog
+  @email
   Scenario: Guest user is not able to upload or create files
     Given user "Alice" has been created with default attributes and large skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -167,7 +167,7 @@ Feature: Guests
     And user "guest@example.com" logs in using the webUI
     Then the user should not have permission to upload or create files
 
-  @mailhog @skipOnOcV10.3
+  @email @skipOnOcV10.3
   Scenario Outline: Guest user is able to upload or create files inside the received share(with change permission)
     Given user "Alice" has been created with default attributes and large skeleton files
     And user "Alice" has logged in using the webUI
@@ -185,7 +185,7 @@ Feature: Guests
       | John.Smith@email.com           |
       | Betty_Anne+Bob-Burns@email.com |
 
-  @mailhog
+  @email
   Scenario: Guest user tries to upload or create files inside the received share(read only permission)
     Given user "Alice" has been created with default attributes and large skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -197,7 +197,7 @@ Feature: Guests
     And the user opens folder "simple-folder" using the webUI
     Then the user should not have permission to upload or create files
 
-  @mailhog
+  @email
   Scenario: Create a regular user using the same email address of an existing guest user
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the administrator has logged in using the webUI
