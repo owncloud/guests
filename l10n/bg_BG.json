@@ -10,7 +10,7 @@
     "Access to this resource is forbidden for guests." : "Достъпът за гости до този ресурс е забранен.",
     "Invalid mail address" : "Невалиден имейл адрес",
     "No such guest user" : "Няма такъв гост потребител",
-    "The token is invalid" : "Маркерът е невалиден",
+    "The token is invalid" : "Токенът е невалиден",
     "Password cannot be empty" : "Паролата не може да бъде празна",
     "Group name must not be empty." : "Името на групата не може да бъде празно",
     "Saved" : "Запазено",
