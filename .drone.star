@@ -81,9 +81,6 @@ config = {
             "suites": {
                 "apiGuests": "apiGuestsScality",
             },
-            "servers": [
-                "daily-master-qa",
-            ],
             "databases": [
                 "mysql:8.0",
             ],
@@ -94,9 +91,6 @@ config = {
             "suites": {
                 "apiGuests": "apiGuestsCeph",
             },
-            "servers": [
-                "daily-master-qa",
-            ],
             "databases": [
                 "mysql:8.0",
             ],
