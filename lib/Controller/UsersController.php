@@ -235,11 +235,14 @@ class UsersController extends Controller {
 	public function isDomainBlocked(string $email): bool {
 		# disable to add users from blocked domains
 		$blockedDomains = \OC::$server->getConfig()->getAppValue('guests', 'blockdomains');
-		$blockedDomains = explode(',', $blockedDomains);
+		$blockedDomains = \explode(',', $blockedDomains);
+		$emailDomain = \explode('@', $email);
+		if (\count($emailDomain) !== 2) {
+			return false;
+		}
 		foreach ($blockedDomains as $blockedDomain) {
-			$blockedDomain = trim($blockedDomain);
-			$length = \strlen($blockedDomain);
-			if ($length && \substr($email, -$length) === $blockedDomain) {
+			$blockedDomain = \trim($blockedDomain);
+			if (\strtolower($emailDomain[1]) === \strtolower($blockedDomain)) {
 				return true;
 			}
 		}
