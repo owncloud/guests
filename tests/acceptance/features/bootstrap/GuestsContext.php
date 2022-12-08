@@ -403,6 +403,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		string $guestDisplayName,
 		string $guestEmail
 	): void {
+		$this->featureContext->pushEmailRecipientAsMailBox($guestEmail);
 		$this->userCreatesAGuestUser(
 			$this->featureContext->getAdminUsername(),
 			$guestDisplayName,
@@ -513,7 +514,6 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	public function getRegistrationUrl(string $address): string {
 		$lastEmailBody = EmailHelper::getBodyOfLastEmail(
-			$this->emailContext->getLocalMailhogUrl(),
 			$address,
 			$this->featureContext->getStepLineRef()
 		);

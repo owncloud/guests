@@ -1,6 +1,6 @@
 BANST_AWS_CLI = "banst/awscli"
 DRONE_CLI = "drone/cli:alpine"
-MAILHOG_MAILHOG = "mailhog/mailhog"
+INBUCKET_INBUCKET = "inbucket/inbucket"
 MINIO_MC = "minio/mc:RELEASE.2020-12-18T10-53-53Z"
 OC_CI_ALPINE = "owncloudci/alpine:latest"
 OC_CI_BAZEL_BUILDIFIER = "owncloudci/bazel-buildifier"
@@ -48,7 +48,14 @@ config = {
     "codestyle": True,
     "phpstan": True,
     "javascript": True,
-    "phan": True,
+    "phan": {
+        "multipleVersions": {
+            "phpVersions": [
+                DEFAULT_PHP_VERSION,
+                "7.3",
+            ],
+        },
+    },
     "phpunit": True,
     "acceptance": {
         "webUI": {
@@ -81,9 +88,6 @@ config = {
             "suites": {
                 "apiGuests": "apiGuestsScality",
             },
-            "servers": [
-                "daily-master-qa",
-            ],
             "databases": [
                 "mysql:8.0",
             ],
@@ -94,9 +98,6 @@ config = {
             "suites": {
                 "apiGuests": "apiGuestsCeph",
             },
-            "servers": [
-                "daily-master-qa",
-            ],
             "databases": [
                 "mysql:8.0",
             ],
@@ -413,6 +414,7 @@ def phan(ctx):
 
     default = {
         "phpVersions": [DEFAULT_PHP_VERSION],
+        "extraApps": {},
     }
 
     if "defaults" in config:
@@ -451,6 +453,7 @@ def phan(ctx):
                 },
                 "steps": skipIfUnchanged(ctx, "lint") +
                          installCore(ctx, "daily-master-qa", "sqlite", False) +
+                         installExtraApps(phpVersion, params["extraApps"], False) +
                          [
                              {
                                  "name": "phan",
@@ -1146,7 +1149,7 @@ def acceptance(ctx):
                         makeParameter = "test-acceptance-cli"
 
                 if testConfig["emailNeeded"]:
-                    environment["MAILHOG_HOST"] = "email"
+                    environment["EMAIL_HOST"] = "email"
 
                 if testConfig["ldapNeeded"]:
                     environment["TEST_WITH_LDAP"] = True
@@ -1182,6 +1185,7 @@ def acceptance(ctx):
                              testConfig["extraSetup"] +
                              waitForServer(testConfig["federatedServerNeeded"]) +
                              waitForEmailService(testConfig["emailNeeded"]) +
+                             waitForSamba(testConfig["extraServices"]) +
                              fixPermissions(phpVersionForDocker, testConfig["federatedServerNeeded"], params["selUserNeeded"]) +
                              waitForBrowserService(testConfig["browser"]) +
                              [
@@ -1465,7 +1469,7 @@ def emailService(emailNeeded):
     if emailNeeded:
         return [{
             "name": "email",
-            "image": MAILHOG_MAILHOG,
+            "image": INBUCKET_INBUCKET,
         }]
 
     return []
@@ -1476,7 +1480,27 @@ def waitForEmailService(emailNeeded):
             "name": "wait-for-email",
             "image": OC_CI_WAIT_FOR,
             "commands": [
-                "wait-for -it email:8025 -t 600",
+                "wait-for -it email:9000 -t 600",
+            ],
+        }]
+
+    return []
+
+def waitForSamba(extraServices):
+    foundSamba = False
+
+    for extraService in extraServices:
+        # each service entry should be a key-value dictionary that has at least a "name" key
+        # if there is a "samba" service specified, then we need to wait for it to start.
+        if (extraService["name"] == "samba"):
+            foundSamba = True
+
+    if (foundSamba):
+        return [{
+            "name": "wait-for-samba",
+            "image": OC_CI_WAIT_FOR,
+            "commands": [
+                "wait-for -it samba:139,samba:445 -t 300",
             ],
         }]
 
@@ -1708,7 +1732,7 @@ def installTestrunner(ctx, phpVersion, useBundledApp):
         ] if not useBundledApp else []),
     }]
 
-def installExtraApps(phpVersion, extraApps):
+def installExtraApps(phpVersion, extraApps, enableExtraApps = True):
     commandArray = []
     for app, command in extraApps.items():
         commandArray.append("ls %s/apps/%s || git clone https://github.com/owncloud/%s.git %s/apps/%s" % (dir["testrunner"], app, app, dir["testrunner"], app))
@@ -1717,9 +1741,10 @@ def installExtraApps(phpVersion, extraApps):
             commandArray.append("cd %s/apps/%s" % (dir["server"], app))
             commandArray.append(command)
         commandArray.append("cd %s" % dir["server"])
-        commandArray.append("php occ a:l")
-        commandArray.append("php occ a:e %s" % app)
-        commandArray.append("php occ a:l")
+        if (enableExtraApps):
+            commandArray.append("php occ a:l")
+            commandArray.append("php occ a:e %s" % app)
+            commandArray.append("php occ a:l")
 
     if (commandArray == []):
         return []
