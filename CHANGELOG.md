@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [0.12.2] - 2022-12-09
+
+### Fixed
+
+- - [#529](https://github.com/owncloud/guests/pull/529) - Fix blocklist checking only if email string ends with blocklist entry, instead of comparing email domain with blocklist domain #529
 
 
 ## [0.12.1] - 2022-11-18
@@ -221,7 +225,8 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
-[Unreleased]: https://github.com/owncloud/guests/compare/v0.12.1...master
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.12.2...master
+[0.12.2]: https://github.com/owncloud/guests/compare/v0.12.1...v0.12.2
 [0.12.1]: https://github.com/owncloud/guests/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/owncloud/guests/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/owncloud/guests/compare/v0.10.0...v0.11.0
