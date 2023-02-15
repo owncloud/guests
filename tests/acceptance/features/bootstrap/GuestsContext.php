@@ -699,6 +699,30 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @param string $app
+	 *
+	 * @return void
+	 */
+	public function addAppToWhiteList(string $app): void {
+		$whiteList = $this->getWhiteListApps();
+		$whiteList = explode(",", trim($whiteList));
+		if (!\in_array($app, $whiteList)) {
+			$appsList[] = $app;
+		}
+		$whiteList = join(",", $whiteList);
+		AppConfigHelper::modifyAppConfig(
+			$this->featureContext->getBaseUrl(),
+			$this->featureContext->getAdminUsername(),
+			$this->featureContext->getAdminPassword(),
+			"guests",
+			"whitelist",
+			$whiteList,
+			$this->featureContext->getStepLineRef(),
+			$this->featureContext->getOcsApiVersion()
+		);
+	}
+
+	/**
 	 * @Given the administrator has removed the app :app from the whitelist for the guest user
 	 *
 	 * @param string $app
@@ -707,5 +731,16 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 */
 	public function theAdministratorHasRemovedAppFromTheWhitelistForGuestUser(string $app) : void {
 		$this->removeAppFromWhiteList($app);
+	}
+
+	/**
+	 * @Given the administrator has added the app :app to the whitelist for the guest user
+	 *
+	 * @param string $app
+	 *
+	 * @return void
+	 */
+	public function theAdministratorHasAddedAppToTheWhitelistForGuestUser(string $app) : void {
+		$this->addAppToWhiteList($app);
 	}
 }
