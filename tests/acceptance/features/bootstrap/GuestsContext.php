@@ -30,6 +30,7 @@ use TestHelpers\EmailHelper;
 use TestHelpers\HttpRequestHelper;
 use TestHelpers\SetupHelper;
 use TestHelpers\UploadHelper;
+use TestHelpers\AppConfigHelper;
 
 require_once 'bootstrap.php';
 
@@ -659,65 +660,36 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When the administrator has set useWhitelist to :state
+	 * @Given the administrator has removed the app :app from the whitelist for the guest user
 	 *
-	 * @param string $state
+	 * @param string $app
 	 *
 	 * @return void
 	 */
-	public function theAdministratorHasSetUsewhitelistTo(string $state) : void {
-		$fullUrl = $this->featureContext->getBaseUrl() . '/index.php/apps-external/guests/config';
-		$body = [
-			'group' => 'guest_app',
-			'useWhitelist' => $state
-		];
-		$headers = [];
-		$headers['Content-Type'] = 'application/x-www-form-urlencoded';
-		$response = HttpRequestHelper::sendRequest(
-			$fullUrl,
-			$this->featureContext->getStepLineRef(),
-			'PUT',
-			$this->featureContext->getAdminUsername(),
-			$this->featureContext->getAdminPassword(),
-			$headers,
-			$body
-		);
-		$this->featureContext->setResponse($response);
-		$this->featureContext->theHTTPStatusCodeShouldBeSuccess();
-	}
+	public function theAdministratorHasRemovedAppFromTheWhitelistForGuestUser(string $app) : void {
+		$whiteList = SetupHelper::runOcc(
+			['config:app:get', 'guests', 'whitelist'],
+			$this->featureContext->getStepLineRef()
+		)['stdOut'];
 
-	/**
-	 * @When the administrator has removed the :whitelist from the whitelist
-	 *
-	 * @param string $whitelist
-	 *
-	 * @return void
-	 */
-	public function theAdministratorHasRemovedTheFromTheWhitelist(string $whitelist) : void {
-		$appWhitelist = ['settings', 'files_sharing', 'systemtags', 'files_trashbin', 'files_versions', 'comments'];
-		if (($key = array_search($whitelist, $appWhitelist)) !== false) {
-			unset($appWhitelist[$key]);
-		}
-		$appWhitelist = join(",", $appWhitelist);
-		
-		$fullUrl = $this->featureContext->getBaseUrl() . '/index.php/apps-external/guests/config';
-		$body = [
-			'group' => 'guest_app',
-			'useWhitelist' => 'true',
-			'whitelist[]' => $appWhitelist
-		];
-		$headers = [];
-		$headers['Content-Type'] = 'application/x-www-form-urlencoded';
-		$response = HttpRequestHelper::sendRequest(
-			$fullUrl,
-			$this->featureContext->getStepLineRef(),
-			'PUT',
+		$whiteList = explode(",", trim($whiteList));
+		$whiteList = array_filter(
+			$whiteList,
+			function ($item) use ($app) {
+				return $item !== $app;
+			}
+		);
+		$whiteList = join(",", $whiteList);
+		AppConfigHelper::modifyAppConfig(
+			$this->featureContext->getBaseUrl(),
 			$this->featureContext->getAdminUsername(),
 			$this->featureContext->getAdminPassword(),
-			$headers,
-			$body
+			"guests",
+			"whitelist",
+			$whiteList,
+			$this->featureContext->getStepLineRef(),
+			$this->featureContext->getOcsApiVersion()
 		);
-		$this->featureContext->setResponse($response);
-		$this->featureContext->theHTTPStatusCodeShouldBeSuccess();
+		$this->featureContext->clearStatusCodeArrays();
 	}
 }
