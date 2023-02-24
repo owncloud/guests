@@ -660,18 +660,24 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Given the administrator has removed the app :app from the whitelist for the guest user
+	 * Returns the whitelist apps enabled for the guest user
 	 *
+	 * @return string
+	 */
+	public function getWhiteListApps(): string {
+		return SetupHelper::runOcc(
+			['config:app:get', 'guests', 'whitelist'],
+			$this->featureContext->getStepLineRef()
+		)['stdOut'];
+	}
+
+	/**
 	 * @param string $app
 	 *
 	 * @return void
 	 */
-	public function theAdministratorHasRemovedAppFromTheWhitelistForGuestUser(string $app) : void {
-		$whiteList = SetupHelper::runOcc(
-			['config:app:get', 'guests', 'whitelist'],
-			$this->featureContext->getStepLineRef()
-		)['stdOut'];
-
+	public function removeAppFromWhiteList(string $app): void {
+		$whiteList = $this->getWhiteListApps();
 		$whiteList = explode(",", trim($whiteList));
 		$whiteList = array_filter(
 			$whiteList,
@@ -690,6 +696,16 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->featureContext->getStepLineRef(),
 			$this->featureContext->getOcsApiVersion()
 		);
-		$this->featureContext->clearStatusCodeArrays();
+	}
+
+	/**
+	 * @Given the administrator has removed the app :app from the whitelist for the guest user
+	 *
+	 * @param string $app
+	 *
+	 * @return void
+	 */
+	public function theAdministratorHasRemovedAppFromTheWhitelistForGuestUser(string $app) : void {
+		$this->removeAppFromWhiteList($app);
 	}
 }
