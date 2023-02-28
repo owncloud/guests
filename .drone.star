@@ -58,21 +58,6 @@ config = {
     },
     "phpunit": True,
     "acceptance": {
-        "webUI": {
-            "suites": {
-                "webUIGuests": "webUIGuest",
-            },
-            "browsers": [
-                "chrome",
-                "firefox",
-            ],
-            "databases": [
-                "mysql:8.0",
-                "postgres:9.4",
-                "oracle",
-            ],
-            "emailNeeded": True,
-        },
         "api": {
             "suites": [
                 "apiGuests",
@@ -83,26 +68,6 @@ config = {
                 "oracle",
             ],
             "emailNeeded": True,
-        },
-        "api-scality": {
-            "suites": {
-                "apiGuests": "apiGuestsScality",
-            },
-            "databases": [
-                "mysql:8.0",
-            ],
-            "emailNeeded": True,
-            "scalityS3": True,
-        },
-        "api-ceph": {
-            "suites": {
-                "apiGuests": "apiGuestsCeph",
-            },
-            "databases": [
-                "mysql:8.0",
-            ],
-            "emailNeeded": True,
-            "cephS3": True,
         },
     },
     "defaults": {

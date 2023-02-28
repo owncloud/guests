@@ -535,6 +535,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$oldCSRFSetting = $this->disableCSRFFromGuestsScenario();
 		$userName = $this->createdGuests[$guestDisplayName];
 		$fullRegisterUrl = $this->getRegistrationUrl($userName);
+		var_dump($fullRegisterUrl);
 		$explodedFullRegisterUrl = \explode('/', $fullRegisterUrl);
 		$sizeOfExplodedFullRegisterUrl = \count($explodedFullRegisterUrl);
 
