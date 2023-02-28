@@ -233,3 +233,32 @@ Feature: Guests
       | username    | email             |
       | regularUser | guest@example.com |
     Then the email address of user "regularUser" should be "guest@example.com"
+
+  @email @skip_on_objectstore
+  Scenario: A guest user cannot view versions of resource when files_versions app is not in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has uploaded file with content "some added content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And parameter "usewhitelist" of app "guests" has been set to "true"
+    And the administrator has removed the app "files_versions" from the whitelist for the guest user
+    When user "guest@example.com" gets the version metadata of file "textfile0.txt"
+    Then the HTTP status code should be "207"
+    And the version folder of file "/textfile0.txt" for user "guest@example.com" should contain "0" element
+    But the version folder of file "/textfile0.txt" for user "Alice" should contain "1" element
+
+  @email @skip_on_objectstore
+  Scenario: A guest user cannot add versions of resource when files_versions app is not in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And parameter "usewhitelist" of app "guests" has been set to "true"
+    And the administrator has removed the app "files_versions" from the whitelist for the guest user
+    When user "guest@example.com" uploads file with content "some new content" to "/textfile0.txt" using the WebDAV API
+    Then the HTTP status code should be "204"
+    And the version folder of file "/textfile0.txt" for user "guest@example.com" should contain "0" element
+    And the version folder of file "/textfile0.txt" for user "Alice" should contain "0" element

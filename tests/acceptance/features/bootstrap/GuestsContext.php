@@ -30,6 +30,7 @@ use TestHelpers\EmailHelper;
 use TestHelpers\HttpRequestHelper;
 use TestHelpers\SetupHelper;
 use TestHelpers\UploadHelper;
+use TestHelpers\AppConfigHelper;
 
 require_once 'bootstrap.php';
 
@@ -656,5 +657,55 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->featureContext->isUserOrGroupInSharedData($guestUser, "user", $permissions),
 			"User $sharer failed to share $filePath with user $guestUser"
 		);
+	}
+
+	/**
+	 * Returns the whitelist apps enabled for the guest user
+	 *
+	 * @return string
+	 */
+	public function getWhiteListApps(): string {
+		return SetupHelper::runOcc(
+			['config:app:get', 'guests', 'whitelist'],
+			$this->featureContext->getStepLineRef()
+		)['stdOut'];
+	}
+
+	/**
+	 * @param string $app
+	 *
+	 * @return void
+	 */
+	public function removeAppFromWhiteList(string $app): void {
+		$whiteList = $this->getWhiteListApps();
+		$whiteList = explode(",", trim($whiteList));
+		$whiteList = array_filter(
+			$whiteList,
+			function ($item) use ($app) {
+				return $item !== $app;
+			}
+		);
+		$whiteList = join(",", $whiteList);
+		AppConfigHelper::modifyAppConfig(
+			$this->featureContext->getBaseUrl(),
+			$this->featureContext->getAdminUsername(),
+			$this->featureContext->getAdminPassword(),
+			"guests",
+			"whitelist",
+			$whiteList,
+			$this->featureContext->getStepLineRef(),
+			$this->featureContext->getOcsApiVersion()
+		);
+	}
+
+	/**
+	 * @Given the administrator has removed the app :app from the whitelist for the guest user
+	 *
+	 * @param string $app
+	 *
+	 * @return void
+	 */
+	public function theAdministratorHasRemovedAppFromTheWhitelistForGuestUser(string $app) : void {
+		$this->removeAppFromWhiteList($app);
 	}
 }
