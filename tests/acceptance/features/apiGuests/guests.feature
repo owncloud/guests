@@ -242,7 +242,7 @@ Feature: Guests
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
     And guest user "guest" has registered
-    And parameter "usewhitelist" of app "guests" has been set to "true"
+    And the administrator has limited the guest access to the default whitelist apps
     And the administrator has removed the app "files_versions" from the whitelist for the guest user
     When user "guest@example.com" gets the version metadata of file "textfile0.txt"
     Then the HTTP status code should be "207"
@@ -256,7 +256,7 @@ Feature: Guests
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
     And guest user "guest" has registered
-    And parameter "usewhitelist" of app "guests" has been set to "true"
+    And the administrator has limited the guest access to the default whitelist apps
     And the administrator has removed the app "files_versions" from the whitelist for the guest user
     When user "guest@example.com" uploads file with content "some new content" to "/textfile0.txt" using the WebDAV API
     Then the HTTP status code should be "204"

@@ -225,31 +225,31 @@ Feature: Guests
     And the command output should be the text "something.com,qwerty.org,example.gov"
 
   @email
-  Scenario: The comments panel should be visible
+  Scenario: check comments panel when comments app is whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
-    And user "Alice" has uploaded file with content "new content" to "TEXTFILE.txt"
-    And user "Alice" has shared file "/TEXTFILE.txt" with user "guest@example.com" with permissions "read"
-    And parameter "usewhitelist" of app "guests" has been set to "true"
+    And user "Alice" has uploaded file with content "new content" to "lorem.txt"
+    And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
+    And the administrator has limited the guest access to the default whitelist apps
     And the administrator has added the app "comments" to the whitelist for the guest user
-    When guest user "guest" registers and sets password to "password" using the webUI
-    And user "guest@example.com" logs in using the webUI
-    And the user opens the file action menu of file "TEXTFILE.txt" on the webUI
+    And guest user "guest" has registered
+    And user "guest@example.com" has logged in using the webUI
+    When the user opens the file action menu of file "lorem.txt" on the webUI
     And the user clicks the details file action on the webUI
     Then the details dialog should be visible on the webUI
     And the "comments" details panel should be visible
 
   @email
-  Scenario: The comments panel should not be visible
+  Scenario: check comments panel when comments app is not whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
-    And user "Alice" has uploaded file with content "new content" to "TEXTFILE.txt"
-    And user "Alice" has shared file "/TEXTFILE.txt" with user "guest@example.com" with permissions "read"
-    And parameter "usewhitelist" of app "guests" has been set to "true"
+    And user "Alice" has uploaded file with content "new content" to "lorem.txt"
+    And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
+    And the administrator has limited the guest access to the default whitelist apps
     And the administrator has removed the app "comments" from the whitelist for the guest user
-    When guest user "guest" registers and sets password to "password" using the webUI
-    And user "guest@example.com" logs in using the webUI
-    And the user opens the file action menu of file "TEXTFILE.txt" on the webUI
+    And guest user "guest" has registered
+    And user "guest@example.com" has logged in using the webUI
+    When the user opens the file action menu of file "lorem.txt" on the webUI
     And the user clicks the details file action on the webUI
     Then the details dialog should be visible on the webUI
     And the "comments" details panel should not be visible

@@ -38,6 +38,10 @@ require_once 'bootstrap.php';
  * Guests context.
  */
 class GuestsContext implements Context, SnippetAcceptingContext {
+	// Default whitelisted apps
+	// Same can be found in lib/AppWhitelist.php:34
+	private $DEFAULT_WHITELIST = 'settings,avatar,files_trashbin,files_versions,files_sharing,files_texteditor,activity,firstrunwizard,gallery,notifications,password_policy,oauth2,files_pdfviewer,files_mediaviewer,richdocuments,onlyoffice,wopi,oco_selfservice,twofactor_totp';
+
 	/**
 	 * Stores the email of each created guest, keyed by guest display name.
 	 *
@@ -56,6 +60,13 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	 * @var EmailContext
 	 */
 	private $emailContext;
+
+	/**
+	 * @return string
+	 */
+	public function getDefaultWhitelist(): string {
+		return $this->DEFAULT_WHITELIST;
+	}
 
 	/**
 	 * @return string
@@ -660,6 +671,25 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @param string $parameter
+	 * @param string $value
+	 *
+	 * @return void
+	 */
+	public function setConfig(string $parameter, string $value): void {
+		AppConfigHelper::modifyAppConfig(
+			$this->featureContext->getBaseUrl(),
+			$this->featureContext->getAdminUsername(),
+			$this->featureContext->getAdminPassword(),
+			"guests",
+			$parameter,
+			$value,
+			$this->featureContext->getStepLineRef(),
+			$this->featureContext->getOcsApiVersion()
+		);
+	}
+
+	/**
 	 * Returns the whitelist apps enabled for the guest user
 	 *
 	 * @return string
@@ -686,16 +716,7 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			}
 		);
 		$whiteList = join(",", $whiteList);
-		AppConfigHelper::modifyAppConfig(
-			$this->featureContext->getBaseUrl(),
-			$this->featureContext->getAdminUsername(),
-			$this->featureContext->getAdminPassword(),
-			"guests",
-			"whitelist",
-			$whiteList,
-			$this->featureContext->getStepLineRef(),
-			$this->featureContext->getOcsApiVersion()
-		);
+		$this->setConfig("whitelist", $whiteList);
 	}
 
 	/**
@@ -707,19 +728,20 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 		$whiteList = $this->getWhiteListApps();
 		$whiteList = explode(",", trim($whiteList));
 		if (!\in_array($app, $whiteList)) {
-			$appsList[] = $app;
+			$whiteList[] = $app;
 		}
 		$whiteList = join(",", $whiteList);
-		AppConfigHelper::modifyAppConfig(
-			$this->featureContext->getBaseUrl(),
-			$this->featureContext->getAdminUsername(),
-			$this->featureContext->getAdminPassword(),
-			"guests",
-			"whitelist",
-			$whiteList,
-			$this->featureContext->getStepLineRef(),
-			$this->featureContext->getOcsApiVersion()
-		);
+		$this->setConfig("whitelist", $whiteList);
+	}
+
+	/**
+	 * @Given the administrator has limited the guest access to the default whitelist apps
+	 *
+	 * @return void
+	 */
+	public function theAdministratorHasLimitedTheGuestAccessToTheDefaultWhitelistApps(): void {
+		$this->setConfig("usewhitelist", "true");
+		$this->setConfig("whitelist", $this->getDefaultWhitelist());
 	}
 
 	/**
