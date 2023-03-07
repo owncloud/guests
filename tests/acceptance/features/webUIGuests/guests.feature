@@ -224,3 +224,32 @@ Feature: Guests
     Then the command should have been successful
     And the command output should be the text "something.com,qwerty.org,example.gov"
 
+  @email
+  Scenario: check comments panel when comments app is whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has uploaded file with content "new content" to "lorem.txt"
+    And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "comments" to the whitelist for the guest user
+    And guest user "guest" has registered
+    And user "guest@example.com" has logged in using the webUI
+    When the user opens the file action menu of file "lorem.txt" on the webUI
+    And the user clicks the details file action on the webUI
+    Then the details dialog should be visible on the webUI
+    And the "comments" details panel should be visible
+
+  @email
+  Scenario: check comments panel when comments app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has uploaded file with content "new content" to "lorem.txt"
+    And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "comments" from the whitelist for the guest user
+    And guest user "guest" has registered
+    And user "guest@example.com" has logged in using the webUI
+    When the user opens the file action menu of file "lorem.txt" on the webUI
+    And the user clicks the details file action on the webUI
+    Then the details dialog should be visible on the webUI
+    And the "comments" details panel should not be visible
