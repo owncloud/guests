@@ -225,7 +225,7 @@ Feature: Guests
     And the command output should be the text "something.com,qwerty.org,example.gov"
 
   @email
-  Scenario Outline: check sidebar panel when when specific app is whitelisted
+  Scenario Outline: check sidebar panel when specific app is whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has uploaded file with content "new content" to "lorem.txt"
@@ -262,3 +262,27 @@ Feature: Guests
       | comments       | comments |
       | systemtags     | tags     |
       | files_versions | versions |
+
+  @email
+  Scenario: check deleted files sidebar when files_trashbin app is whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has uploaded file with content "new content" to "lorem.txt"
+    And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "files_trashbin" to the whitelist for the guest user
+    And guest user "guest" has registered
+    When user "guest@example.com" logs in using the webUI
+    Then the user should see "Deleted files" sidebar navigation on the webUI
+
+  @email
+  Scenario: check deleted files sidebar when files_trashbin app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has uploaded file with content "new content" to "lorem.txt"
+    And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "files_trashbin" from the whitelist for the guest user
+    And guest user "guest" has registered
+    When user "guest@example.com" logs in using the webUI
+    Then the user should not see "Deleted files" sidebar navigation on the webUI
