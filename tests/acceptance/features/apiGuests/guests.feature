@@ -478,3 +478,50 @@ Feature: Guests
     Then the HTTP status code should be "204"
     # uncomment the line above and remove the line above when issue-549 is fixed
     #Then the HTTP status code should be "403"
+
+  @email @issue-551
+  Scenario: a guest user cannot add tags on resource when systemtags app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created a "normal" tag with name "MyFirstTag"
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "systemtags" from the whitelist for the guest user
+    When user "guest@example.com" adds tag "MyFirstTag" to file "/textfile0.txt" using the WebDAV API
+    Then the HTTP status code should be "201"
+    # uncomment the line below and remove the line above when issue-551 is fixed
+    #Then the HTTP status code should be "403"
+
+  @email @issue-551
+  Scenario: a guest user cannot view tags of resource when systemtags app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created a "normal" tag with name "MyFirstTag"
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has added tag "MyFirstTag" to file "/textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "systemtags" from the whitelist for the guest user
+    When user "guest@example.com" requests tags for file "/textfile0.txt" owned by user "Alice" using the WebDAV API
+    Then the HTTP status code should be "207"
+    # uncomment the line below and remove the line above when issue-551 is fixed
+    #Then the HTTP status code should be "403"
+
+  @email @issue-551
+  Scenario: a guest user cannot remove tags of resource when systemtags app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created a "normal" tag with name "MyFirstTag"
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has added tag "MyFirstTag" to file "/textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "systemtags" from the whitelist for the guest user
+    When user "guest@example.com" removes tag "MyFirstTag" from file "/myFileToTag.txt" shared by "Alice" using the WebDAV API
+    Then the HTTP status code should be "404"
+    # uncomment the line below and remove the line above when issue-551 is fixed
+    #Then the HTTP status code should be "403"
