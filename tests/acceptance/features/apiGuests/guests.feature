@@ -476,8 +476,53 @@ Feature: Guests
     And the administrator has removed the app "comments" from the whitelist for the guest user
     When user "guest@example.com" deletes the last created comment using the WebDAV API
     Then the HTTP status code should be "204"
-    # uncomment the line above and remove the line above when issue-549 is fixed
+    # uncomment the line below and remove the line above when issue-549 is fixed
     #Then the HTTP status code should be "403"
+
+  @email @issue-553
+  Scenario: files inside shared folder deleted by guest user is available in sharer trashbin when files_trashbin app is whitelisted
+    Given user "Alice" has been created with default attributes and small skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has created folder "/tmp"
+    And user "Alice" has uploaded file with content "some content" to "/tmp/textfile0.txt"
+    And user "Alice" has shared folder "/tmp" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "files_trashbin" to the whitelist for the guest user
+    When user "guest@example.com" deletes file "/tmp/textfile0.txt" using the WebDAV API
+    Then the HTTP status code should be "204"
+    And as "Alice" file "/tmp/textfile0.txt" should not exist
+    When user "Alice" tries to list the trashbin content for user "Alice"
+    Then the HTTP status code should be "207"
+    And as "Alice" the file with original path "/tmp/textfile0.txt" should exist in the trashbin
+
+  @email @issue-553
+  Scenario: a guest user can delete shared files when files_trashbin app is whitelisted
+    Given user "Alice" has been created with default attributes and small skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "files_trashbin" to the whitelist for the guest user
+    When user "guest@example.com" deletes file "/textfile0.txt" using the WebDAV API
+    Then the HTTP status code should be "204"
+    And as "Alice" file "/textfile0.txt" should exist
+    And as "guest@example.com" file "/textfile0.txt" should not exist
+
+  @email @issue-553
+  Scenario: a guest user cannot delete shared files when files_trashbin app is not whitelisted
+    Given user "Alice" has been created with default attributes and small skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "files_trashbin" from the whitelist for the guest user
+    When user "guest@example.com" deletes file "/textfile0.txt" using the WebDAV API
+    Then the HTTP status code should be "204"
+    And as "Alice" file "/textfile0.txt" should exist
+    And as "guest@example.com" file "/textfile0.txt" should not exist
 
   @email @issue-551
   Scenario: a guest user cannot add tags on resource when systemtags app is not whitelisted

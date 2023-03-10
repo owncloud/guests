@@ -19,6 +19,8 @@ default:
         - CommentsContext:
         - WebDavPropertiesContext:
         - TagsContext:
+        - TrashbinContext:
+        - OccContext:
 
     webUIGuests:
       paths:
