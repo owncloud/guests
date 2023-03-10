@@ -295,3 +295,78 @@ Feature: Guests
     And the version folder of file "/textfile0.txt" for user "Alice" should contain "1" element
     And the content of file "/textfile0.txt" for user "guest@example.com" should be "some new content"
     And the content of file "/textfile0.txt" for user "Alice" should be "some new content"
+
+  @email
+  Scenario: A guest user can add comments on a resource when comments app is in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "comments" to the whitelist for the guest user
+    When user "guest@example.com" comments with content "A comment from guest" on file "/textfile0.txt" using the WebDAV API
+    Then the HTTP status code should be "201"
+    And user "Alice" should have the following comments on file "/textfile0.txt"
+      | user              | comment              |
+      | guest@example.com | A comment from guest |
+
+  @email
+  Scenario: A guest user can view comments on a resource when comments app is in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has commented with content "My first comment" on folder "/textfile0.txt"
+    And user "Alice" should have the following comments on folder "/textfile0.txt"
+      | user  | comment          |
+      | Alice | My first comment |
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "comments" to the whitelist for the guest user
+    When user "guest@example.com" gets the following properties of file "/textfile0.txt" using the WebDAV API
+      | propertyName       |
+      | oc:comments-count  |
+    Then the HTTP status code should be "200"
+    And the single response should contain a property "oc:comments-count" with value "1"
+    And user "guest@example.com" should have the following comments on file "/textfile0.txt"
+      | user  | comment          |
+      | Alice | My first comment |
+
+  @email
+  Scenario: A guest user can edit own comments on a shared resource when comments app is in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "comments" to the whitelist for the guest user
+    And user "guest@example.com" has commented with content "A comment from guest" on file "/textfile0.txt"
+    When user "guest@example.com" edits the last created comment with content "My edited comment" using the WebDAV API
+    Then the HTTP status code should be "207"
+    And user "guest@example.com" should have the following comments on file "/textfile0.txt"
+      | user              | comment           |
+      | guest@example.com | My edited comment |
+
+  @email
+  Scenario: A guest user can delete own comments on a shared resource when comments app is in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has commented with content "My first comment" on folder "/textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "comments" to the whitelist for the guest user
+    And user "guest@example.com" has commented with content "A comment from guest" on file "/textfile0.txt"
+    And user "guest@example.com" should have the following comments on folder "/textfile0.txt"
+      | user              | comment              |
+      | Alice             | My first comment     |
+      | guest@example.com | A comment from guest |
+    When user "guest@example.com" deletes the last created comment using the WebDAV API
+    Then the HTTP status code should be "204"
+    And user "guest@example.com" should have 1 comments on file "/textfile0.txt"
+    And user "guest@example.com" should have the following comments on file "/textfile0.txt"
+      | user  | comment          |
+      | Alice | My first comment |
