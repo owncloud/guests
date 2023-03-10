@@ -262,3 +262,36 @@ Feature: Guests
     Then the HTTP status code should be "204"
     And the version folder of file "/textfile0.txt" for user "guest@example.com" should contain "0" element
     And the version folder of file "/textfile0.txt" for user "Alice" should contain "0" element
+
+  @email
+  Scenario: A guest user can view versions of resource when files_versions app is in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has uploaded file with content "some added content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "files_versions" to the whitelist for the guest user
+    When user "guest@example.com" gets the version metadata of file "textfile0.txt"
+    Then the HTTP status code should be "207"
+    And the version folder of file "/textfile0.txt" for user "guest@example.com" should contain "1" element
+    And the version folder of file "/textfile0.txt" for user "Alice" should contain "1" element
+    And the content of file "/textfile0.txt" for user "guest@example.com" should be "some added content"
+    And the content of file "/textfile0.txt" for user "Alice" should be "some added content"
+
+  @email
+  Scenario: A guest user can add versions of resource when files_versions app is in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "files_versions" to the whitelist for the guest user
+    When user "guest@example.com" uploads file with content "some new content" to "/textfile0.txt" using the WebDAV API
+    Then the HTTP status code should be "204"
+    And the version folder of file "/textfile0.txt" for user "guest@example.com" should contain "1" element
+    And the version folder of file "/textfile0.txt" for user "Alice" should contain "1" element
+    And the content of file "/textfile0.txt" for user "guest@example.com" should be "some new content"
+    And the content of file "/textfile0.txt" for user "Alice" should be "some new content"
