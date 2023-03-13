@@ -225,31 +225,64 @@ Feature: Guests
     And the command output should be the text "something.com,qwerty.org,example.gov"
 
   @email
-  Scenario: check comments panel when comments app is whitelisted
+  Scenario Outline: check sidebar panel when specific app is whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has uploaded file with content "new content" to "lorem.txt"
     And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
     And the administrator has limited the guest access to the default whitelist apps
-    And the administrator has added the app "comments" to the whitelist for the guest user
+    And the administrator has added the app "<app>" to the whitelist for the guest user
     And guest user "guest" has registered
     And user "guest@example.com" has logged in using the webUI
     When the user opens the file action menu of file "lorem.txt" on the webUI
     And the user clicks the details file action on the webUI
-    Then the details dialog should be visible on the webUI
-    And the "comments" details panel should be visible
+    And the user switches to the "<panel>" tab in the details panel using the webUI
+    Then the "<panel>" details panel should be visible
+    Examples:
+      | app            | panel    |
+      | comments       | comments |
+      | systemtags     | tags     |
+      | files_versions | versions |
 
   @email
-  Scenario: check comments panel when comments app is not whitelisted
+  Scenario Outline: check sidebar panel when specific app is not whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has uploaded file with content "new content" to "lorem.txt"
     And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
     And the administrator has limited the guest access to the default whitelist apps
-    And the administrator has removed the app "comments" from the whitelist for the guest user
+    And the administrator has removed the app "<app>" from the whitelist for the guest user
     And guest user "guest" has registered
     And user "guest@example.com" has logged in using the webUI
     When the user opens the file action menu of file "lorem.txt" on the webUI
     And the user clicks the details file action on the webUI
-    Then the details dialog should be visible on the webUI
-    And the "comments" details panel should not be visible
+    Then the "<panel>" details panel should not be visible
+    Examples:
+      | app            | panel    |
+      | comments       | comments |
+      | systemtags     | tags     |
+      | files_versions | versions |
+
+  @email
+  Scenario: check deleted files sidebar when files_trashbin app is whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has uploaded file with content "new content" to "lorem.txt"
+    And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "files_trashbin" to the whitelist for the guest user
+    And guest user "guest" has registered
+    When user "guest@example.com" logs in using the webUI
+    Then the user should see "Deleted files" sidebar navigation on the webUI
+
+  @email
+  Scenario: check deleted files sidebar when files_trashbin app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has uploaded file with content "new content" to "lorem.txt"
+    And user "Alice" has shared file "/lorem.txt" with user "guest@example.com"
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "files_trashbin" from the whitelist for the guest user
+    And guest user "guest" has registered
+    When user "guest@example.com" logs in using the webUI
+    Then the user should not see "Deleted files" sidebar navigation on the webUI
