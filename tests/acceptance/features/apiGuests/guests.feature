@@ -363,3 +363,55 @@ Feature: Guests
     And user "guest@example.com" should have the following comments on file "/textfile0.txt"
       | user  | comment          |
       | Alice | My first comment |
+
+  @email
+  Scenario: A guest user can view tags on resource when systemtags app is in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created a "normal" tag with name "MyFirstTag"
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has added tag "MyFirstTag" to file "/textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "systemtags" to the whitelist for the guest user
+    When user "guest@example.com" requests tags for file "/textfile0.txt" owned by user "Alice" using the WebDAV API
+    Then the HTTP status code should be "207"
+    And file "/textfile0.txt" should have the following tags for user "guest@example.com"
+      | name       | type   |
+      | MyFirstTag | normal |
+
+  @email
+  Scenario: A guest user can add tags on resource when systemtags app is in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created a "normal" tag with name "MyFirstTag"
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "systemtags" to the whitelist for the guest user
+    When user "guest@example.com" adds tag "MyFirstTag" to file "/textfile0.txt" using the WebDAV API
+    Then the HTTP status code should be "201"
+    And file "/textfile0.txt" shared by user "Alice" should have the following tags
+      | name       | type   |
+      | MyFirstTag | normal |
+
+  @email
+  Scenario: A guest user can delete tags on resource when systemtags app is in whitelist
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created a "normal" tag with name "MyFirstTag"
+    And the administrator has created a "normal" tag with name "MySecondTag"
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has added tag "MyFirstTag" to file "/textfile0.txt"
+    And user "Alice" has added tag "MySecondTag" to file "/textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has added the app "systemtags" to the whitelist for the guest user
+    When user "guest@example.com" removes tag "MyFirstTag" from file "/textfile0.txt" shared by "Alice" using the WebDAV API
+    Then the HTTP status code should be "204"
+    And file "/textfile0.txt" should have the following tags for user "Alice"
+      | name        | type   |
+      | MySecondTag | normal |

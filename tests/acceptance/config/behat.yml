@@ -18,6 +18,7 @@ default:
         - FilesVersionsContext:
         - CommentsContext:
         - WebDavPropertiesContext:
+        - TagsContext:
 
     webUIGuests:
       paths:
