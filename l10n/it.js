@@ -6,6 +6,7 @@ OC.L10N.register(
     "Reset" : "Ripristina",
     "Error while sharing" : "Errore durante la condivisione",
     "Error" : "Errore",
+    "Add multiple users and guests" : "Aggiungi più utenti e ospiti",
     "Add {unknown}" : "Aggiungi {unknown}",
     "Error loading activities" : "Errore durante il caricamento delle attività",
     "Access to this resource is forbidden for guests." : "L'accesso a questa risorsa è proibito per gli Ospiti",
