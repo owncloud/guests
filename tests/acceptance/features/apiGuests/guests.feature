@@ -431,3 +431,50 @@ Feature: Guests
     And user "Alice" should have the following comments on file "/textfile0.txt"
       | user  | comment          |
       | Alice | My first comment |
+
+  @email @issue-549
+  Scenario: a guest user cannot add comments on resource when the comments app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "comments" from the whitelist for the guest user
+    When user "guest@example.com" comments with content "Comment from guest" on file "/textfile0.txt" using the WebDAV API
+    Then the HTTP status code should be "201"
+    # uncomment the line below and remove the line above when issue-549 is fixed
+    #Then the HTTP status code should be "403"
+
+  @email @issue-549
+  Scenario: a guest user cannot view comments on a resource when the comments app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And user "Alice" has commented with content "My first comment" on file "/textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "comments" from the whitelist for the guest user
+    When user "guest@example.com" gets the following properties of file "/textfile0.txt" using the WebDAV API
+      | propertyName      |
+      | oc:comments-count |
+    Then the HTTP status code should be "200"
+    And the single response should contain a property "oc:comments-count" with value "1"
+    # uncomment the line below and remove the line above when issue-549 is fixed
+    #And the single response should contain a property "oc:comments-count" with value "0"
+
+  @email @issue-549
+  Scenario: a guest user cannot delete their comments on a resource when the comments app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
+    And the administrator has created guest user "guest" with email "guest@example.com"
+    And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
+    And guest user "guest" has registered
+    And user "guest@example.com" has commented with content "My first comment" on file "/textfile0.txt"
+    And the administrator has limited the guest access to the default whitelist apps
+    And the administrator has removed the app "comments" from the whitelist for the guest user
+    When user "guest@example.com" deletes the last created comment using the WebDAV API
+    Then the HTTP status code should be "204"
+    # uncomment the line above and remove the line above when issue-549 is fixed
+    #Then the HTTP status code should be "403"
