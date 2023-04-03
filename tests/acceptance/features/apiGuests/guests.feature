@@ -417,7 +417,7 @@ Feature: Guests
       | MySecondTag | normal |
 
   @email
-  Scenario: a guest user cannot delete comments on resource when the comments app is not whitelisted
+  Scenario: a guest user cannot delete other users comments on resource when the comments app is whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And user "Alice" has commented with content "My first comment" on file "/textfile0.txt"
@@ -425,7 +425,7 @@ Feature: Guests
     And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
     And guest user "guest" has registered
     And the administrator has limited the guest access to the default whitelist apps
-    And the administrator has removed the app "comments" from the whitelist for the guest user
+    And the administrator has added the app "comments" to the whitelist for the guest user
     When user "guest@example.com" deletes the last created comment using the WebDAV API
     Then the HTTP status code should be "403"
     And user "Alice" should have the following comments on file "/textfile0.txt"
