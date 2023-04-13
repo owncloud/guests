@@ -13,7 +13,7 @@
   "devDependencies": {
     "jasmine-core": "^2.8.0",
     "jasmine-sinon": "^0.4.0",
-    "karma": "^1.5.0",
+    "karma": "^6.4.1",
     "karma-coverage": "*",
     "karma-jasmine": "^1.1.1",
     "karma-jasmine-sinon": "^1.0.4",
