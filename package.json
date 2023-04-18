@@ -13,14 +13,13 @@
   "devDependencies": {
     "jasmine-core": "^2.8.0",
     "jasmine-sinon": "^0.4.0",
-    "karma": "^1.5.0",
+    "karma": "^6.4.1",
+    "karma-chrome-launcher": "^3.1.1",
     "karma-coverage": "*",
     "karma-jasmine": "^1.1.1",
     "karma-jasmine-sinon": "^1.0.4",
     "karma-junit-reporter": "*",
-    "karma-phantomjs-launcher": "*",
-    "phantomjs-prebuilt": "*",
-    "sinon": "^2.0.0"
+    "sinon": "^15.0.3"
   },
   "engines": {
     "node": ">= 6.9",
