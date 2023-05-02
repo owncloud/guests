@@ -350,7 +350,6 @@ class GuestsContext implements Context, SnippetAcceptingContext {
 			$this->featureContext->getPasswordForUser($userName),
 			$guestDisplayName,
 			$guestEmail,
-			null,
 			$shouldExist
 		);
 	}
