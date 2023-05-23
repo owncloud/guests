@@ -6,7 +6,6 @@ parameters:
     - %currentWorkingDirectory%/appinfo/Migrations/*.php
     - %currentWorkingDirectory%/appinfo/routes.php
   ignoreErrors:
-    - '#Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required.#'
     -
       message: '#Property OCA\\Guests\\Controller\\RegisterController::\$groupManager is never read, only written.#'
       path: lib/Controller/RegisterController.php
