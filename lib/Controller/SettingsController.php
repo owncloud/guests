@@ -38,7 +38,6 @@ use OCP\IRequest;
  * @package OCA\Guests\Controller
  */
 class SettingsController extends Controller {
-
 	/**
 	 * @var string
 	 */

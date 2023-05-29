@@ -37,7 +37,6 @@ use OCP\Template;
 use OCP\Util;
 
 class Mail {
-
 	/** @var ILogger */
 	private $logger;
 

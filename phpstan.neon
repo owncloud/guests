@@ -9,9 +9,12 @@ parameters:
     -
       message: '#Property OCA\\Guests\\Controller\\RegisterController::\$groupManager is never read, only written.#'
       path: lib/Controller/RegisterController.php
+      count: 1
     -
       message: '#Property OCA\\Guests\\Controller\\RegisterController::\$secureRandom is never read, only written.#'
       path: lib/Controller/RegisterController.php
+      count: 1
     -
       message: '#Property OCA\\Guests\\Controller\\SettingsController::\$userId is never read, only written.#'
       path: lib/Controller/SettingsController.php
+      count: 1

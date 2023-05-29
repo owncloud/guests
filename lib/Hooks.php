@@ -31,7 +31,6 @@ use OCP\IUserSession;
 use OCP\Share\IShare;
 
 class Hooks {
-
 	/**
 	 * @var ILogger
 	 */

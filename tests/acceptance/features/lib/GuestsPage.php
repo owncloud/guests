@@ -30,7 +30,6 @@ use Behat\Mink\Element\NodeElement;
  * page where the guests users are grouped under a virtual group in the user manager
  */
 class GuestsPage extends OwncloudPage {
-
 	/**
 	 * @var string $path
 	 */
