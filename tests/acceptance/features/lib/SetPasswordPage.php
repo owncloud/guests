@@ -30,7 +30,6 @@ use Behat\Mink\Element\NodeElement;
  * page where the guest user can set its password
  */
 class SetPasswordPage extends OwncloudPage {
-
 	/**
 	 * @var string $path
 	 */

@@ -29,7 +29,6 @@ use OCP\Settings\ISettings;
 use OCP\Template;
 
 class Admin implements ISettings {
-
 	/**
 	 * The panel controller method that returns a template to the UI
 	 *
