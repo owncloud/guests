@@ -570,3 +570,16 @@ Feature: Guests
     Then the HTTP status code should be "404"
     # uncomment the line below and remove the line above when issue-551 is fixed
     #Then the HTTP status code should be "403"
+
+  @email @skipOnOcV10.11 @skipOnOcV10.12
+  Scenario: A guest user can upload files to a folder shared with them when share_folder is in use
+    Given the administrator has set the default folder for received shares to "Shares"
+    And user "Alice" has been created with default attributes and small skeleton files
+    And the administrator has created guest user "guest1" with email "guest1@example.com"
+    And the HTTP status code should be "201"
+    And user "Alice" has created folder "/tmp"
+    And user "Alice" has shared folder "/tmp" with guest user "guest1@example.com"
+    And guest user "guest1" has registered
+    When user "guest1@example.com" uploads file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt" using the WebDAV API
+    Then the HTTP status code should be "201"
+    And as "Alice" file "/tmp/textfile.txt" should exist
