@@ -939,7 +939,6 @@ def acceptance(ctx):
         "skip": False,
         "debugSuites": [],
         "skipExceptParts": [],
-        "earlyFail": True,
         "enableApp": True,
         "selUserNeeded": False,
     }
@@ -976,14 +975,6 @@ def acceptance(ctx):
 
             if params["skip"]:
                 continue
-
-            # switch off earlyFail if the PR title contains full-ci
-            if ("full-ci" in ctx.build.title.lower()):
-                params["earlyFail"] = False
-
-            # switch off earlyFail when running cron builds (for example, nightly CI)
-            if (ctx.build.event == "cron"):
-                params["earlyFail"] = False
 
             if "externalScality" in params and len(params["externalScality"]) != 0:
                 # We want to use an external scality server for this pipeline.
