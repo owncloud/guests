@@ -6,7 +6,7 @@ Feature: Guests
     And using new dav path
 
   @skipOnOcV10.3
-  Scenario Outline: Creating a guest user works fine
+  Scenario Outline: creating a guest user works fine
     When the administrator creates guest user "<user>" with email "<email-address>" using the API
     Then the HTTP status code should be "201"
     And user "<user>" should be a guest user
@@ -18,8 +18,8 @@ Feature: Guests
       | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
 
 
-  Scenario: Cannot create a guest if a user with the same email address exists
-    Given user "existing-user" has been created with default attributes and small skeleton files
+  Scenario: cannot create a guest if a user with the same email address exists
+    Given user "existing-user" has been created with default attributes and without skeleton files
     And the administrator sends HTTP method "PUT" to OCS API endpoint "/cloud/users/existing-user" with body
       | key   | email             |
       | value | guest@example.com |
@@ -28,7 +28,7 @@ Feature: Guests
     And user "guest" should not exist
 
 
-  Scenario: A guest user cannot upload files to their own storage
+  Scenario: guest user cannot upload files to their own storage
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     When user "guest@example.com" uploads overwriting file "textfile.txt" from the guests test data folder to "/myfile.txt" with all mechanisms using the WebDAV API
@@ -38,7 +38,7 @@ Feature: Guests
     And as "Alice" file "/textfile.txt" should not exist
 
 
-  Scenario: A guest user cannot upload files to their own storage (async upload)
+  Scenario: guest user cannot upload files to their own storage (async upload)
     Given the administrator has enabled async operations
     And the administrator has created guest user "guest" with email "guest@example.com"
     When user "guest@example.com" uploads file "textfile.txt" from the guests test data folder asynchronously to "/textfile.txt" in 3 chunks using the WebDAV API
@@ -47,8 +47,8 @@ Feature: Guests
     And as "Alice" file "/textfile.txt" should not exist
 
   @email @skipOnOcV10.3
-  Scenario Outline: A guest user can upload files to a folder shared with them
-    Given user "Alice" has been created with default attributes and small skeleton files
+  Scenario Outline: guest user can upload files to a folder shared with them
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "<user>" with email "<email-address>"
     And the HTTP status code should be "201"
     And user "Alice" has created folder "/tmp"
@@ -64,8 +64,8 @@ Feature: Guests
       | betty_anne+bob-burns@email.com | betty_anne+bob-burns |
 
   @email
-  Scenario: A guest user can upload chunked files to a folder shared with them
-    Given user "Alice" has been created with default attributes and small skeleton files
+  Scenario: guest user can upload chunked files to a folder shared with them
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "Alice" has created folder "/tmp"
@@ -80,8 +80,8 @@ Feature: Guests
     And as "Alice" file "/tmp/myChunkedFile.txt" should exist
 
   @email @issue-279
-  Scenario: A guest user can upload files to a folder shared with them
-    Given user "Alice" has been created with default attributes and small skeleton files
+  Scenario: guest user can upload files to a folder shared with them
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "Alice" has created folder "/tmp"
@@ -105,9 +105,9 @@ Feature: Guests
     """
 
   @email
-  Scenario: A guest user can upload files to a folder shared with them (async upload)
+  Scenario: guest user can upload files to a folder shared with them (async upload)
     Given the administrator has enabled async operations
-    And user "Alice" has been created with default attributes and small skeleton files
+    And user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has created folder "/tmp"
     And user "Alice" has shared folder "/tmp" with user "guest@example.com"
@@ -130,8 +130,8 @@ Feature: Guests
     """
 
   @email
-  Scenario: A guest user can cancel a chunked upload
-    Given user "Alice" has been created with default attributes and small skeleton files
+  Scenario: guest user can cancel a chunked upload
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "Alice" has created folder "/tmp"
@@ -146,8 +146,8 @@ Feature: Guests
     And as "Alice" file "/tmp/myChunkedFile.txt" should not exist
 
   @email
-  Scenario: A guest user can upload a file and can reshare it
-    Given these users have been created with default attributes and small skeleton files:
+  Scenario: guest user can upload a file and can reshare it
+    Given these users have been created with default attributes and without skeleton files:
       | username |
       | Alice    |
       | Brian    |
@@ -163,8 +163,8 @@ Feature: Guests
     And the HTTP status code should be "200"
 
   @email
-  Scenario: A guest user cannot reshare files
-    Given these users have been created with default attributes and small skeleton files:
+  Scenario: guest user cannot reshare files
+    Given these users have been created with default attributes and without skeleton files:
       | username |
       | Alice    |
       | Brian    |
@@ -186,8 +186,9 @@ Feature: Guests
     And the HTTP status code should be "200"
 
   @email
-  Scenario: A created guest user can log in
-    Given user "Alice" has been created with default attributes and small skeleton files
+  Scenario: guest user can log in
+    Given user "Alice" has been created with default attributes and without skeleton files
+    And user "Alice" has uploaded file with content "ownCloud test text file 1" to "/textfile1.txt"
     And the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "guest" should be a guest user
@@ -198,7 +199,7 @@ Feature: Guests
       | /textfile1.txt |
 
 
-  Scenario: Trying to create a guest user that already exists
+  Scenario: guest user cannot be created if it already exists
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And user "guest" should be a guest user
@@ -206,7 +207,7 @@ Feature: Guests
     Then the HTTP status code should be "422"
 
 
-  Scenario: removing a guest user from a group
+  Scenario: guest user can be removed from a group
     Given the administrator has created guest user "guest" with email "guest@example.com"
     And the HTTP status code should be "201"
     And group "guests_app" has been created
@@ -217,8 +218,8 @@ Feature: Guests
     And user "guest@example.com" should not belong to group "guests_app"
 
   @email
-  Scenario: A guest user can not create new guest users
-    Given user "Alice" has been created with default attributes and small skeleton files
+  Scenario: guest user cannot create new guest users
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has created folder "/tmp"
     And user "Alice" has shared folder "/tmp" with user "guest@example.com"
@@ -227,7 +228,7 @@ Feature: Guests
     Then the HTTP status code should be "403"
 
   @email
-  Scenario: Create a regular user using the same email address as an existing guest user
+  Scenario: create a regular user using the same email address as an existing guest user
     Given the administrator has created guest user "guest" with email "guest@example.com"
     When the administrator creates these users with skeleton files:
       | username    | email             |
@@ -235,7 +236,7 @@ Feature: Guests
     Then the email address of user "regularUser" should be "guest@example.com"
 
   @email @skip_on_objectstore
-  Scenario: A guest user cannot view versions of resource when files_versions app is not in whitelist
+  Scenario: guest user cannot view versions of resources when files_versions app is not in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And user "Alice" has uploaded file with content "some added content" to "textfile0.txt"
@@ -250,7 +251,7 @@ Feature: Guests
     But the version folder of file "/textfile0.txt" for user "Alice" should contain "1" element
 
   @email @skip_on_objectstore
-  Scenario: A guest user cannot add versions of resource when files_versions app is not in whitelist
+  Scenario: guest user cannot add versions of resources when files_versions app is not in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -264,7 +265,7 @@ Feature: Guests
     And the version folder of file "/textfile0.txt" for user "Alice" should contain "0" element
 
   @email
-  Scenario: A guest user can view versions of resource when files_versions app is in whitelist
+  Scenario: guest user can view versions of resources when files_versions app is in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And user "Alice" has uploaded file with content "some added content" to "textfile0.txt"
@@ -281,7 +282,7 @@ Feature: Guests
     And the content of file "/textfile0.txt" for user "Alice" should be "some added content"
 
   @email
-  Scenario: A guest user can add versions of resource when files_versions app is in whitelist
+  Scenario: guest user can add versions of resources when files_versions app is in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -297,7 +298,7 @@ Feature: Guests
     And the content of file "/textfile0.txt" for user "Alice" should be "some new content"
 
   @email
-  Scenario: A guest user can add comments on a resource when comments app is in whitelist
+  Scenario: guest user can add comments on a resource when comments app is in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -312,7 +313,7 @@ Feature: Guests
       | guest@example.com | A comment from guest |
 
   @email
-  Scenario: A guest user can view comments on a resource when comments app is in whitelist
+  Scenario: guest user can view comments on a resource when comments app is in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And user "Alice" has commented with content "My first comment" on folder "/textfile0.txt"
@@ -331,7 +332,7 @@ Feature: Guests
       | Alice | My first comment |
 
   @email
-  Scenario: A guest user can edit own comments on a shared resource when comments app is in whitelist
+  Scenario: guest user can edit own comments on a shared resource when comments app is in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -347,7 +348,7 @@ Feature: Guests
       | guest@example.com | My edited comment |
 
   @email
-  Scenario: A guest user can delete own comments on a shared resource when comments app is in whitelist
+  Scenario: guest user can delete own comments on a shared resource when comments app is in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And user "Alice" has commented with content "My first comment" on folder "/textfile0.txt"
@@ -365,7 +366,7 @@ Feature: Guests
       | Alice | My first comment |
 
   @email
-  Scenario: A guest user can view tags on resource when systemtags app is in whitelist
+  Scenario: guest user can view tags on resources when systemtags app is in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created a "normal" tag with name "MyFirstTag"
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
@@ -382,7 +383,7 @@ Feature: Guests
       | MyFirstTag | normal |
 
   @email
-  Scenario: A guest user can add tags on resource when systemtags app is in whitelist
+  Scenario: guest user can add tags on resources when systemtags app is in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created a "normal" tag with name "MyFirstTag"
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
@@ -398,7 +399,7 @@ Feature: Guests
       | MyFirstTag | normal |
 
   @email
-  Scenario: A guest user can delete tags on resource when systemtags app is in whitelist
+  Scenario: guest user can delete tags on resources when systemtags app is in whitelist
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created a "normal" tag with name "MyFirstTag"
     And the administrator has created a "normal" tag with name "MySecondTag"
@@ -417,7 +418,7 @@ Feature: Guests
       | MySecondTag | normal |
 
   @email
-  Scenario: a guest user cannot delete other users comments on resource when the comments app is whitelisted
+  Scenario: guest user cannot delete other users comments on resources when the comments app is whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And user "Alice" has commented with content "My first comment" on file "/textfile0.txt"
@@ -433,7 +434,7 @@ Feature: Guests
       | Alice | My first comment |
 
   @email @issue-549
-  Scenario: a guest user cannot add comments on resource when the comments app is not whitelisted
+  Scenario: guest user cannot add comments on resources when the comments app is not whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -447,7 +448,7 @@ Feature: Guests
     #Then the HTTP status code should be "403"
 
   @email @issue-549
-  Scenario: a guest user cannot view comments on a resource when the comments app is not whitelisted
+  Scenario: guest user cannot view comments on a resources when the comments app is not whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And user "Alice" has commented with content "My first comment" on file "/textfile0.txt"
@@ -465,7 +466,7 @@ Feature: Guests
     #And the single response should contain a property "oc:comments-count" with value "0"
 
   @email @issue-549
-  Scenario: a guest user cannot delete their comments on a resource when the comments app is not whitelisted
+  Scenario: guest user cannot delete their comments on a resource when the comments app is not whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And the administrator has created guest user "guest" with email "guest@example.com"
@@ -480,8 +481,8 @@ Feature: Guests
     #Then the HTTP status code should be "403"
 
   @email @issue-553
-  Scenario: files inside shared folder deleted by guest user is available in sharer trashbin when files_trashbin app is whitelisted
-    Given user "Alice" has been created with default attributes and small skeleton files
+  Scenario: files inside shared folder deleted by guest user are available in sharer trashbin when files_trashbin app is whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has created folder "/tmp"
     And user "Alice" has uploaded file with content "some content" to "/tmp/textfile0.txt"
@@ -497,8 +498,8 @@ Feature: Guests
     And as "Alice" the file with original path "/tmp/textfile0.txt" should exist in the trashbin
 
   @email @issue-553
-  Scenario: a guest user can delete shared files when files_trashbin app is whitelisted
-    Given user "Alice" has been created with default attributes and small skeleton files
+  Scenario: guest user can delete shared files when files_trashbin app is whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
@@ -511,8 +512,8 @@ Feature: Guests
     And as "guest@example.com" file "/textfile0.txt" should not exist
 
   @email @issue-553
-  Scenario: a guest user cannot delete shared files when files_trashbin app is not whitelisted
-    Given user "Alice" has been created with default attributes and small skeleton files
+  Scenario: guest user cannot delete shared files when files_trashbin app is not whitelisted
+    Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created guest user "guest" with email "guest@example.com"
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
     And user "Alice" has shared file "/textfile0.txt" with user "guest@example.com"
@@ -525,7 +526,7 @@ Feature: Guests
     And as "guest@example.com" file "/textfile0.txt" should not exist
 
   @email @issue-551
-  Scenario: a guest user cannot add tags on resource when systemtags app is not whitelisted
+  Scenario: guest user cannot add tags on resources when systemtags app is not whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created a "normal" tag with name "MyFirstTag"
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
@@ -540,7 +541,7 @@ Feature: Guests
     #Then the HTTP status code should be "403"
 
   @email @issue-551
-  Scenario: a guest user cannot view tags of resource when systemtags app is not whitelisted
+  Scenario: guest user cannot view tags of resources when systemtags app is not whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created a "normal" tag with name "MyFirstTag"
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
@@ -556,7 +557,7 @@ Feature: Guests
     #Then the HTTP status code should be "403"
 
   @email @issue-551
-  Scenario: a guest user cannot remove tags of resource when systemtags app is not whitelisted
+  Scenario: guest user cannot remove tags of resources when systemtags app is not whitelisted
     Given user "Alice" has been created with default attributes and without skeleton files
     And the administrator has created a "normal" tag with name "MyFirstTag"
     And user "Alice" has uploaded file with content "some content" to "textfile0.txt"
@@ -570,3 +571,16 @@ Feature: Guests
     Then the HTTP status code should be "404"
     # uncomment the line below and remove the line above when issue-551 is fixed
     #Then the HTTP status code should be "403"
+
+  @email @skipOnOcV10.11 @skipOnOcV10.12
+  Scenario: guest user can upload files to a folder shared with them when share_folder is in use
+    Given the administrator has set the default folder for received shares to "Shares"
+    And user "Alice" has been created with default attributes and without skeleton files
+    And the administrator has created guest user "guest1" with email "guest1@example.com"
+    And the HTTP status code should be "201"
+    And user "Alice" has created folder "/tmp"
+    And user "Alice" has shared folder "/tmp" with guest user "guest1@example.com"
+    And guest user "guest1" has registered
+    When user "guest1@example.com" uploads file "textfile.txt" from the guests test data folder to "/tmp/textfile.txt" using the WebDAV API
+    Then the HTTP status code should be "201"
+    And as "Alice" file "/tmp/textfile.txt" should exist
