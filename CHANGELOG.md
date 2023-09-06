@@ -4,13 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased] xxxx-xx-xx
+## [0.12.3] - 2023-09-05
+
+### Fixed
+
+- [#600](https://github.com/owncloud/guests/pull/600) - Add always enabled apps to core whitelist
+
+### Changed
+
+- Translations updated
+- Dependencies updated
 
 ## [0.12.2] - 2022-12-09
 
 ### Fixed
 
-- - [#529](https://github.com/owncloud/guests/pull/529) - Fix blocklist checking only if email string ends with blocklist entry, instead of comparing email domain with blocklist domain #529
+- [#529](https://github.com/owncloud/guests/pull/529) - Fix blocklist checking only if email string ends with blocklist entry, instead of comparing email domain with blocklist domain #529
 
 
 ## [0.12.1] - 2022-11-18
