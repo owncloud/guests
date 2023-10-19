@@ -19,7 +19,7 @@
     "karma-jasmine": "^1.1.1",
     "karma-jasmine-sinon": "^1.0.4",
     "karma-junit-reporter": "*",
-    "sinon": "^15.2.0"
+    "sinon": "^16.1.3"
   },
   "engines": {
     "node": ">= 6.9",
