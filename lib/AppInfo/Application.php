@@ -103,6 +103,11 @@ class Application extends App {
 			return;
 		}
 		$appWhiteList = AppWhitelist::getWhitelist();
+ 
+		// If the usewhitelist flag is set to false, then we do not set the whitelistedAppsForGuests attribute in the event
+		if ($server->getConfig()->getAppValue(self::APP_NAME, 'usewhitelist', 'true') === 'false') {
+			return;
+		}
 
 		/**
 		 * Add whitelistedAppsForGuests attribute only if it is not present. There is a
