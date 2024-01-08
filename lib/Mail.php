@@ -116,12 +116,8 @@ class Mail {
 			['fileId' => $share->getNode()->getId()]
 		);
 
-		$usedeflanguage = null;
-		$defaultLang = \OC::$server->getConfig()->getSystemValue('default_language', false);
-		// if set, use default_language in config.php for the guests template
-		if ($defaultLang !== false) {
-			$usedeflanguage = \OC::$server->getL10N('lib', $defaultLang);
-			$subject = (string)$usedeflanguage->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
+		if ($this->checkDefaultLanguage() !== null) {
+			$subject = (string)$this->checkDefaultLanguage()->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
 		}
 
 		list($htmlBody, $textBody) = $this->createMailBody(
@@ -132,7 +128,7 @@ class Mail {
 			$senderDisplayName,
 			$expiration,
 			$shareWithEmail,
-			$usedeflanguage
+			$this->checkDefaultLanguage()
 		);
 
 		try {
@@ -176,12 +172,8 @@ class Mail {
 
 		$subject = (string)$this->l10n->t('%s invited you', [$senderDisplayName]);
 
-		$usedeflanguage = null;
-		$defaultLang = \OC::$server->getConfig()->getSystemValue('default_language', false);
-		// if set, use default_language in config.php for the guests template
-		if ($defaultLang !== false) {
-			$usedeflanguage = \OC::$server->getL10N('lib', $defaultLang);
-			$subject = (string)$usedeflanguage->t('%s invited you', [$senderDisplayName]);
+		if ($this->checkDefaultLanguage() !== null) {
+			$subject = (string)$this->checkDefaultLanguage()->t('%s invited you', [$senderDisplayName]);
 		}
 
 		list($htmlBody, $textBody) = $this->createMailBody(
@@ -192,7 +184,7 @@ class Mail {
 			$senderDisplayName,
 			null,
 			$shareWithEmail,
-			$usedeflanguage
+			$this->checkDefaultLanguage()
 		);
 
 		try {
@@ -256,5 +248,18 @@ class Mail {
 		$plainTextMail = $plainText->fetchPage();
 
 		return [$htmlMail, $plainTextMail];
+	}
+
+	/**
+	 * check if default_language is defined in config.php
+	 * @return string|null
+	*/
+	private function checkDefaultLanguage() {
+		$useDefaultLanguage = null;
+		$defaultLang = \OC::$server->getConfig()->getSystemValue('default_language', false);
+		if ($defaultLang !== false) {
+			$useDefaultLanguage = \OC::$server->getL10N('lib', $defaultLang);
+		}
+		return $useDefaultLanguage;
 	}
 }
