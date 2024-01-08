@@ -27,6 +27,7 @@ namespace OCA\Guests;
 
 use OCP\Defaults;
 use OCP\IL10N;
+use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -52,6 +53,9 @@ class Mail {
 	/** @var IL10N */
 	private $l10n;
 
+	/** @var IConfig */
+	private $config;
+
 	/** @var  IURLGenerator */
 	private $urlGenerator;
 	/**
@@ -65,6 +69,7 @@ class Mail {
 		IMailer $mailer,
 		Defaults $defaults,
 		IL10N $l10n,
+		IConfig $config = null,
 		IUserManager $userManager,
 		IURLGenerator $urlGenerator
 	) {
@@ -73,6 +78,7 @@ class Mail {
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
 		$this->l10n = $l10n;
+		$this->config = $config;
 		$this->userManager = $userManager;
 		$this->urlGenerator = $urlGenerator;
 	}
@@ -101,7 +107,9 @@ class Mail {
 		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
 		$filename = \trim($share->getTarget(), '/');
-		$subject = (string)$this->l10n->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
+		$useDefaultLanguage = $this->getDefaultLanguage();
+		$l10n = $useDefaultLanguage ?? $this->l10n;
+		$subject = (string)$l10n->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
 		$expiration = $share->getExpirationDate();
 		if ($expiration instanceof \DateTime) {
 			try {
@@ -116,10 +124,6 @@ class Mail {
 			['fileId' => $share->getNode()->getId()]
 		);
 
-		if ($this->checkDefaultLanguage() !== null) {
-			$subject = (string)$this->checkDefaultLanguage()->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
-		}
-
 		list($htmlBody, $textBody) = $this->createMailBody(
 			$filename,
 			$link,
@@ -128,7 +132,7 @@ class Mail {
 			$senderDisplayName,
 			$expiration,
 			$shareWithEmail,
-			$this->checkDefaultLanguage()
+			$useDefaultLanguage
 		);
 
 		try {
@@ -170,11 +174,9 @@ class Mail {
 
 		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
-		$subject = (string)$this->l10n->t('%s invited you', [$senderDisplayName]);
-
-		if ($this->checkDefaultLanguage() !== null) {
-			$subject = (string)$this->checkDefaultLanguage()->t('%s invited you', [$senderDisplayName]);
-		}
+		$useDefaultLanguage = $this->getDefaultLanguage();
+		$l10n = $useDefaultLanguage ?? $this->l10n;
+		$subject = (string)$l10n->t('%s invited you', [$senderDisplayName]);
 
 		list($htmlBody, $textBody) = $this->createMailBody(
 			null,
@@ -184,7 +186,7 @@ class Mail {
 			$senderDisplayName,
 			null,
 			$shareWithEmail,
-			$this->checkDefaultLanguage()
+			$useDefaultLanguage
 		);
 
 		try {
@@ -251,12 +253,11 @@ class Mail {
 	}
 
 	/**
-	 * check if default_language is defined in config.php
-	 * @return OCP\IL10N|null
-	*/
-	private function checkDefaultLanguage() {
+		 * get default_language is defined in config.php
+		*/
+	private function getDefaultLanguage() {
 		$useDefaultLanguage = null;
-		$defaultLang = \OC::$server->getConfig()->getSystemValue('default_language', false);
+		$defaultLang = $this->config->getSystemValue('default_language', false);
 		if ($defaultLang !== false) {
 			$useDefaultLanguage = \OC::$server->getL10N('lib', $defaultLang);
 		}
