@@ -252,7 +252,7 @@ class Mail {
 
 	/**
 	 * check if default_language is defined in config.php
-	 * @return string|null
+	 * @return OCP\IL10N|null
 	*/
 	private function checkDefaultLanguage() {
 		$useDefaultLanguage = null;
