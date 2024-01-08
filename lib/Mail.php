@@ -116,6 +116,13 @@ class Mail {
 			['fileId' => $share->getNode()->getId()]
 		);
 
+		$defaultLang = \OC::$server->getConfig()->getSystemValue('default_language', false);
+		// if set, use default_language in config.php for the guests template
+		if ($defaultLang !== false) {
+			$usedeflanguage = \OC::$server->getL10N('lib', $defaultLang);
+			$subject = (string)$usedeflanguage->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
+		}
+
 		list($htmlBody, $textBody) = $this->createMailBody(
 			$filename,
 			$link,
@@ -123,7 +130,8 @@ class Mail {
 			$this->defaults->getName(),
 			$senderDisplayName,
 			$expiration,
-			$shareWithEmail
+			$shareWithEmail,
+			$usedeflanguage
 		);
 
 		try {
@@ -167,6 +175,13 @@ class Mail {
 
 		$subject = (string)$this->l10n->t('%s invited you', [$senderDisplayName]);
 
+		$defaultLang = \OC::$server->getConfig()->getSystemValue('default_language', false);
+		// if set, use default_language in config.php for the guests template
+		if ($defaultLang !== false) {
+			$usedeflanguage = \OC::$server->getL10N('lib', $defaultLang);
+			$subject = (string)$usedeflanguage->t('%s invited you', [$senderDisplayName]);
+		}
+
 		list($htmlBody, $textBody) = $this->createMailBody(
 			null,
 			null,
@@ -174,7 +189,8 @@ class Mail {
 			$this->defaults->getName(),
 			$senderDisplayName,
 			null,
-			$shareWithEmail
+			$shareWithEmail,
+			$usedeflanguage
 		);
 
 		try {
@@ -213,10 +229,11 @@ class Mail {
 	 * @param string $guestEmail
 	 * @return array an array of the html mail body and the plain text mail body
 	 */
-	private function createMailBody($filename, $link, $passwordLink, $cloudName, $displayName, $expiration, $guestEmail) {
+	private function createMailBody($filename, $link, $passwordLink, $cloudName, $displayName, $expiration, $guestEmail, $overrideL10n = null) {
 		$formattedDate = $expiration ? $this->l10n->l('date', $expiration) : null;
+		$l10n = $overrideL10n === null ? $this->l10n : $overrideL10n;
 
-		$html = new Template('guests', 'mail/invite');
+		$html = new Template('guests', 'mail/invite', '', false, $l10n->getLanguageCode());
 		$html->assign('link', $link);
 		$html->assign('password_link', $passwordLink);
 		$html->assign('cloud_name', $cloudName);
@@ -226,7 +243,7 @@ class Mail {
 		$html->assign('guestEmail', $guestEmail);
 		$htmlMail = $html->fetchPage();
 
-		$plainText = new Template('guests', 'mail/altinvite');
+		$plainText = new Template('guests', 'mail/altinvite', '', false, $l10n->getLanguageCode());
 		$plainText->assign('link', $link);
 		$plainText->assign('password_link', $passwordLink);
 		$plainText->assign('cloud_name', $cloudName);
