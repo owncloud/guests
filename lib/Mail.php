@@ -116,6 +116,7 @@ class Mail {
 			['fileId' => $share->getNode()->getId()]
 		);
 
+		$usedeflanguage = null;
 		$defaultLang = \OC::$server->getConfig()->getSystemValue('default_language', false);
 		// if set, use default_language in config.php for the guests template
 		if ($defaultLang !== false) {
@@ -175,6 +176,7 @@ class Mail {
 
 		$subject = (string)$this->l10n->t('%s invited you', [$senderDisplayName]);
 
+		$usedeflanguage = null;
 		$defaultLang = \OC::$server->getConfig()->getSystemValue('default_language', false);
 		// if set, use default_language in config.php for the guests template
 		if ($defaultLang !== false) {
