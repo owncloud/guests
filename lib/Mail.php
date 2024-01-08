@@ -253,7 +253,7 @@ class Mail {
 	}
 
 	/**
-	 * get default_language is defined in config.php
+	 * get default_language if defined in config.php
 	 */
 	private function getDefaultLanguage() {
 		$useDefaultLanguage = null;
