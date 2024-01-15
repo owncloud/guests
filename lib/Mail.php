@@ -107,8 +107,8 @@ class Mail {
 		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
 		$filename = \trim($share->getTarget(), '/');
-		$useDefaultLanguage = $this->getDefaultLanguage();
-		$l10n = $useDefaultLanguage ?? $this->l10n;
+		$defaultLanguage = $this->getDefaultLanguage();
+		$l10n = $defaultLanguage ?? $this->l10n;
 		$subject = (string)$l10n->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
 		$expiration = $share->getExpirationDate();
 		if ($expiration instanceof \DateTime) {
@@ -132,7 +132,7 @@ class Mail {
 			$senderDisplayName,
 			$expiration,
 			$shareWithEmail,
-			$useDefaultLanguage
+			$defaultLanguage
 		);
 
 		try {
@@ -174,8 +174,8 @@ class Mail {
 
 		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
-		$useDefaultLanguage = $this->getDefaultLanguage();
-		$l10n = $useDefaultLanguage ?? $this->l10n;
+		$defaultLanguage = $this->getDefaultLanguage();
+		$l10n = $defaultLanguage ?? $this->l10n;
 		$subject = (string)$l10n->t('%s invited you', [$senderDisplayName]);
 
 		list($htmlBody, $textBody) = $this->createMailBody(
@@ -186,7 +186,7 @@ class Mail {
 			$senderDisplayName,
 			null,
 			$shareWithEmail,
-			$useDefaultLanguage
+			$defaultLanguage
 		);
 
 		try {
@@ -223,6 +223,7 @@ class Mail {
 	 * @param ?string $link link to the shared file
 	 * @param ?int $expiration expiration date (timestamp)
 	 * @param string $guestEmail
+	 * @param IL10N|null $overrideL10n language to be used
 	 * @return array an array of the html mail body and the plain text mail body
 	 */
 	private function createMailBody($filename, $link, $passwordLink, $cloudName, $displayName, $expiration, $guestEmail, $overrideL10n = null) {
@@ -254,13 +255,14 @@ class Mail {
 
 	/**
 	 * get default_language if defined in config.php
+	 * @return IL10N|null
 	 */
 	private function getDefaultLanguage() {
-		$useDefaultLanguage = null;
+		$defaultLanguage = null;
 		$defaultLang = $this->config->getSystemValue('default_language', false);
 		if ($defaultLang !== false) {
-			$useDefaultLanguage = \OC::$server->getL10N('lib', $defaultLang);
+			$defaultLanguage = \OC::$server->getL10N('lib', $defaultLang);
 		}
-		return $useDefaultLanguage;
+		return $defaultLanguage;
 	}
 }
