@@ -45,11 +45,11 @@ class AppWhitelist {
 		$whitelistEnabled = $config->getAppValue('guests', 'usewhitelist', 'true') === 'true';
 
 		if ($isGuest && $whitelistEnabled) {
-			$path = \OC::$server->getRequest()->getRawPathInfo();
+			$path = \OC::$server->getRequest()->getPathInfo();
 			$app = self::getRequestedApp($path);
 			$whitelist = self::getWhitelist();
 
-			if (!\in_array($app, $whitelist)) {
+			if (!\in_array($app, $whitelist, true)) {
 				\header('HTTP/1.0 403 Forbidden');
 				$l = \OC::$server->getL10NFactory()->get('guests');
 				Template::printErrorPage($l->t(
