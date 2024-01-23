@@ -45,7 +45,7 @@ class AppWhitelist {
 		$whitelistEnabled = $config->getAppValue('guests', 'usewhitelist', 'true') === 'true';
 
 		if ($isGuest && $whitelistEnabled) {
-			$path = \OC::$server->getRequest()->getRawPathInfo();
+			$path = \OC::$server->getRequest()->getPathInfo();
 			$app = self::getRequestedApp($path);
 			$whitelist = self::getWhitelist();
 

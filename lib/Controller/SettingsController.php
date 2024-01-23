@@ -104,7 +104,7 @@ class SettingsController extends Controller {
 		foreach ($whitelist as $app) {
 			$newWhitelist[] = \trim($app);
 		}
-		$newWhitelist = \join(',', $newWhitelist);
+		$newWhitelist = \implode(',', $newWhitelist);
 		$this->config->setAppValue('guests', 'group', $group);
 		$this->config->setAppValue('guests', 'usewhitelist', $useWhitelist);
 		$this->config->setAppValue('guests', 'whitelist', $newWhitelist);
@@ -121,7 +121,6 @@ class SettingsController extends Controller {
 	/**
 	 * AJAX handler for getting whitelisted apps
 	 *
-	 * @NoAdminRequired
 	 * @return array whitelisted apps
 	 */
 	public function getWhitelist() {
@@ -135,7 +134,6 @@ class SettingsController extends Controller {
 	/**
 	 * AJAX handler for resetting the whitelisted apps
 	 *
-	 * @NoAdminRequired
 	 * @return DataResponse with the reset whitelist
 	 */
 	public function resetWhitelist() {
