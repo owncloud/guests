@@ -49,7 +49,7 @@ class AppWhitelist {
 			$app = self::getRequestedApp($path);
 			$whitelist = self::getWhitelist();
 
-			if (!\in_array($app, $whitelist)) {
+			if (!\in_array($app, $whitelist, true)) {
 				\header('HTTP/1.0 403 Forbidden');
 				$l = \OC::$server->getL10NFactory()->get('guests');
 				Template::printErrorPage($l->t(
@@ -90,6 +90,8 @@ class AppWhitelist {
 			return 'heartbeat';
 		} elseif (\substr($url, 0, 13) === '/dav/comments') {
 			return 'comments';
+		} elseif (\substr($url, 0, 11) === '/dav/files/') {
+			return 'files';
 		}
 		return false;
 	}
