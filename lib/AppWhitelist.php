@@ -49,7 +49,7 @@ class AppWhitelist {
 			$app = self::getRequestedApp($path);
 			$whitelist = self::getWhitelist();
 
-			if (!\in_array($app, $whitelist, true)) {
+			if (!\in_array($app, $whitelist)) {
 				\header('HTTP/1.0 403 Forbidden');
 				$l = \OC::$server->getL10NFactory()->get('guests');
 				Template::printErrorPage($l->t(
