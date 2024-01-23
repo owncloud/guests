@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased] - ...
+## [0.12.4] - 2024-01-23
+
+### Fixed
+
+- [#600](https://github.com/owncloud/guests/pull/600) - Update AppWhitelist.php add always enabled apps to core whitelist #600
+- [#612](https://github.com/owncloud/guests/pull/612) - Fix: respect the usewhitelist flag #612
+- [#617](https://github.com/owncloud/guests/pull/617) - fix: harden apis
 
 
 ## [0.12.3] - 2023-09-05
@@ -239,7 +245,8 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
-[Unreleased]: https://github.com/owncloud/guests/compare/v0.12.3...master
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.12.4...master
+[0.12.4]: https://github.com/owncloud/guests/compare/v0.12.3...v0.12.4
 [0.12.3]: https://github.com/owncloud/guests/compare/v0.12.2...v0.12.3
 [0.12.2]: https://github.com/owncloud/guests/compare/v0.12.1...v0.12.2
 [0.12.1]: https://github.com/owncloud/guests/compare/v0.12.0...v0.12.1
