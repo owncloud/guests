@@ -67,6 +67,7 @@ class Application extends App {
 					$server->getMailer(),
 					new \OCP\Defaults(),
 					$server->getL10N(self::APP_NAME),
+					$server->getConfig(),
 					$server->getUserManager(),
 					$server->getURLGenerator()
 				);

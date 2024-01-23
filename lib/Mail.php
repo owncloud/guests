@@ -27,6 +27,7 @@ namespace OCA\Guests;
 
 use OCP\Defaults;
 use OCP\IL10N;
+use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -52,6 +53,9 @@ class Mail {
 	/** @var IL10N */
 	private $l10n;
 
+	/** @var IConfig */
+	private $config;
+
 	/** @var  IURLGenerator */
 	private $urlGenerator;
 	/**
@@ -65,6 +69,7 @@ class Mail {
 		IMailer $mailer,
 		Defaults $defaults,
 		IL10N $l10n,
+		IConfig $config = null,
 		IUserManager $userManager,
 		IURLGenerator $urlGenerator
 	) {
@@ -73,6 +78,7 @@ class Mail {
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
 		$this->l10n = $l10n;
+		$this->config = $config;
 		$this->userManager = $userManager;
 		$this->urlGenerator = $urlGenerator;
 	}
@@ -101,7 +107,9 @@ class Mail {
 		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
 		$filename = \trim($share->getTarget(), '/');
-		$subject = (string)$this->l10n->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
+		$defaultLanguage = $this->getDefaultLanguage();
+		$l10n = $defaultLanguage ?? $this->l10n;
+		$subject = (string)$l10n->t('%s shared »%s« with you', [$senderDisplayName, $filename]);
 		$expiration = $share->getExpirationDate();
 		if ($expiration instanceof \DateTime) {
 			try {
@@ -123,7 +131,8 @@ class Mail {
 			$this->defaults->getName(),
 			$senderDisplayName,
 			$expiration,
-			$shareWithEmail
+			$shareWithEmail,
+			$defaultLanguage
 		);
 
 		try {
@@ -165,7 +174,9 @@ class Mail {
 
 		$this->logger->debug("sending invite to $shareWith: $registerLink", ['app' => 'guests']);
 
-		$subject = (string)$this->l10n->t('%s invited you', [$senderDisplayName]);
+		$defaultLanguage = $this->getDefaultLanguage();
+		$l10n = $defaultLanguage ?? $this->l10n;
+		$subject = (string)$l10n->t('%s invited you', [$senderDisplayName]);
 
 		list($htmlBody, $textBody) = $this->createMailBody(
 			null,
@@ -174,7 +185,8 @@ class Mail {
 			$this->defaults->getName(),
 			$senderDisplayName,
 			null,
-			$shareWithEmail
+			$shareWithEmail,
+			$defaultLanguage
 		);
 
 		try {
@@ -211,12 +223,14 @@ class Mail {
 	 * @param ?string $link link to the shared file
 	 * @param ?int $expiration expiration date (timestamp)
 	 * @param string $guestEmail
+	 * @param IL10N|null $overrideL10n language to be used
 	 * @return array an array of the html mail body and the plain text mail body
 	 */
-	private function createMailBody($filename, $link, $passwordLink, $cloudName, $displayName, $expiration, $guestEmail) {
+	private function createMailBody($filename, $link, $passwordLink, $cloudName, $displayName, $expiration, $guestEmail, $overrideL10n = null) {
 		$formattedDate = $expiration ? $this->l10n->l('date', $expiration) : null;
+		$l10n = $overrideL10n === null ? $this->l10n : $overrideL10n;
 
-		$html = new Template('guests', 'mail/invite');
+		$html = new Template('guests', 'mail/invite', '', false, $l10n->getLanguageCode());
 		$html->assign('link', $link);
 		$html->assign('password_link', $passwordLink);
 		$html->assign('cloud_name', $cloudName);
@@ -226,7 +240,7 @@ class Mail {
 		$html->assign('guestEmail', $guestEmail);
 		$htmlMail = $html->fetchPage();
 
-		$plainText = new Template('guests', 'mail/altinvite');
+		$plainText = new Template('guests', 'mail/altinvite', '', false, $l10n->getLanguageCode());
 		$plainText->assign('link', $link);
 		$plainText->assign('password_link', $passwordLink);
 		$plainText->assign('cloud_name', $cloudName);
@@ -237,5 +251,18 @@ class Mail {
 		$plainTextMail = $plainText->fetchPage();
 
 		return [$htmlMail, $plainTextMail];
+	}
+
+	/**
+	 * get default_language if defined in config.php
+	 * @return IL10N|null
+	 */
+	private function getDefaultLanguage() {
+		$defaultLanguage = null;
+		$defaultLang = $this->config->getSystemValue('default_language', false);
+		if ($defaultLang !== false) {
+			$defaultLanguage = \OC::$server->getL10N('lib', $defaultLang);
+		}
+		return $defaultLanguage;
 	}
 }
