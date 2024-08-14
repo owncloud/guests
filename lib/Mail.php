@@ -69,7 +69,7 @@ class Mail {
 		IMailer $mailer,
 		Defaults $defaults,
 		IL10N $l10n,
-		IConfig $config = null,
+		?IConfig $config,
 		IUserManager $userManager,
 		IURLGenerator $urlGenerator
 	) {
