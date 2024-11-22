@@ -21,6 +21,7 @@ OC.L10N.register(
     "%s shared »%s« with you" : "%s compartiu «%s» con vostede",
     "%s via %s" : "%s vía %s",
     "Couldn't send reset email. Please contact your administrator." : "Non foi posíbel enviar o correo de restabelecemento. Póñase en contacto co administrador.",
+    "%s invited you" : "%s convidouche",
     "Email" : "Correo",
     "Password" : "Contrasinal",
     "Set password" : "Estabelecer o contrasinal",
