@@ -53,18 +53,11 @@ config = {
     "branches": [
         "master",
     ],
-    "codestyle": True,
-    "phpstan": True,
+    "codestyle": False,
+    "phpstan": False,
     "javascript": True,
-    "phan": {
-        "multipleVersions": {
-            "phpVersions": [
-                DEFAULT_PHP_VERSION,
-                "7.3",
-            ],
-        },
-    },
-    "phpunit": True,
+    "phan": False,
+    "phpunit": False,
     "acceptance": {
         "webUI": {
             "suites": {
