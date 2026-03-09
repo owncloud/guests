@@ -102,7 +102,7 @@ Feature: Guests
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
     Then dialog should be displayed on the webUI
       | title | content             |
-      | Error | Error while sharing |
+      | Error | Error whilst sharing |
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
@@ -127,7 +127,7 @@ Feature: Guests
     And the user shares file "testimage.jpg" with guest user with email "valid@email.com" using the webUI
     Then dialog should be displayed on the webUI
       | title | content             |
-      | Error | Error while sharing |
+      | Error | Error whilst sharing |
     And user "valid@email.com" should exist
     # And user "valid@email.com" should not exist
 
