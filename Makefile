@@ -98,6 +98,11 @@ $(nodejs_deps): package.json yarn.lock
 
 $(KARMA): $(nodejs_deps)
 
+# Installs dependencies and does any build actions needed for the app to run in CI
+.PHONY: ci
+ci: vendor
+	@echo dependencies and build actions for CI are completed
+
 ##------------
 ## Tests
 ##------------
