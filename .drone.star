@@ -59,32 +59,6 @@ config = {
     "phan": False,
     "phpunit": False,
     "acceptance": {
-        "webUI": {
-            "suites": {
-                "webUIGuests": "webUIGuest",
-            },
-            "browsers": [
-                "chrome",
-                "firefox",
-            ],
-            "databases": [
-                "mysql:8.0",
-                "postgres:9.4",
-                "oracle",
-            ],
-            "emailNeeded": True,
-        },
-        "api": {
-            "suites": [
-                "apiGuests",
-            ],
-            "databases": [
-                "mysql:8.0",
-                "postgres:9.4",
-                "oracle",
-            ],
-            "emailNeeded": True,
-        },
         "api-scality": {
             "suites": {
                 "apiGuests": "apiGuestsScality",
