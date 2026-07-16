@@ -495,7 +495,7 @@ Feature: Guests
     And as "Alice" file "/tmp/textfile0.txt" should not exist
     When user "Alice" tries to list the trashbin content for user "Alice"
     Then the HTTP status code should be "207"
-    And as "Alice" the file with original path "/tmp/textfile0.txt" should exist in the trashbin
+    And as "Alice" the file with original path "tmp/textfile0.txt" should exist in the trashbin
 
   @email @issue-553
   Scenario: guest user can delete shared files when files_trashbin app is whitelisted
