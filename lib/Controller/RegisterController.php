@@ -90,7 +90,7 @@ class RegisterController extends Controller {
 		IConfig $config,
 		ISecureRandom $secureRandom,
 		IMailer $mailer,
-		IUrlGenerator $urlGenerator
+		IURLGenerator $urlGenerator
 	) {
 		parent::__construct($appName, $request);
 

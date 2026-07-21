@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- [#696](https://github.com/owncloud/guests/issues/696) - fix: allow guests to complete login/2FA flow (AppWhitelist)
 - [#618](https://github.com/owncloud/guests/pull/618) - fix: detect files app in guest whitelist checking
 
 ## [0.12.4] - 2024-01-23
