@@ -82,6 +82,8 @@ class AppWhitelist {
 			return  \OC_App::cleanAppId($app);
 		} elseif (\substr($url, 0, 6) === '/core/') {
 			return 'core';
+		} elseif (\str_starts_with($url, '/login') || \str_starts_with($url, '/logout')) {
+			return 'core';
 		} elseif (\substr($url, 0, 10) === '/settings/') {
 			return 'settings';
 		} elseif (\substr($url, 0, 8) === '/avatar/') {
