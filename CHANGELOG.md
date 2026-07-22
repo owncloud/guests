@@ -6,10 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-### Fixed
 
+## [0.13.1] - 2026-07-22
+
+### Fixed
 - [#696](https://github.com/owncloud/guests/issues/696) - fix: allow guests to complete login/2FA flow (AppWhitelist)
 - [#618](https://github.com/owncloud/guests/pull/618) - fix: detect files app in guest whitelist checking
+
+## [0.13.0] - 2026-06-29
+
+### Changed
+- ownCloud 11 compatible release (oc 11.0.0-rc1).
 
 ## [0.12.4] - 2024-01-23
 
@@ -253,7 +260,9 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 
 - Core functionality
 
-[Unreleased]: https://github.com/owncloud/guests/compare/v0.12.4...master
+[Unreleased]: https://github.com/owncloud/guests/compare/v0.13.1..master
+[0.13.1]: https://github.com/owncloud/guests/compare/v0.13.0..v0.13.1
+[0.13.0]: https://github.com/owncloud/guests/compare/v0.12.4..v0.13.0
 [0.12.4]: https://github.com/owncloud/guests/compare/v0.12.3...v0.12.4
 [0.12.3]: https://github.com/owncloud/guests/compare/v0.12.2...v0.12.3
 [0.12.2]: https://github.com/owncloud/guests/compare/v0.12.1...v0.12.2
@@ -272,6 +281,7 @@ This release consists mostly of internal changes to adapt the guest app to ownCl
 [0.6.2]: https://github.com/owncloud/guests/compare/v0.6.0...v0.6.2
 [0.6.0]: https://github.com/owncloud/guests/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/owncloud/guests/compare/v0.4.1...v0.5.0
+[0.4.2]: https://github.com/owncloud/guests/compare/v0.4.1..v0.4.2
 [0.4.1]: https://github.com/owncloud/guests/compare/v.0.4...v0.4.1
 [0.4]: https://github.com/owncloud/guests/compare/v0.3...v.0.4
 [0.3]: https://github.com/owncloud/guests/compare/v0.2...v0.3
