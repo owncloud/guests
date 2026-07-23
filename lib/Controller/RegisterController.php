@@ -118,43 +118,58 @@ class RegisterController extends Controller {
 	 */
 	public function showPasswordForm($email, $token) {
 		$errorMessages = [];
-		$userId = \strtolower($email);
+		$parameters = [];
 
+		$parameters['email'] = (string)$email;
+		$parameters['token'] = (string)$token;
+		$parameters['postAction'] =
+			$this->urlGenerator->linkToRouteAbsolute('guests.register.register');
+
+		// Keep the mail format validation (non-sensitive), but avoid account enumeration.
 		if (empty($email) || !$this->mailer->validateMailAddress($email)) {
-			$errorMessages['email'] = (string)$this->l10n->t(
-				'Invalid mail address'
+			$errorMessages['email'] = (string)$this->l10n->t('Invalid mail address');
+
+			$parameters['messages'] = $errorMessages;
+			return new TemplateResponse(
+				$this->appName,
+				'form.password',
+				$parameters,
+				'guest'
 			);
 		}
 
+		$userId = \strtolower($email);
+
+		// Fetch both values with safe defaults to avoid revealing existence via distinct errors.
 		$isGuest = (bool)$this->config->getUserValue(
 			$userId,
 			'owncloud',
-			'isGuest'
+			'isGuest',
+			0
 		);
 
-		if (!$isGuest) {
-			$errorMessages['username'] = (string)$this->l10n->t(
-				'No such guest user'
-			);
-		}
-
-		$checkToken = $this->config->getUserValue(
+		$registerToken = (string)$this->config->getUserValue(
 			$userId,
 			'guests',
-			'registerToken'
+			'registerToken',
+			''
 		);
 
-		if (empty($checkToken)) {
-			$errorMessages['token'] = (string)$this->l10n->t(
-				'The token is invalid'
-			);
+		// Only allow showing the password form when BOTH:
+		// - user is a guest
+		// - provided token matches stored token (constant-time comparison)
+		$valid = false;
+		if ($isGuest && $registerToken !== '' && (string)$token !== '') {
+			$valid = \hash_equals($registerToken, (string)$token);
 		}
 
-		$parameters['email'] = $email;
+		// If invalid for ANY reason (non-guest, missing token, mismatch), show a generic error.
+		// This prevents user enumeration via observable response differences.
+		if (!$valid) {
+			$errorMessages['token'] = (string)$this->l10n->t('The token is invalid');
+		}
+
 		$parameters['messages'] = $errorMessages;
-		$parameters['token'] = $token;
-		$parameters['postAction'] =
-			$this->urlGenerator->linkToRouteAbsolute('guests.register.register');
 
 		return new TemplateResponse(
 			$this->appName,
@@ -192,22 +207,28 @@ class RegisterController extends Controller {
 			);
 		}
 
-		$registerToken = $this->config->getUserValue(
+		$registerToken = (string)$this->config->getUserValue(
 			$userId,
 			'guests',
 			'registerToken',
-			false
+			''
 		);
+
 		// only show token error when there are no others
-		if (
-			empty($parameters['messages']) &&
-			(empty($token) || empty($registerToken) || $registerToken !== $token)
-		) {
-			$parameters['token'] = $token;
-			$parameters['email'] = $email;
-			$parameters['messages']['token'] = (string)$this->l10n->t(
-				'The token is invalid'
-			);
+		// Use constant-time compare for robustness.
+		if (empty($parameters['messages'])) {
+			$valid = false;
+			if ($token !== '' && $registerToken !== '') {
+				$valid = \hash_equals($registerToken, $token);
+			}
+
+			if (!$valid) {
+				$parameters['token'] = $token;
+				$parameters['email'] = $email;
+				$parameters['messages']['token'] = (string)$this->l10n->t(
+					'The token is invalid'
+				);
+			}
 		}
 
 		if (!empty($parameters['messages'])) {
