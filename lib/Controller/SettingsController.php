@@ -100,6 +100,21 @@ class SettingsController extends Controller {
 			]);
 		}
 
+		if (!empty($shareBlockDomains)) {
+			$blockedDomains = \explode(",", $shareBlockDomains);
+			$domainPattern = "/^(?=.{1,254}$)((?=[a-z0-9-]{1,63}\.)(xn--+)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}$/i";
+			foreach ($blockedDomains as $domain) {
+				if (!preg_match($domainPattern, $domain)) {
+					return new DataResponse([
+						'status' => 'error',
+						'data' => [
+							'message' => $this->l10n->t('Invalid domain name: %s', $domain)
+						],
+					]);
+				}
+			}
+		}
+
 		$newWhitelist = [];
 		foreach ($whitelist as $app) {
 			$newWhitelist[] = \trim($app);
