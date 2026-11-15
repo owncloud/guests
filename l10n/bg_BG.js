@@ -8,7 +8,7 @@ OC.L10N.register(
     "Error" : "Грешка",
     "Add multiple users and guests" : "Добавяне на множество потребители и гости",
     "Add {unknown}" : "Добавяне на {unknown}",
-    "Error loading activities" : "Грешка при зареждане на дейностите",
+    "Error loading activities" : "Грешка при зареждане на активностите",
     "Access to this resource is forbidden for guests." : "Достъпът за гости до този ресурс е забранен.",
     "Invalid mail address" : "Невалиден имейл адрес",
     "No such guest user" : "Няма такъв гост потребител",
